@@ -2,20 +2,25 @@ package org.amusedd.codeblocks.blocks;
 
 import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.input.ValueType;
+import org.bukkit.entity.Cod;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Map;
 
 public class ValueBlock<T> extends CodeBlock {
 
     private T value;
+    private CodeBlock scope;
 
-    public ValueBlock(){
-
+    public ValueBlock(CodeBlock scope){
+        this.scope = scope;
     }
 
     public ValueBlock(T value){
         this.value = value;
+        setTag("value_type", value.getClass().getSimpleName(), PersistentDataType.STRING);
+        setTag("value", value, PersistentDataType.STRING);
     }
 
 
@@ -35,10 +40,6 @@ public class ValueBlock<T> extends CodeBlock {
 
     @Override
     public Map<String, Object> serialize() {
-        Map<String, Object> data = super.serialize();
-        data.put("value_type", value.getClass().getSimpleName());
-        data.put("value", value);
-        return data;
+        return null;
     }
-
 }

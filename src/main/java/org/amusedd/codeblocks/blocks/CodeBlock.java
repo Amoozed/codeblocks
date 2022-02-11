@@ -29,11 +29,7 @@ public abstract class CodeBlock implements ConfigurationSerializable {
             getContainer().nextBlock();
     }
 
-    public Map<String, Object> serialize(){
-        Map<String, Object> map = new HashMap<>();
-        map.put("codeblock", getGUIItem());
-        return map;
-    }
+    public abstract Map<String, Object> serialize();
 
     public abstract ItemStack getGUIItem();
 

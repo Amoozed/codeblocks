@@ -12,6 +12,10 @@ public class NumericLoop extends CodeBlockContainer {
     int iterations;
     String name;
 
+    public NumericLoop(String name) {
+        super(name);
+    }
+
     @Override
     public HashMap<String, ValueBlock<Object>> getVariableScope() {
         return variableScope;

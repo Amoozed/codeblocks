@@ -39,12 +39,12 @@ public abstract class CodeBlockContainer extends CodeBlock {
 
     @Override
     public Map<String, Object> serialize() {
-        Map<String, Object> data = super.serialize();
+        Map<String, Object> data = new HashMap<>();
         ArrayList<ItemStack> blockItems = new ArrayList<>();
         for(CodeBlock codeBlock : codeBlocks){
             blockItems.add(codeBlock.getGUIItem());
         }
-        data.put("blocks", blockItems);
+        data.put("container:" + getName(), blockItems);
         return data;
     }
 

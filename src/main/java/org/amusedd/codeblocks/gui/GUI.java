@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 public abstract class GUI implements InventoryHolder {
     protected Inventory inventory;
-    private Player owner;
+    private final Player owner;
 
     public GUI(Player player) {
         this.owner = player;
