@@ -1,45 +1,53 @@
 package org.amusedd.codeblocks.blocks.functions;
 
+import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.CodeBlockContainer;
 import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.items.ItemBuilder;
+import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class FunctionBlock extends CodeBlockContainer {
-    HashMap<String, ValueBlock<Object>> variableScope = new HashMap<>();
-    String name;
+    HashMap<String, ValueBlock> variableScope = new HashMap<>();
 
-    public FunctionBlock(String name) {
-        super(name);
+    public FunctionBlock(String name, ArrayList<CodeBlock> codeBlocks) {
+        super(name, codeBlocks);
+    }
+
+    public FunctionBlock(String name, LinkedHashMap map) {
+        super(name, map);
     }
 
     @Override
-    public HashMap<String, ValueBlock<Object>> getVariableScope() {
+    public HashMap<String, ValueBlock> getVariableScope() {
         return variableScope;
     }
 
     @Override
-    public ItemStack getGUIItem() {
-        return new ItemBuilder(Material.COMMAND_BLOCK).setName(name).build();
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public void setFunctionName(String name) {
-        this.name = name;
+    public ItemStack getBaseItem() {
+        return new ItemBuilder(Material.COMMAND_BLOCK).setName(getName()).build();
     }
 
     @Override
     public Map<String, Object> serialize() {
-        Map<String, Object> data = super.serialize();
-        data.put("name", name);
-        return data;
+        return super.serialize();
+    }
+
+    public static FunctionBlock deserialize(Map<String, Object> map) {
+        ItemStack item = (ItemStack) map.get("block");
+        String name = (String) item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CodeBlocksPlugin.getInstance(), "name"), PersistentDataType.STRING);
+        return new FunctionBlock(name, (LinkedHashMap)map.get("blocks"));
+    }
+
+    public static ItemStack getPreview(){
+        return new ItemBuilder(Material.COMMAND_BLOCK).setName("Function").build();
     }
 }

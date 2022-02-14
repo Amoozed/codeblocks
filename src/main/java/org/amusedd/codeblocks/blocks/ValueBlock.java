@@ -2,35 +2,30 @@ package org.amusedd.codeblocks.blocks;
 
 import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.input.ValueType;
+import org.amusedd.codeblocks.items.ItemBuilder;
+import org.bukkit.Material;
 import org.bukkit.entity.Cod;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-public class ValueBlock<T> extends CodeBlock {
+public class ValueBlock extends CodeBlock {
 
-    private T value;
-    private CodeBlock scope;
+    private Object value;
 
-    public ValueBlock(CodeBlock scope){
-        this.scope = scope;
-    }
-
-    public ValueBlock(T value){
+    public ValueBlock(Object value) {
         this.value = value;
-        setTag("value_type", value.getClass().getSimpleName(), PersistentDataType.STRING);
-        setTag("value", value, PersistentDataType.STRING);
     }
 
+    public ValueBlock(){
 
-    public void set(T t) { this.value = t; }
-    public T get() { return value; }
-
-    @Override
-    public ItemStack getGUIItem() {
-        return null;
     }
+
+    public void setValue(Object t) { this.value = t; }
+    public Object getValue() { return value; }
+
 
     @Override
     public void execute() {
@@ -39,7 +34,20 @@ public class ValueBlock<T> extends CodeBlock {
     }
 
     @Override
+    public ItemStack getBaseItem() {
+        return new ItemBuilder(Material.DIAMOND).setName("Value Block").build();
+    }
+
+    @Override
     public Map<String, Object> serialize() {
-        return null;
+        Map<String, Object> map = super.serialize();
+        map.put("value", value);
+        map.put("type", value.getClass().getSimpleName());
+        return map;
+    }
+
+    public static ValueBlock deserialize(Map<String, Object> map)  {
+        Object value = map.get("value");
+        return new ValueBlock(value);
     }
 }

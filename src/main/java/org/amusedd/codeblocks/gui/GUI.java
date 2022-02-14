@@ -68,4 +68,12 @@ public abstract class GUI implements InventoryHolder {
         System.out.println("No confirmation needed.");
     }
 
+    public void onPlayerTextResponse(ItemStack item, InventoryEvent event, String response) {
+        System.out.println("No text response needed.");
+    }
+
+    public void onPlayerGUISelection(ItemStack item, InventoryEvent event) {
+        System.out.println("No GUI selection needed.");
+    }
+
 }

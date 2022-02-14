@@ -1,6 +1,6 @@
 package org.amusedd.codeblocks.data;
 
-import org.amusedd.codeblocks.plugin.CodeBlocksPlugin;
+import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -8,6 +8,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 public class DataManager {
     private final CodeBlocksPlugin instance = CodeBlocksPlugin.getInstance();
@@ -44,6 +45,7 @@ public class DataManager {
 
     FileConfiguration getFileConfig(String path) {
         File dataFile = new File(path);
+        System.out.println(path);
         if (!dataFile.exists()) {
             try {
                 dataFile.createNewFile();
@@ -78,6 +80,17 @@ public class DataManager {
             }
         }
         queuedSaves.clear();
+    }
+
+    public void directSave(String folder, String fileName, Map<String, Object> serializable) {
+        FileConfiguration config = getFileConfig(folder, fileName);
+        config.set("data", serializable);
+        String path = instance.getDataFolder() + "/" + folder + "/" + fileName + ".yml";
+        try {
+            config.save(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void queueSave(String folder, String fileName, ConfigurationSerializable data) {

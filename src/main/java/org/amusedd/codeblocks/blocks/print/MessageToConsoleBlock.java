@@ -11,13 +11,16 @@ public class MessageToConsoleBlock extends MessageBlock{
         super(text);
     }
 
-    @Override
-    public ItemStack getGUIItem() {
-        return new ItemBuilder(Material.FURNACE).setName("Message to console").build();
-    }
 
     @Override
     protected void print(String text) {
         Bukkit.getConsoleSender().sendMessage(text);
     }
+
+    @Override
+    public ItemStack getBaseItem() {
+        return new ItemBuilder(super.getBaseItem()).setName("Message to console").build();
+    }
+
+
 }

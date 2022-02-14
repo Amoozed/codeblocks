@@ -11,13 +11,15 @@ public class MessageToServerBlock extends MessageBlock{
         super(text);
     }
 
-    @Override
-    public ItemStack getGUIItem() {
-        return new ItemBuilder(Material.PAPER).setName("Message to server").build();
-    }
 
     @Override
     protected void print(String text) {
         Bukkit.broadcastMessage(text);
+    }
+
+
+    @Override
+    public ItemStack getBaseItem() {
+        return new ItemBuilder(super.getBaseItem()).setName("Message to Server").build();
     }
 }

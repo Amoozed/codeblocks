@@ -1,7 +1,9 @@
 name: CodeBlocks
-version: '${project.version}'
+version: 'DEV'
 main: org.amusedd.codeblocks.CodeBlocksPlugin
 api-version: 1.16
 prefix: CodeBlocks
 authors: [ Amusedd ]
 description: Create your own plugins in game without coding.
+commands:
+  codeblocks:

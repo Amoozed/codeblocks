@@ -1,10 +1,15 @@
 package org.amusedd.codeblocks.items;
 
+import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ItemBuilder {
@@ -12,7 +17,10 @@ public class ItemBuilder {
     int amount;
     String name;
     boolean enchanted;
+    ItemStack presetItem;
     List<String> lore;
+    HashMap<String, Object> tagData = new HashMap<>();
+    ArrayList<PersistentDataType> types = new ArrayList<>();
 
     public ItemBuilder(String name, Material mat, int amount, boolean enchanted, List<String> lore) {
         this.mat = mat;
@@ -36,6 +44,10 @@ public class ItemBuilder {
 
     public ItemBuilder(String name, Material mat){
         this(name, mat, 1);
+    }
+
+    public ItemBuilder(ItemStack item){
+        presetItem = item;
     }
 
     public ItemBuilder(){
@@ -68,9 +80,15 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder setTag(String key, Object value, PersistentDataType type){
+        tagData.put(key, value);
+        types.add(type);
+        return this;
+    }
+
     // Builds the item
     public ItemStack build() {
-        ItemStack item = new ItemStack(mat, amount);
+        ItemStack item = (presetItem != null) ? presetItem.clone() : new ItemStack(mat, amount);
         ItemMeta meta = item.getItemMeta();
         if(name != null) meta.setDisplayName(name);
         if(enchanted){
@@ -80,7 +98,19 @@ public class ItemBuilder {
         if(lore.size() > 0) {
             meta.setLore(lore);
         }
+        if(tagData.size() > 0){
+            PersistentDataContainer container = meta.getPersistentDataContainer();
+            for(int i = 0; i < tagData.keySet().size(); i++){
+                String key = tagData.keySet().toArray()[i].toString();
+                Object value = tagData.get(key);
+                PersistentDataType type = types.get(i);
+                container.set(new NamespacedKey(CodeBlocksPlugin.getInstance(), key), type, value);
+            }
+        }
         item.setItemMeta(meta);
         return item;
     }
+
+
+
 }

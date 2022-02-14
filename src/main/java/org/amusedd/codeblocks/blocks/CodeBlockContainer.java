@@ -2,34 +2,39 @@ package org.amusedd.codeblocks.blocks;
 
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class CodeBlockContainer extends CodeBlock {
     protected ArrayList<CodeBlock> codeBlocks;
-    HashMap<String, ValueBlock<Object>> variablesInScope = new HashMap<>();
+    HashMap<String, ValueBlock> variablesInScope = new HashMap<>();
     protected int blockIndex = 0;
     String name;
 
-    public CodeBlockContainer(String name){
-        this(name, new ArrayList<CodeBlock>());
-    }
 
-    ItemStack item;
-    {
-        item = new ItemBuilder(Material.CHEST).setName(getName()).build();
-    }
-
-    public CodeBlockContainer(String name, ArrayList<CodeBlock> codeBlocks){
+    public CodeBlockContainer(String name, LinkedHashMap data) {
+        for (Object o : data.values()) {
+            codeBlocks.add((CodeBlock) o);
+        }
         this.name = name;
-        this.codeBlocks = codeBlocks;
+        setTag("name", name, PersistentDataType.STRING);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(name);
+        item.setItemMeta(meta);
     }
 
+    public CodeBlockContainer(String name, ArrayList<CodeBlock> codeBlocks) {
+        this.codeBlocks = codeBlocks;
+        this.name = name;
+        setTag("name", name, PersistentDataType.STRING);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(name);
+        item.setItemMeta(meta);
+    }
 
     @Override
     public void execute() {
@@ -37,16 +42,23 @@ public abstract class CodeBlockContainer extends CodeBlock {
         nextBlock();
     }
 
+    public ArrayList<CodeBlock> getCodeBlocks(){
+        return codeBlocks;
+    }
+
     @Override
     public Map<String, Object> serialize() {
-        Map<String, Object> data = new HashMap<>();
-        ArrayList<ItemStack> blockItems = new ArrayList<>();
+        Map<String, Object> data = super.serialize();
+        HashMap<String, Map<String, Object>> blocks = new HashMap<>();
         for(CodeBlock codeBlock : codeBlocks){
-            blockItems.add(codeBlock.getGUIItem());
+            Map<String, Object> codeBlocksData = codeBlock.serialize();
+            blocks.put(codeBlock.getID(), codeBlocksData);
         }
-        data.put("container:" + getName(), blockItems);
+        data.put("blocks", blocks);
         return data;
     }
+
+
 
     public void addCodeBlock(CodeBlock codeBlock){
         codeBlocks.add(codeBlock);
@@ -69,32 +81,39 @@ public abstract class CodeBlockContainer extends CodeBlock {
     }
 
 
-    public abstract HashMap<String, ValueBlock<Object>> getVariableScope();
+    public abstract HashMap<String, ValueBlock> getVariableScope();
 
-    public void setVariableInScope(String variableName, ValueBlock<Object> variableValue){
+    public void setVariableInScope(String variableName, ValueBlock variableValue){
         getVariableScope().put(variableName, variableValue);
     }
 
     @Override
-    public ItemStack getGUIItem() {
-        return item;
+    public ItemStack getBaseItem() {
+        return new ItemBuilder(Material.CHEST).setName("Container").build();
     }
 
-    public ValueBlock<Object> getVariable(String variableName){
+    public ValueBlock getValue(String variableName){
         if(getVariableScope().containsKey(variableName)){
             return getVariableScope().get(variableName);
         } else if(getContainer() != null){
-            return getContainer().getVariable(variableName);
+            return getContainer().getValue(variableName);
         }
         return null;
     }
 
     public String getName(){
+        System.out.println(name);
         return name;
     }
 
     public int idOf(CodeBlock codeBlock){
         return codeBlocks.indexOf(codeBlock);
     }
+
+    @Override
+    public CodeBlockContainer getContainer() {
+        return (super.getContainer() == null) ? this : super.getContainer();
+    }
+
 
 }
