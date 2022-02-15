@@ -7,6 +7,7 @@ import org.amusedd.codeblocks.items.ItemBuilder;
 import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -45,6 +46,11 @@ public class FunctionBlock extends CodeBlockContainer {
         ItemStack item = (ItemStack) map.get("block");
         String name = (String) item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CodeBlocksPlugin.getInstance(), "name"), PersistentDataType.STRING);
         return new FunctionBlock(name, (LinkedHashMap)map.get("blocks"));
+    }
+
+    @Override
+    public void onGUIRightClick(Player player) {
+        return;
     }
 
     public static ItemStack getPreview(){

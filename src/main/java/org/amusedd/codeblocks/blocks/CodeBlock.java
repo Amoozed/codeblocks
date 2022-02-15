@@ -1,8 +1,10 @@
 package org.amusedd.codeblocks.blocks;
 
 import org.amusedd.codeblocks.CodeBlocksPlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -45,7 +47,7 @@ public abstract class CodeBlock implements ConfigurationSerializable{
     public void setContainer(CodeBlockContainer container){
         this.container = container;
         this.container.addCodeBlock(this);
-        setTag("tag", getID(), PersistentDataType.STRING);
+        setTag("id", getID(), PersistentDataType.STRING);
     }
 
     public void onResponse(String response){
@@ -53,6 +55,16 @@ public abstract class CodeBlock implements ConfigurationSerializable{
             getContainer().nextBlock();
     }
 
+    public final boolean isValid(){
+        if(canRun()){
+            return true;
+        } else{
+            Bukkit.getLogger().warning("Invalid block: " + getID() + " of " + container.getName());
+            return false;
+        }
+    }
+
+    public abstract boolean canRun();
 
     public void setTag(String key, Object value, PersistentDataType type){
         ItemMeta meta = getItem().getItemMeta();
@@ -67,8 +79,8 @@ public abstract class CodeBlock implements ConfigurationSerializable{
         return container.get(new NamespacedKey(CodeBlocksPlugin.getInstance(), key), type);
     }
 
-    public String getID(){
-        return getContainer().getName() + ":" + getContainer().idOf(this);
+    public String getID() {
+        return container.indexOf(this) + "";
     }
 
 
@@ -87,4 +99,7 @@ public abstract class CodeBlock implements ConfigurationSerializable{
         return null;
     }
 
+    public abstract void onGUIRightClick(Player player);
+
+    public abstract void onGUILeftClick(Player player);
 }

@@ -1,5 +1,6 @@
 package org.amusedd.codeblocks.input;
 
+import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.gui.GUI;
 import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.bukkit.Bukkit;
@@ -16,10 +17,19 @@ public class ChatInput {
 
     Player player;
     GUI gui;
+    CodeBlock block;
     InventoryClickEvent event;
     String prompt;
 
     int taskID = 0;
+
+    public ChatInput(String prompt, Player player,CodeBlock block) {
+        this.player = player;
+        this.block = block;
+        this.prompt = prompt;
+        awaitingResponse.add(player.getUniqueId().toString());
+        player.sendMessage(prompt);
+    }
 
     public ChatInput(String prompt, Player player, InventoryClickEvent event, GUI gui) {
         this.player = player;
@@ -56,9 +66,17 @@ public class ChatInput {
                 Bukkit.broadcastMessage("Response found?");
                 Bukkit.getScheduler().cancelTask(taskID);
                 awaitingResponse.remove(player.getUniqueId().toString());
-                gui.onPlayerTextResponse(event.getCurrentItem(), event, responses.get(player.getUniqueId().toString()));
+                sendResponse(responses.get(player.getUniqueId().toString()));
                 responses.remove(player.getUniqueId().toString());
             }
         }, 0, 20);
+    }
+
+    void sendResponse(String response){
+        if(gui != null){
+            gui.onPlayerTextResponse(event.getCurrentItem(), event, response);
+        } else if(block != null){
+            block.onResponse(response);
+        }
     }
 }

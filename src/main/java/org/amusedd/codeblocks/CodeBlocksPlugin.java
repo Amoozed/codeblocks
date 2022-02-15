@@ -34,12 +34,12 @@ public final class CodeBlocksPlugin extends JavaPlugin {
             try {
                 System.out.println("Registering " + clazz.getSimpleName());
                 ConfigurationSerialization.registerClass(clazz);
-                ItemStack preview = new ItemBuilder((ItemStack) clazz.getMethod("getPreview").invoke(null)).setName(clazz.getSimpleName()).setTag("type", clazz.getSimpleName(), PersistentDataType.STRING).build();
+                ItemStack preview = new ItemBuilder((ItemStack) clazz.getMethod("getPreview").invoke(null)).setName(clazz.getSimpleName()).setTag("createtype", clazz.getSimpleName(), PersistentDataType.STRING).build();
                 blockStorage.addPreviewBlock(clazz.getSimpleName(), preview);
             } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             } catch (NoSuchMethodException e) {
-                ItemStack preview = new ItemBuilder(Material.STONE).setTag("type", clazz.getSimpleName(), PersistentDataType.STRING).setName(clazz.getSimpleName()).build();
+                ItemStack preview = new ItemBuilder(Material.STONE).setTag("createtype", clazz.getSimpleName(), PersistentDataType.STRING).setName(clazz.getSimpleName()).build();
                 blockStorage.addPreviewBlock(clazz.getSimpleName(), preview);
             }
         }

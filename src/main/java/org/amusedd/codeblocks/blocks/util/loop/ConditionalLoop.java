@@ -6,6 +6,7 @@ import org.amusedd.codeblocks.blocks.CodeBlockContainer;
 import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.blocks.util.ConditionalBlock;
 import org.amusedd.codeblocks.items.ItemBuilder;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -19,8 +20,10 @@ import java.util.Map;
 public class ConditionalLoop extends CodeBlockContainer {
     private ConditionalBlock conditionalBlock;
 
-    public ConditionalLoop(String name, ArrayList<CodeBlock> codeBlocks) {
+    public ConditionalLoop(String name, ArrayList<CodeBlock> codeBlocks, ConditionalBlock conditionalBlock) {
         super(name, codeBlocks);
+        this.conditionalBlock = conditionalBlock;
+        item = new ItemBuilder(Material.CHAIN).addLore(ChatColor.GREEN + "Right Click to Edit Required Values").build();
     }
 
     @Override
@@ -40,6 +43,11 @@ public class ConditionalLoop extends CodeBlockContainer {
         } else {
             super.nextBlock();
         }
+    }
+
+    @Override
+    public boolean canRun() {
+        return super.canRun() && conditionalBlock.canRun();
     }
 
     @Override
@@ -63,8 +71,7 @@ public class ConditionalLoop extends CodeBlockContainer {
         }
         ItemStack item = (ItemStack) data.get("block");
         String name = (String) item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CodeBlocksPlugin.getInstance(), "name"), PersistentDataType.STRING);
-        ConditionalLoop fin = new ConditionalLoop(name, codeBlocks);
-        fin.setConditionalBlock(conditionalBlock);
+        ConditionalLoop fin = new ConditionalLoop(name, codeBlocks, conditionalBlock);
         return fin;
     }
 

@@ -13,10 +13,15 @@ import java.util.Map;
 
 public class EventFunctionBlock extends FunctionBlock {
     Event event;
+    String type;
 
     public EventFunctionBlock(String name, ArrayList<CodeBlock> codeBlocks, String eventType) {
         super(name, codeBlocks);
-        setTag("event", getEventType(), PersistentDataType.STRING);
+    }
+
+    @Override
+    public boolean canRun() {
+        return super.canRun() && type != null && !type.isEmpty();
     }
 
     @Override
@@ -28,6 +33,12 @@ public class EventFunctionBlock extends FunctionBlock {
         this.event = event;
         super.execute();
     }
+
+    public void setEventType(String eventType){
+        this.type = eventType;
+        setTag("event", eventType, PersistentDataType.STRING);
+    }
+
 
     public Event getEvent() {
         if(event == null){

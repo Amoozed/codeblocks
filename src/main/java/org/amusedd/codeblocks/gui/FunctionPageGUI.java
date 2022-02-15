@@ -1,5 +1,6 @@
 package org.amusedd.codeblocks.gui;
 
+import org.amusedd.codeblocks.blocks.CodeBlockContainer;
 import org.amusedd.codeblocks.blocks.functions.FunctionBlock;
 import org.amusedd.codeblocks.input.ChatInput;
 import org.amusedd.codeblocks.items.ItemBuilder;
@@ -45,7 +46,7 @@ public class FunctionPageGUI extends GUI{
 
     @Override
     public HashMap<Integer, ItemStack> getItems() {
-        ArrayList<FunctionBlock> functions = CodeBlocksPlugin.getInstance().getBlockStorage().getFunctions();
+        ArrayList<CodeBlockContainer> functions = CodeBlocksPlugin.getInstance().getBlockStorage().getContainers();
         HashMap<Integer, ItemStack> items = new HashMap<>();
         items.put(53, createFunction);
         for(int i = 0; i < functions.size(); i++) {
@@ -60,7 +61,7 @@ public class FunctionPageGUI extends GUI{
     }
 
     @Override
-    public void onPlayerTextResponse(ItemStack item, InventoryEvent event, String response) {
+    public void onPlayerTextResponse(ItemStack item, InventoryClickEvent event, String response) {
         if(item.equals(createFunction)) {
             FunctionBlock function = new FunctionBlock(response, new ArrayList<>());
             ItemMeta meta = function.getItem().getItemMeta();

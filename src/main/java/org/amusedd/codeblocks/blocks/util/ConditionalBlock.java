@@ -1,6 +1,7 @@
 package org.amusedd.codeblocks.blocks.util;
 
 import org.amusedd.codeblocks.blocks.ValueBlock;
+import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -14,14 +15,17 @@ public class ConditionalBlock extends ValueBlock {
     ValueBlock a;
     ValueBlock b;
 
-    public ConditionalBlock() {
-        setTag("conditional_type", type.ordinal(), PersistentDataType.INTEGER);
-    }
-
     public ConditionalBlock(ConditionalType type, ValueBlock a, ValueBlock b) {
+        super(ValueType.BOOLEAN);
         this.type = type;
         this.a = a;
         this.b = b;
+        setTag("conditional_type", type.name(), PersistentDataType.STRING);
+    }
+
+    @Override
+    public boolean canRun() {
+        return super.canRun() && a.canRun() && b.canRun();
     }
 
     @Override
@@ -63,14 +67,14 @@ public class ConditionalBlock extends ValueBlock {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> data = super.serialize();
-        data.put("conditional_type", type.ordinal());
+        data.put("conditional_type", type.name());
         data.put("value_a", a);
         data.put("value_b", b);
         return data;
     }
 
     public static ConditionalBlock deserialize(Map<String, Object> data){
-        ConditionalType type = ConditionalType.values()[(int) data.get("conditional_type")];
+        ConditionalType type = ConditionalType.valueOf((String) data.get("conditional_type"));
         ValueBlock a = (ValueBlock) data.get("value_a");
         ValueBlock b = (ValueBlock) data.get("value_b");
         return new ConditionalBlock(type, a, b);

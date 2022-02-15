@@ -22,6 +22,11 @@ public class MessageToPlayerBlock extends MessageBlock{
     }
 
     @Override
+    public boolean canRun() {
+        return super.canRun() && player.canRun();
+    }
+
+    @Override
     public ItemStack getBaseItem() {
         return new ItemBuilder(super.getBaseItem()).setName("Message to player").build();
     }

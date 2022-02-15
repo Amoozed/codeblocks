@@ -1,13 +1,15 @@
 package org.amusedd.codeblocks.blocks.print;
 
+import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class MessageToConsoleBlock extends MessageBlock{
 
-    public MessageToConsoleBlock(String text) {
+    public MessageToConsoleBlock(ValueBlock text) {
         super(text);
     }
 

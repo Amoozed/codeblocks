@@ -60,19 +60,19 @@ public abstract class GUI implements InventoryHolder {
         return owner;
     }
 
-    public void onPlayerSignResponse(ItemStack item, InventoryEvent event, ArrayList<String> responses) {
+    public void onPlayerSignResponse(ItemStack item, InventoryClickEvent event, ArrayList<String> responses) {
         System.out.println("No response needed.");
     }
 
-    public void onPlayerConfirmation(ItemStack item, InventoryEvent event, boolean confirmed) {
+    public void onPlayerConfirmation(ItemStack item, InventoryClickEvent event, boolean confirmed) {
         System.out.println("No confirmation needed.");
     }
 
-    public void onPlayerTextResponse(ItemStack item, InventoryEvent event, String response) {
+    public void onPlayerTextResponse(ItemStack item, InventoryClickEvent event, String response) {
         System.out.println("No text response needed.");
     }
 
-    public void onPlayerGUISelection(ItemStack item, InventoryEvent event) {
+    public void onPlayerGUISelection(ItemStack item, InventoryClickEvent event) {
         System.out.println("No GUI selection needed.");
     }
 

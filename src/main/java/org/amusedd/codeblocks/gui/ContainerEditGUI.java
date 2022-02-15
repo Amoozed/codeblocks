@@ -12,15 +12,14 @@ import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ContainerEditGUI extends GUI{
-
-    private CodeBlockContainer container;
+public class ContainerEditGUI extends GUI {
 
     ItemStack addCodeBlock;
+    private CodeBlockContainer container;
+
     {
         addCodeBlock = new ItemBuilder(Material.EMERALD).setName("Add CodeBlock").addLore("Click to add a codeblock").build();
     }
@@ -41,21 +40,31 @@ public class ContainerEditGUI extends GUI{
 
     @Override
     public void itemClicked(ItemStack item, InventoryClickEvent event) {
-        if(item.equals(addCodeBlock)){
+        if (item.equals(addCodeBlock)) {
             new CodeBlocksSelection(getOwner(), this).open();
+        } else {
+            int index = Integer.parseInt(item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CodeBlocksPlugin.getInstance(), "index"), PersistentDataType.INTEGER).toString());
+            CodeBlock codeBlock = container.getCodeBlock(index);
+            if(event.getClick().isRightClick()) {
+                codeBlock.onGUIRightClick(getOwner());
+            } else if(event.getClick().isLeftClick()) {
+                codeBlock.onGUILeftClick(getOwner());
+            }
         }
     }
 
     @Override
-    public void onPlayerGUISelection(ItemStack item, InventoryEvent event) {
-        String type = item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CodeBlocksPlugin.getInstance(), "type"), PersistentDataType.STRING);
+    public void onPlayerGUISelection(ItemStack item, InventoryClickEvent event) {
+        if (item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(CodeBlocksPlugin.getInstance(), "createtype"), PersistentDataType.STRING)) {
+            String type = item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CodeBlocksPlugin.getInstance(), "createtype"), PersistentDataType.STRING);
+        }
     }
 
     @Override
     public HashMap<Integer, ItemStack> getItems() {
         ArrayList<CodeBlock> codeBlocks = container.getCodeBlocks();
         HashMap<Integer, ItemStack> items = new HashMap<>();
-        for(int i = 0; i < codeBlocks.size(); i++){
+        for (int i = 0; i < codeBlocks.size(); i++) {
             items.put(i, codeBlocks.get(i).getItem());
         }
         items.put(53, addCodeBlock);

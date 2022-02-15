@@ -17,7 +17,7 @@ import java.util.Map;
 public class BlockStorage {
     CodeBlocksPlugin instance = CodeBlocksPlugin.getInstance();
     HashMap<String, ArrayList<EventFunctionBlock>> eventBlocks = new HashMap<>();
-    HashMap<String, FunctionBlock> functionBlocks = new HashMap<>();
+    HashMap<String, CodeBlockContainer> containers = new HashMap<>();
     HashMap<String, ItemStack> previewBlocks = new HashMap<>();
 
     public void refreshBlocks() {
@@ -29,7 +29,7 @@ public class BlockStorage {
                 CodeBlock block = (CodeBlock) memory.get(key);
                 if (block instanceof FunctionBlock) {
                     FunctionBlock functionBlock = (FunctionBlock) block;
-                    functionBlocks.put(functionBlock.getName(), functionBlock);
+                    containers.put(functionBlock.getName(), functionBlock);
                 }
             }
             /*
@@ -57,7 +57,7 @@ public class BlockStorage {
     }
 
     public void addFunctionBlock(FunctionBlock block) {
-        functionBlocks.put(block.getName(), block);
+        containers.put(block.getName(), block);
     }
 
     public void addPreviewBlock(String name, ItemStack item) {
@@ -68,17 +68,17 @@ public class BlockStorage {
         return new ArrayList<>(previewBlocks.values());
     }
 
-    public FunctionBlock getFunctionBlock(String name){
-        return functionBlocks.get(name);
+    public CodeBlockContainer getContainerBlock(String name){
+        return containers.get(name);
     }
 
-    public ArrayList<FunctionBlock> getFunctions() {
-        return new ArrayList<>(functionBlocks.values());
+    public ArrayList<CodeBlockContainer> getContainers() {
+        return new ArrayList<>(containers.values());
     }
 
     public void prepareSave(){
         Map<String, Object> data = new HashMap<>();
-        for(FunctionBlock block : functionBlocks.values()){
+        for(CodeBlockContainer block : containers.values()){
             data.put(block.getName(), block);
         }
         for(String event : eventBlocks.keySet()){

@@ -1,8 +1,10 @@
 package org.amusedd.codeblocks.blocks;
 
+import org.amusedd.codeblocks.gui.ContainerEditGUI;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -18,7 +20,9 @@ public abstract class CodeBlockContainer extends CodeBlock {
 
     public CodeBlockContainer(String name, LinkedHashMap data) {
         for (Object o : data.values()) {
-            codeBlocks.add((CodeBlock) o);
+            CodeBlock block = (CodeBlock) o;
+            block.setContainer(this);
+            codeBlocks.add(block);
         }
         this.name = name;
         setTag("name", name, PersistentDataType.STRING);
@@ -47,17 +51,25 @@ public abstract class CodeBlockContainer extends CodeBlock {
     }
 
     @Override
+    public boolean canRun() {
+        return name != null && !name.isEmpty();
+    }
+
+    @Override
     public Map<String, Object> serialize() {
         Map<String, Object> data = super.serialize();
         HashMap<String, Map<String, Object>> blocks = new HashMap<>();
         for(CodeBlock codeBlock : codeBlocks){
             Map<String, Object> codeBlocksData = codeBlock.serialize();
-            blocks.put(codeBlock.getID(), codeBlocksData);
+            blocks.put(indexOf(codeBlock) + "", codeBlocksData);
         }
         data.put("blocks", blocks);
         return data;
     }
 
+    public CodeBlock getCodeBlock(int index){
+        return codeBlocks.get(index);
+    }
 
 
     public void addCodeBlock(CodeBlock codeBlock){
@@ -80,6 +92,10 @@ public abstract class CodeBlockContainer extends CodeBlock {
         }
     }
 
+    @Override
+    public void onGUILeftClick(Player player) {
+        new ContainerEditGUI(player,this).open();
+    }
 
     public abstract HashMap<String, ValueBlock> getVariableScope();
 
@@ -106,8 +122,13 @@ public abstract class CodeBlockContainer extends CodeBlock {
         return name;
     }
 
-    public int idOf(CodeBlock codeBlock){
+    public int indexOf(CodeBlock codeBlock){
         return codeBlocks.indexOf(codeBlock);
+    }
+
+    @Override
+    public void onGUIRightClick(Player player) {
+        execute();
     }
 
     @Override
