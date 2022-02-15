@@ -1,13 +1,13 @@
 package org.amusedd.codeblocks.blocks.util;
 
 import org.amusedd.codeblocks.blocks.ValueBlock;
+import org.amusedd.codeblocks.input.ConditionalType;
 import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class ConditionalBlock extends ValueBlock {

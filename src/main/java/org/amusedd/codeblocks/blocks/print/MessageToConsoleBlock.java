@@ -7,6 +7,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Map;
+
 public class MessageToConsoleBlock extends MessageBlock{
 
     public MessageToConsoleBlock(ValueBlock text) {
@@ -24,5 +26,8 @@ public class MessageToConsoleBlock extends MessageBlock{
         return new ItemBuilder(super.getBaseItem()).setName("Message to console").build();
     }
 
+    public static MessageToConsoleBlock deserialize(Map<String, Object> map) {
+        return new MessageToConsoleBlock((ValueBlock) map.get("text"));
+    }
 
 }

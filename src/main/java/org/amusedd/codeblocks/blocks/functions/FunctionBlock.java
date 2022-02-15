@@ -3,6 +3,7 @@ package org.amusedd.codeblocks.blocks.functions;
 import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.CodeBlockContainer;
 import org.amusedd.codeblocks.blocks.ValueBlock;
+import org.amusedd.codeblocks.gui.GUI;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.bukkit.Material;
@@ -49,7 +50,7 @@ public class FunctionBlock extends CodeBlockContainer {
     }
 
     @Override
-    public void onGUIRightClick(Player player) {
+    public void onGUIRightClick(Player player, GUI gui) {
         return;
     }
 

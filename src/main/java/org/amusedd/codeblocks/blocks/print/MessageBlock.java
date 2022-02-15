@@ -2,6 +2,7 @@ package org.amusedd.codeblocks.blocks.print;
 
 import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.ValueBlock;
+import org.amusedd.codeblocks.gui.GUI;
 import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
@@ -41,10 +42,17 @@ public abstract class MessageBlock extends CodeBlock {
     }
 
     @Override
-    public void onGUIRightClick(Player player) {
+    public void onGUIRightClick(Player player, GUI gui) {
 
     }
 
     @Override
-    public void onGUILeftClick(Player player) {}
+    public void onGUILeftClick(Player player, GUI gui) {}
+
+    @Override
+    public Map<String, Object> serialize() {
+        Map<String, Object> data = super.serialize();
+        data.put("text", text.serialize());
+        return data;
+    }
 }

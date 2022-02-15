@@ -1,6 +1,7 @@
 package org.amusedd.codeblocks.blocks;
 
 import org.amusedd.codeblocks.gui.ContainerEditGUI;
+import org.amusedd.codeblocks.gui.GUI;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -93,7 +94,7 @@ public abstract class CodeBlockContainer extends CodeBlock {
     }
 
     @Override
-    public void onGUILeftClick(Player player) {
+    public void onGUILeftClick(Player player, GUI gui) {
         new ContainerEditGUI(player,this).open();
     }
 
@@ -127,7 +128,7 @@ public abstract class CodeBlockContainer extends CodeBlock {
     }
 
     @Override
-    public void onGUIRightClick(Player player) {
+    public void onGUIRightClick(Player player, GUI gui) {
         execute();
     }
 

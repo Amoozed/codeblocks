@@ -1,30 +1,32 @@
 package org.amusedd.codeblocks.input;
 
+import org.amusedd.codeblocks.items.ItemBuilder;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public enum ValueType {
-    INTEGER(0),
-    DOUBLE(1),
-    STRING(2),
-    BOOLEAN(3);
+    INTEGER,
+    DOUBLE,
+    STRING,
+    BOOLEAN,
+    CONDITIONAL(ConditionalType.values()),
+    STRING_LIST,
+    PLAYER,
+    ITEMSTACK;
 
-    private static Map map = new HashMap<>();
 
-    static {
-        for (ValueType conditionalTypeType : ValueType.values()) {
-            map.put(conditionalTypeType.value, conditionalTypeType);
-        }
+    ValueType(){
+
     }
 
-    private int value;
+    Enum[] values;
 
-    private ValueType(int value) {
-        this.value = value;
-    }
-
-    public static ValueType valueOf(int pageType) {
-        return (ValueType) map.get(pageType);
+    ValueType(Enum[] values){
+        this.values = values;
     }
 
     public boolean isOfType(Object value) {
@@ -46,6 +48,20 @@ public enum ValueType {
                     String stringValue = (String) value;
                     return stringValue.matches("true|false");
                 } else return value instanceof Boolean;
+            case CONDITIONAL:
+                if (value instanceof ConditionalType) {
+                    return true;
+                } else {
+                    if (value instanceof String) {
+                        String stringValue = (String) value;
+                        try {
+                            ConditionalType type = ConditionalType.valueOf(stringValue);
+                            return true;
+                        } catch (IllegalArgumentException e) {
+                            return false;
+                        }
+                    }
+                }
             default:
                 return false;
         }
@@ -61,12 +77,20 @@ public enum ValueType {
                 return (String) value;
             case BOOLEAN:
                 return Boolean.parseBoolean((String) value);
+            case CONDITIONAL:
+                return ConditionalType.valueOf((String) value);
             default:
                 return null;
         }
     }
 
-    public int getValue() {
-        return value;
+    public ArrayList<ItemStack> getValueSelection(){
+        if(values == null) return null;
+        ArrayList<ItemStack> items = new ArrayList<>();
+        for(Enum e : values){
+            ItemStack item = new ItemBuilder(Material.STONE).setName(e.name()).build();
+            items.add(item);
+        }
+        return items;
     }
 }

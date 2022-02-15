@@ -4,8 +4,12 @@ import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.CodeBlockContainer;
 import org.amusedd.codeblocks.blocks.ValueBlock;
+import org.amusedd.codeblocks.gui.ContainerEditGUI;
+import org.amusedd.codeblocks.gui.EditVariablesGUI;
+import org.amusedd.codeblocks.gui.GUI;
 import org.amusedd.codeblocks.input.ValueType;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -19,7 +23,7 @@ public class NumericLoop extends CodeBlockContainer {
     ValueBlock amount;
     int iterations;
 
-    public NumericLoop(String name, ArrayList<CodeBlock> codeBlocks, ValueBlock amount) {
+    public NumericLoop(String name, LinkedHashMap codeBlocks, ValueBlock amount) {
         super(name, codeBlocks);
         if(amount != null) {
             this.amount = amount;
@@ -57,15 +61,23 @@ public class NumericLoop extends CodeBlockContainer {
 
     public static NumericLoop deserialize(Map<String, Object> data) {
         LinkedHashMap lmap = (LinkedHashMap) data.get("blocks");
-        ArrayList<CodeBlock> codeBlocks = new ArrayList<>();
-        for (Object o : lmap.values()) {
-            codeBlocks.add((CodeBlock) o);
-        }
         ItemStack item = (ItemStack) data.get("block");
         String name = (String) item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CodeBlocksPlugin.getInstance(), "name"), PersistentDataType.STRING);
         ValueBlock amount = (ValueBlock) data.get("amount");
-        NumericLoop fin = new NumericLoop(name, codeBlocks, amount);
+        NumericLoop fin = new NumericLoop(name, lmap, amount);
         return fin;
+    }
+
+    @Override
+    public void onGUIRightClick(Player player, GUI gui) {
+        ArrayList<ValueBlock> variables = new ArrayList<>();
+        variables.add(amount);
+        new EditVariablesGUI(player, variables).open();
+    }
+
+    @Override
+    public void onGUILeftClick(Player player, GUI gui) {
+        new ContainerEditGUI(player, this).open();
     }
 
     @Override

@@ -1,5 +1,7 @@
 package org.amusedd.codeblocks.blocks;
 
+import org.amusedd.codeblocks.gui.GUI;
+import org.amusedd.codeblocks.gui.SelectGUI;
 import org.amusedd.codeblocks.input.ChatInput;
 import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
@@ -68,11 +70,15 @@ public class ValueBlock extends CodeBlock {
     }
 
     @Override
-    public void onGUIRightClick(Player player) {
+    public void onGUIRightClick(Player player, GUI gui) {
     }
 
     @Override
-    public void onGUILeftClick(Player player) {
+    public void onGUILeftClick(Player player, GUI gui) {
+        if(type.getValueSelection() != null) {
+            new SelectGUI(player, gui, type.getValueSelection()).open();
+            return;
+        }
         new ChatInput("Enter value of type :" + getValueType().name(), player, this).awaitResponse();
     }
 

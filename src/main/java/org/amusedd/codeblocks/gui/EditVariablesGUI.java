@@ -1,20 +1,19 @@
 package org.amusedd.codeblocks.gui;
 
-import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.input.ChatInput;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class RequiredVariableEditPage extends GUI{
+public class EditVariablesGUI extends GUI{
 
     private ArrayList<ValueBlock> valueBlocks;
-    public RequiredVariableEditPage(Player player, ArrayList<ValueBlock> valueBlocks) {
+    public EditVariablesGUI(Player player, ArrayList<ValueBlock> valueBlocks) {
         super(player);
         this.valueBlocks = valueBlocks;
     }
@@ -34,8 +33,11 @@ public class RequiredVariableEditPage extends GUI{
         int slot = event.getSlot();
         if(slot < valueBlocks.size()){
             ValueBlock valueBlock = valueBlocks.get(slot);
-            String prompt = "Please enter a value of type " + valueBlock.getValueType().name();
-            new ChatInput(prompt, getOwner(), event, this).awaitResponse();
+            if(event.isRightClick()){
+                valueBlock.onGUIRightClick(getOwner(), this);
+            } else if(event.isLeftClick()){
+                valueBlock.onGUILeftClick(getOwner(), this);
+            }
             getOwner().closeInventory();
         }
     }
@@ -51,6 +53,16 @@ public class RequiredVariableEditPage extends GUI{
             } else {
                 getOwner().sendMessage("Invalid value");
             }
+        }
+    }
+
+    @Override
+    public void onPlayerGUISelection(ItemStack item, InventoryClickEvent event) {
+        int slot = event.getSlot();
+        if(slot < valueBlocks.size()){
+            ValueBlock valueBlock = valueBlocks.get(slot);
+            Bukkit.broadcastMessage(item.getItemMeta().getDisplayName());
+            valueBlock.setValue(valueBlock.getValueType().getTypedValue(item.getItemMeta().getDisplayName()));
         }
     }
 

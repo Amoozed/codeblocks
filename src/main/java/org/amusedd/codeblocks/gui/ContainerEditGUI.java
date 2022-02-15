@@ -46,9 +46,9 @@ public class ContainerEditGUI extends GUI {
             int index = Integer.parseInt(item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CodeBlocksPlugin.getInstance(), "index"), PersistentDataType.INTEGER).toString());
             CodeBlock codeBlock = container.getCodeBlock(index);
             if(event.getClick().isRightClick()) {
-                codeBlock.onGUIRightClick(getOwner());
+                codeBlock.onGUIRightClick(getOwner(), this);
             } else if(event.getClick().isLeftClick()) {
-                codeBlock.onGUILeftClick(getOwner());
+                codeBlock.onGUILeftClick(getOwner(), this);
             }
         }
     }

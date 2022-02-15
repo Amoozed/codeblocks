@@ -1,6 +1,7 @@
 package org.amusedd.codeblocks.blocks;
 
 import org.amusedd.codeblocks.CodeBlocksPlugin;
+import org.amusedd.codeblocks.gui.GUI;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -99,7 +100,7 @@ public abstract class CodeBlock implements ConfigurationSerializable{
         return null;
     }
 
-    public abstract void onGUIRightClick(Player player);
+    public abstract void onGUIRightClick(Player player, GUI gui);
 
-    public abstract void onGUILeftClick(Player player);
+    public abstract void onGUILeftClick(Player player, GUI gui);
 }
