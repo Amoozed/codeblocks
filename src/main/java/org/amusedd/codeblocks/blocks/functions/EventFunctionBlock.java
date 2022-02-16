@@ -4,6 +4,7 @@ import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.gui.GUI;
+import org.amusedd.codeblocks.input.ValueSet;
 import org.amusedd.codeblocks.input.ValueType;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -17,17 +18,17 @@ import java.util.Map;
 
 public class EventFunctionBlock extends FunctionBlock {
     Event event;
-    ValueBlock eventType = new ValueBlock(ValueType.EVENT_TYPE);
+    ValueSet set;
 
-    public EventFunctionBlock(String name, LinkedHashMap codeBlocks, ValueBlock eventType) {
+    public EventFunctionBlock(ValueBlock name, LinkedHashMap codeBlocks, ValueBlock eventType) {
         super(name, codeBlocks);
-        this.eventType = eventType;
+
     }
 
 
     @Override
     public boolean canRun() {
-        return super.canRun() && eventType.canRun();
+        return super.canRun() && set.isComplete();
     }
 
     @Override
@@ -41,7 +42,14 @@ public class EventFunctionBlock extends FunctionBlock {
     }
 
 
-
+    @Override
+    public ValueSet getValueSet() {
+        if(set == null) {
+            set = super.getValueSet();
+            set.addValueBlock("event_type", new ValueBlock(ValueType.EVENT_TYPE));
+        }
+        return set;
+    }
     public Event getEvent() {
         if(event == null){
             throw new IllegalStateException("Event has not been called yet!");
@@ -61,16 +69,18 @@ public class EventFunctionBlock extends FunctionBlock {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> data = super.serialize();
-        data.put("event", eventType);
+        data.put("event", set.getValueBlock("event_type").getValue());
         return data;
     }
 
     public static EventFunctionBlock deserialize(Map<String, Object> map) {
         LinkedHashMap lmap = (LinkedHashMap) map.get("blocks");
         ItemStack block = (ItemStack) map.get("block");
-        String name = (String) block.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CodeBlocksPlugin.getInstance(), "name"), PersistentDataType.STRING);
+        ValueBlock name = (ValueBlock) map.get("name");
         ValueBlock eventType = (ValueBlock) map.get("eventType");
         return new EventFunctionBlock(name, lmap, eventType);
     }
+
+
 
 }

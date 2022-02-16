@@ -3,6 +3,7 @@ package org.amusedd.codeblocks.blocks;
 import org.amusedd.codeblocks.gui.GUI;
 import org.amusedd.codeblocks.gui.SelectGUI;
 import org.amusedd.codeblocks.input.ChatInput;
+import org.amusedd.codeblocks.input.ValueSet;
 import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.ChatColor;
@@ -80,6 +81,11 @@ public class ValueBlock extends CodeBlock {
             return;
         }
         new ChatInput("Enter value of type :" + getValueType().name(), player, this).awaitResponse();
+    }
+
+    @Override
+    public ValueSet getValueSet() {
+        throw new UnsupportedOperationException("Value blocks do not support value sets");
     }
 
     @Override

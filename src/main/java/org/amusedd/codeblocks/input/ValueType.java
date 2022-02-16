@@ -1,6 +1,7 @@
 package org.amusedd.codeblocks.input;
 
 import org.amusedd.codeblocks.CodeBlocksPlugin;
+import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -16,7 +17,9 @@ public enum ValueType {
     STRING_LIST,
     PLAYER,
     EVENT_TYPE(CodeBlocksPlugin.getInstance().getEventBlockUtility().getEventNames()),
-    ITEMSTACK;
+    ITEMSTACK,
+    CODEBLOCK,
+    ANY;
 
 
     Enum[] values;
@@ -69,6 +72,10 @@ public enum ValueType {
                 }
             case EVENT_TYPE:
                 return CodeBlocksPlugin.getInstance().getEventBlockUtility().getEventNames().contains(value);
+            case CODEBLOCK:
+                return value instanceof CodeBlock;
+            case ANY:
+                return true;
             default:
                 return false;
         }
@@ -87,6 +94,8 @@ public enum ValueType {
             case CONDITIONAL:
                 return ConditionalType.valueOf((String) value);
             case EVENT_TYPE:
+            case ANY:
+            case CODEBLOCK:
                 return value;
             default:
                 return null;

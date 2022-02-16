@@ -13,15 +13,20 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Wait extends CodeBlock {
 
     ValueSet set;
 
+    public Wait() {
+        item = new ItemBuilder(item).addLore(ChatColor.WHITE + "Seconds: " + ChatColor.GREEN + "Undefined").build();
+    }
+
     public Wait(ValueBlock seconds) {
-        if(seconds != null) this.seconds = seconds;
-        item = new ItemBuilder(item).addLore(ChatColor.WHITE + "Seconds: " + ChatColor.GREEN + ( (seconds != null) ? seconds.getValue() : "Undefined" )).build();
+        if(seconds.getValue() != null) getValueSet().getValueBlock("seconds").setValue(seconds.getValue());
+        item = new ItemBuilder(item).addLore(ChatColor.WHITE + "Seconds: " + ChatColor.GREEN + ( (seconds.getValue() != null) ? seconds.getValue() : "Undefined" )).build();
     }
 
     @Override
@@ -31,22 +36,28 @@ public class Wait extends CodeBlock {
 
     @Override
     public boolean canRun() {
-        return
+        return getValueSet().isComplete();
     }
 
     @Override
     public void onGUIRightClick(Player player, GUI gui) {
-        seconds.onGUIRightClick(player, gui);
+        getValueSet().getValueBlock("seconds").onGUIRightClick(player, gui);
     }
 
     @Override
     public void onGUILeftClick(Player player, GUI gui) {
-        seconds.onGUIRightClick(player, gui);
+        getValueSet().getValueBlock("seconds").onGUIRightClick(player, gui);
     }
 
     @Override
     public ValueSet getValueSet() {
-        return new ValueSet(new ValueBlock[]{seconds});
+        if(set == null) {
+            set = new ValueSet();
+            set.addValueBlock("seconds", new ValueBlock(ValueType.INTEGER));
+            return set;
+        } else {
+            return set;
+        }
     }
 
     @Override
@@ -56,15 +67,16 @@ public class Wait extends CodeBlock {
             public void run() {
                 Wait.super.execute();
             }
-        }, (int) seconds.getValue());
+        }, (int) getValueSet().getValueBlock("seconds").getValue());
     }
 
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = super.serialize();
-        map.put("seconds", seconds);
+        map.put("seconds", getValueSet().getValueBlock("seconds").getValue());
         return map;
     }
+
 
     public static Wait deserialize(Map<String, Object> map) {
         return new Wait((ValueBlock) map.get("seconds"));

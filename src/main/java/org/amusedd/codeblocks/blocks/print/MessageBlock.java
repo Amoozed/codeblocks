@@ -3,6 +3,7 @@ package org.amusedd.codeblocks.blocks.print;
 import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.gui.GUI;
+import org.amusedd.codeblocks.input.ValueSet;
 import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
@@ -13,15 +14,25 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.Map;
 
 public abstract class MessageBlock extends CodeBlock {
-    ValueBlock text = new ValueBlock(ValueType.STRING);
+    ValueSet set;
 
     public MessageBlock(ValueBlock text) {
-        if(text != null) this.text = text;
+        if(text != null) set.getValueBlock("text").setValue(text.getValue());
+    }
+
+
+    @Override
+    public ValueSet getValueSet() {
+        if(set == null) {
+            set = super.getValueSet();
+            set.addValueBlock("text", new ValueBlock(ValueType.STRING));
+        }
+        return set;
     }
 
     @Override
     public void execute() {
-        String print = (String) text.getValue();
+        String print = (String) getValueSet().getValueBlock("text").getValue();
         print(print);
         super.execute();
     }
@@ -30,7 +41,7 @@ public abstract class MessageBlock extends CodeBlock {
 
     @Override
     public boolean canRun() {
-        return text.canRun();
+        return getValueSet().getValueBlock("text").canRun();
     }
 
     @Override
@@ -49,7 +60,7 @@ public abstract class MessageBlock extends CodeBlock {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> data = super.serialize();
-        data.put("text", text.serialize());
+        data.put("text", getValueSet().getValueBlock("text"));
         return data;
     }
 }

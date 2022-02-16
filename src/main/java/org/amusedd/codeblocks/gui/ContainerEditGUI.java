@@ -47,9 +47,9 @@ public class ContainerEditGUI extends GUI {
         } else {
             int index = Integer.parseInt(item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CodeBlocksPlugin.getInstance(), "index"), PersistentDataType.INTEGER).toString());
             CodeBlock codeBlock = container.getCodeBlock(index);
-            if(event.getClick().isRightClick()) {
+            if (event.getClick().isRightClick()) {
                 codeBlock.onGUIRightClick(getOwner(), this);
-            } else if(event.getClick().isLeftClick()) {
+            } else if (event.getClick().isLeftClick()) {
                 codeBlock.onGUILeftClick(getOwner(), this);
             }
         }
@@ -62,10 +62,10 @@ public class ContainerEditGUI extends GUI {
             System.out.println("found tag");
             String type = item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CodeBlocksPlugin.getInstance(), "createtype"), PersistentDataType.STRING);
             try {
-                if (CodeBlockContainer.class.isAssignableFrom(Class.forName(type))) {
-                    Class<? extends CodeBlockContainer> containerClass = (Class<? extends CodeBlockContainer>) Class.forName(type);
-                    CodeBlockContainer newContainer = containerClass.getConstructor(Object.class).newInstance();
-                }
+                Class<? extends CodeBlock> clazz = (Class<? extends CodeBlock>) Class.forName(type);
+                CodeBlock codeBlock = clazz.getConstructor().newInstance();
+                container.addCodeBlock(codeBlock);
+                new EditVariablesGUI(getOwner(), codeBlock.getValueSet()).open();
             } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | NoSuchMethodException | IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -81,7 +81,7 @@ public class ContainerEditGUI extends GUI {
     public HashMap<Integer, ItemStack> getItems() {
         ArrayList<CodeBlock> codeBlocks = container.getCodeBlocks();
         HashMap<Integer, ItemStack> items = new HashMap<>();
-        if(codeBlocks != null) {
+        if (codeBlocks != null) {
             for (int i = 0; i < codeBlocks.size(); i++) {
                 items.put(i, codeBlocks.get(i).getItem());
             }

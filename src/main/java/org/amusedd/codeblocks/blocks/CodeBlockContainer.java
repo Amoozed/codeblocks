@@ -18,7 +18,7 @@ public abstract class CodeBlockContainer extends CodeBlock {
     protected ArrayList<CodeBlock> codeBlocks = new ArrayList<>();
     HashMap<String, ValueBlock> variablesInScope = new HashMap<>();
     protected int blockIndex = 0;
-    ValueBlock name = new ValueBlock(ValueType.STRING);
+    ValueSet set;
 
 
     public CodeBlockContainer(ValueBlock name, LinkedHashMap data) {
@@ -28,7 +28,7 @@ public abstract class CodeBlockContainer extends CodeBlock {
             block.setContainer(this);
             codeBlocks.add(block);
         }
-        this.name = name;
+        if(name != null) getValueSet().getValueBlock("name").setValue(name.getValue());
         setTag("name", name.getValue(), PersistentDataType.STRING);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName((String) name.getValue());
@@ -37,8 +37,8 @@ public abstract class CodeBlockContainer extends CodeBlock {
 
     public CodeBlockContainer(ValueBlock name, ArrayList<CodeBlock> codeBlocks) {
         if(codeBlocks != null) this.codeBlocks = codeBlocks;
-        this.name = name;
-        setTag("name", name, PersistentDataType.STRING);
+        if(name != null) getValueSet().getValueBlock("name").setValue(name.getValue());
+        setTag("name", name.getValue(), PersistentDataType.STRING);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName((String) name.getValue());
         item.setItemMeta(meta);
@@ -49,6 +49,7 @@ public abstract class CodeBlockContainer extends CodeBlock {
     }
 
     public CodeBlockContainer(){
+
     }
 
     @Override
@@ -63,7 +64,7 @@ public abstract class CodeBlockContainer extends CodeBlock {
 
     @Override
     public boolean canRun() {
-        return name.canRun();
+        return getValueSet().isComplete() && codeBlocks.size() > 0;
     }
 
     @Override
@@ -75,6 +76,7 @@ public abstract class CodeBlockContainer extends CodeBlock {
             blocks.put(indexOf(codeBlock) + "", codeBlocksData);
         }
         data.put("blocks", blocks);
+        data.put("name", getValueSet().getValueBlock("name"));
         return data;
     }
 
@@ -129,21 +131,11 @@ public abstract class CodeBlockContainer extends CodeBlock {
     }
 
     public String getName(){
-        return (String)getNameValue().getValue();
+        return (String)getValueSet().getValueBlock("name").getValue();
     }
 
-    public ValueBlock getNameValue(){
-        System.out.println(name);
-        return name;
-    }
 
-    public void setName(String name){
-        this.name.setValue(name);
-        setTag("name", name, PersistentDataType.STRING);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(name);
-        item.setItemMeta(meta);
-    }
+
 
     public int indexOf(CodeBlock codeBlock){
         return codeBlocks.indexOf(codeBlock);
@@ -161,6 +153,12 @@ public abstract class CodeBlockContainer extends CodeBlock {
 
     @Override
     public ValueSet getValueSet() {
-        return new ValueSet(new ValueBlock[]{name});
+        if(set == null) {
+            set = new ValueSet();
+            set.addValueBlock("name", new ValueBlock(ValueType.STRING));
+            return set;
+        } else {
+            return set;
+        }
     }
 }

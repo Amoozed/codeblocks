@@ -4,6 +4,7 @@ import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.CodeBlockContainer;
 import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.gui.GUI;
+import org.amusedd.codeblocks.input.ValueSet;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.bukkit.Material;
@@ -26,6 +27,10 @@ public class FunctionBlock extends CodeBlockContainer {
 
     public FunctionBlock(ValueBlock name, LinkedHashMap map) {
         super(name, map);
+    }
+
+    public FunctionBlock() {
+
     }
 
     @Override
@@ -58,9 +63,8 @@ public class FunctionBlock extends CodeBlockContainer {
         return new ItemBuilder(Material.COMMAND_BLOCK).setName("Function").build();
     }
 
-    public static void initiate(){
-
+    @Override
+    public ValueSet getValueSet() {
+        return super.getValueSet();
     }
-
-
 }

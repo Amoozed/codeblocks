@@ -1,6 +1,8 @@
 package org.amusedd.codeblocks.blocks.print;
 
 import org.amusedd.codeblocks.blocks.ValueBlock;
+import org.amusedd.codeblocks.input.ValueSet;
+import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -9,11 +11,11 @@ import java.util.Map;
 
 public class MessageToPlayerBlock extends MessageBlock{
 
-    ValueBlock player;
+    ValueSet set;
 
     public MessageToPlayerBlock(ValueBlock text, ValueBlock player) {
         super(text);
-        this.player = player;
+        if(player.getValue() != null) getValueSet().getValueBlock("player").setValue(player.getValue());
     }
 
 
@@ -25,7 +27,7 @@ public class MessageToPlayerBlock extends MessageBlock{
 
     @Override
     public boolean canRun() {
-        return super.canRun() && player.canRun();
+        return set.isComplete();
     }
 
     @Override
@@ -36,7 +38,7 @@ public class MessageToPlayerBlock extends MessageBlock{
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> data = super.serialize();
-        data.put("player", player.serialize());
+        data.put("player", getValueSet().getValueBlock("player"));
         return data;
     }
 
@@ -44,5 +46,14 @@ public class MessageToPlayerBlock extends MessageBlock{
         ValueBlock text = (ValueBlock) data.get("text");
         ValueBlock player = (ValueBlock) data.get("player");
         return new MessageToPlayerBlock(text, player);
+    }
+
+    @Override
+    public ValueSet getValueSet() {
+        if(set == null) {
+            set = super.getValueSet();
+            set.addValueBlock("player", new ValueBlock(ValueType.PLAYER));
+        }
+        return set;
     }
 }

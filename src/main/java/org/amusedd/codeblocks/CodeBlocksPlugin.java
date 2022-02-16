@@ -6,6 +6,7 @@ import org.amusedd.codeblocks.commands.PluginCommand;
 import org.amusedd.codeblocks.data.DataManager;
 import org.amusedd.codeblocks.events.EventBlockUtility;
 import org.amusedd.codeblocks.events.SimpleEventCalls;
+import org.amusedd.codeblocks.input.ValueSet;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -30,6 +31,7 @@ public final class CodeBlocksPlugin extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         ConfigurationSerialization.registerClass(CodeBlock.class);
+        ConfigurationSerialization.registerClass(ValueSet.class);
         getServer().getPluginManager().registerEvents(new SimpleEventCalls(), this);
         plugin = this;
         data = new DataManager();

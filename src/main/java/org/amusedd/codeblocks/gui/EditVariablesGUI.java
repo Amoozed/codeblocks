@@ -2,6 +2,7 @@ package org.amusedd.codeblocks.gui;
 
 import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.input.ChatInput;
+import org.amusedd.codeblocks.input.ValueSet;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -13,6 +14,12 @@ import java.util.HashMap;
 public class EditVariablesGUI extends GUI{
 
     private ArrayList<ValueBlock> valueBlocks;
+
+    public EditVariablesGUI(Player player, ValueSet valueSet) {
+        super(player);
+        this.valueBlocks = valueSet.getValueBlocks();
+    }
+
     public EditVariablesGUI(Player player, ArrayList<ValueBlock> valueBlocks) {
         super(player);
         this.valueBlocks = valueBlocks;
@@ -52,6 +59,7 @@ public class EditVariablesGUI extends GUI{
                 open();
             } else {
                 getOwner().sendMessage("Invalid value");
+                open();
             }
         }
     }

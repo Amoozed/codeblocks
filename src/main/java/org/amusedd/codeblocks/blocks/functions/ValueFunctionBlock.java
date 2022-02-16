@@ -8,7 +8,7 @@ import java.util.Map;
 public class ValueFunctionBlock extends FunctionBlock {
 
     ValueBlock value;
-    public ValueFunctionBlock(String name, LinkedHashMap map, ValueBlock value) {
+    public ValueFunctionBlock(ValueBlock name, LinkedHashMap map, ValueBlock value) {
         super(name, map);
     }
 
@@ -25,7 +25,7 @@ public class ValueFunctionBlock extends FunctionBlock {
 
     public static ValueFunctionBlock deserialize(Map<String, Object> data) {
         return new ValueFunctionBlock(
-                (String) data.get("name"),
+                (ValueBlock) data.get("name"),
                 (LinkedHashMap) data.get("blocks"),
                 (ValueBlock) data.get("value")
         );

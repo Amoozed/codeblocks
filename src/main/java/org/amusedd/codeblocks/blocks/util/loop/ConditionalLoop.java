@@ -8,6 +8,8 @@ import org.amusedd.codeblocks.blocks.functions.FunctionBlock;
 import org.amusedd.codeblocks.blocks.util.ConditionalBlock;
 import org.amusedd.codeblocks.gui.ConditionalGUI;
 import org.amusedd.codeblocks.gui.GUI;
+import org.amusedd.codeblocks.input.ValueSet;
+import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -22,18 +24,31 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ConditionalLoop extends CodeBlockContainer {
-    private ConditionalBlock conditionalBlock;
+    ValueSet set;
 
     private FunctionBlock trueFunction;
     private FunctionBlock falseFunction;
 
 
-    public ConditionalLoop(String name, LinkedHashMap codeBlocks, ConditionalBlock conditionalBlock, FunctionBlock trueFunction, FunctionBlock falseFunction) {
+    public ConditionalLoop(ValueBlock name, LinkedHashMap codeBlocks, ConditionalBlock conditionalBlock, FunctionBlock trueFunction, FunctionBlock falseFunction) {
         super(name, codeBlocks);
-        this.conditionalBlock = conditionalBlock;
         this.trueFunction = trueFunction;
         this.falseFunction = falseFunction;
         item = new ItemBuilder(Material.CHAIN).addLore(ChatColor.GREEN + "Right Click to Edit Required Values").build();
+    }
+
+    public ConditionalLoop(){
+        this.trueFunction = new FunctionBlock(new ValueBlock(ValueType.STRING, getContainer().getName() + ":" + getContainer().indexOf(this) +  ":true"), new ArrayList<>());
+        this.falseFunction = new FunctionBlock(new ValueBlock(ValueType.STRING, getContainer().getName() + ":" + getContainer().indexOf(this) + ":false"), new ArrayList<>());
+    }
+
+    @Override
+    public ValueSet getValueSet() {
+        if(set == null) {
+            set = super.getValueSet();
+            set.addValueBlock("conditionalBlock", new ValueBlock(ValueType.BOOLEAN));
+        }
+        return set;
     }
 
     @Override
@@ -57,7 +72,7 @@ public class ConditionalLoop extends CodeBlockContainer {
 
     @Override
     public boolean canRun() {
-        return super.canRun() && conditionalBlock.canRun();
+        return super.canRun() && set.isComplete();
     }
 
     @Override
@@ -76,7 +91,7 @@ public class ConditionalLoop extends CodeBlockContainer {
         ConditionalBlock conditionalBlock = (ConditionalBlock) data.get("conditionalBlock");
         LinkedHashMap lmap = (LinkedHashMap) data.get("blocks");
         ItemStack item = (ItemStack) data.get("block");
-        String name = (String) item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CodeBlocksPlugin.getInstance(), "name"), PersistentDataType.STRING);
+        ValueBlock name = (ValueBlock) data.get("name");
         FunctionBlock trueFunction = (FunctionBlock) data.get("trueFunction");
         FunctionBlock falseFunction = (FunctionBlock) data.get("falseFunction");
         ConditionalLoop fin = new ConditionalLoop(name, lmap, conditionalBlock, trueFunction, falseFunction);
@@ -85,7 +100,7 @@ public class ConditionalLoop extends CodeBlockContainer {
 
     @Override
     public void onGUIRightClick(Player player, GUI gui) {
-        conditionalBlock.onGUIRightClick(player, gui);
+        getValueSet().getValueBlock("conditionalBlock").onGUIRightClick(player, gui);
     }
 
     @Override
@@ -94,11 +109,7 @@ public class ConditionalLoop extends CodeBlockContainer {
     }
 
     public ConditionalBlock getConditionalBlock() {
-        return conditionalBlock;
-    }
-
-    public void setConditionalBlock(ConditionalBlock conditionalBlock) {
-        this.conditionalBlock = conditionalBlock;
+        return (ConditionalBlock) getValueSet().getValueBlock("conditionalBlock");
     }
 
     public FunctionBlock getTrueFunction() {

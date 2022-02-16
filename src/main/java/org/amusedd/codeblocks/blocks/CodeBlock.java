@@ -105,5 +105,7 @@ public abstract class CodeBlock implements ConfigurationSerializable{
 
     public abstract void onGUILeftClick(Player player, GUI gui);
 
-    public abstract ValueSet getValueSet();
+    public ValueSet getValueSet(){
+        return new ValueSet();
+    }
 }
