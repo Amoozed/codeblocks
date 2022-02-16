@@ -4,23 +4,27 @@ import org.amusedd.codeblocks.blocks.BlockStorage;
 import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.commands.PluginCommand;
 import org.amusedd.codeblocks.data.DataManager;
+import org.amusedd.codeblocks.events.EventBlockUtility;
 import org.amusedd.codeblocks.events.SimpleEventCalls;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public final class CodeBlocksPlugin extends JavaPlugin {
     static CodeBlocksPlugin plugin;
     private BlockStorage blockStorage;
     private DataManager data;
+    private EventBlockUtility eventBlockUtility;
 
     @Override
     public void onEnable() {
@@ -30,6 +34,7 @@ public final class CodeBlocksPlugin extends JavaPlugin {
         plugin = this;
         data = new DataManager();
         blockStorage = new BlockStorage();
+        eventBlockUtility = new EventBlockUtility();
         for (Class<? extends CodeBlock> clazz : new Reflections("org.amusedd.codeblocks.blocks").getSubTypesOf(CodeBlock.class)) {
             try {
                 System.out.println("Registering " + clazz.getSimpleName());
@@ -53,6 +58,10 @@ public final class CodeBlocksPlugin extends JavaPlugin {
         }
 
         blockStorage.refreshBlocks();
+    }
+
+    public EventBlockUtility getEventBlockUtility(){
+        return eventBlockUtility;
     }
 
     @Override

@@ -20,11 +20,11 @@ import java.util.Map;
 public class FunctionBlock extends CodeBlockContainer {
     HashMap<String, ValueBlock> variableScope = new HashMap<>();
 
-    public FunctionBlock(String name, ArrayList<CodeBlock> codeBlocks) {
+    public FunctionBlock(ValueBlock name, ArrayList<CodeBlock> codeBlocks) {
         super(name, codeBlocks);
     }
 
-    public FunctionBlock(String name, LinkedHashMap map) {
+    public FunctionBlock(ValueBlock name, LinkedHashMap map) {
         super(name, map);
     }
 
@@ -45,16 +45,22 @@ public class FunctionBlock extends CodeBlockContainer {
 
     public static FunctionBlock deserialize(Map<String, Object> map) {
         ItemStack item = (ItemStack) map.get("block");
-        String name = (String) item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CodeBlocksPlugin.getInstance(), "name"), PersistentDataType.STRING);
+        ValueBlock name = (ValueBlock) map.get("name");
         return new FunctionBlock(name, (LinkedHashMap)map.get("blocks"));
     }
 
     @Override
     public void onGUIRightClick(Player player, GUI gui) {
-        return;
+        execute();
     }
 
     public static ItemStack getPreview(){
         return new ItemBuilder(Material.COMMAND_BLOCK).setName("Function").build();
     }
+
+    public static void initiate(){
+
+    }
+
+
 }

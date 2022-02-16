@@ -2,6 +2,8 @@ package org.amusedd.codeblocks.blocks;
 
 import org.amusedd.codeblocks.gui.ContainerEditGUI;
 import org.amusedd.codeblocks.gui.GUI;
+import org.amusedd.codeblocks.input.ValueSet;
+import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -13,32 +15,40 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.*;
 
 public abstract class CodeBlockContainer extends CodeBlock {
-    protected ArrayList<CodeBlock> codeBlocks;
+    protected ArrayList<CodeBlock> codeBlocks = new ArrayList<>();
     HashMap<String, ValueBlock> variablesInScope = new HashMap<>();
     protected int blockIndex = 0;
-    String name;
+    ValueBlock name = new ValueBlock(ValueType.STRING);
 
 
-    public CodeBlockContainer(String name, LinkedHashMap data) {
+    public CodeBlockContainer(ValueBlock name, LinkedHashMap data) {
+        if(data != null)
         for (Object o : data.values()) {
             CodeBlock block = (CodeBlock) o;
             block.setContainer(this);
             codeBlocks.add(block);
         }
         this.name = name;
-        setTag("name", name, PersistentDataType.STRING);
+        setTag("name", name.getValue(), PersistentDataType.STRING);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(name);
+        meta.setDisplayName((String) name.getValue());
         item.setItemMeta(meta);
     }
 
-    public CodeBlockContainer(String name, ArrayList<CodeBlock> codeBlocks) {
-        this.codeBlocks = codeBlocks;
+    public CodeBlockContainer(ValueBlock name, ArrayList<CodeBlock> codeBlocks) {
+        if(codeBlocks != null) this.codeBlocks = codeBlocks;
         this.name = name;
         setTag("name", name, PersistentDataType.STRING);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(name);
+        meta.setDisplayName((String) name.getValue());
         item.setItemMeta(meta);
+    }
+
+    public CodeBlockContainer(ValueBlock name) {
+        this(name, new ArrayList<>());
+    }
+
+    public CodeBlockContainer(){
     }
 
     @Override
@@ -53,7 +63,7 @@ public abstract class CodeBlockContainer extends CodeBlock {
 
     @Override
     public boolean canRun() {
-        return name != null && !name.isEmpty();
+        return name.canRun();
     }
 
     @Override
@@ -119,8 +129,20 @@ public abstract class CodeBlockContainer extends CodeBlock {
     }
 
     public String getName(){
+        return (String)getNameValue().getValue();
+    }
+
+    public ValueBlock getNameValue(){
         System.out.println(name);
         return name;
+    }
+
+    public void setName(String name){
+        this.name.setValue(name);
+        setTag("name", name, PersistentDataType.STRING);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(name);
+        item.setItemMeta(meta);
     }
 
     public int indexOf(CodeBlock codeBlock){
@@ -137,5 +159,8 @@ public abstract class CodeBlockContainer extends CodeBlock {
         return (super.getContainer() == null) ? this : super.getContainer();
     }
 
-
+    @Override
+    public ValueSet getValueSet() {
+        return new ValueSet(new ValueBlock[]{name});
+    }
 }

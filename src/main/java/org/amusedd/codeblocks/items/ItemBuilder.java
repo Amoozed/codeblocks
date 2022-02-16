@@ -95,7 +95,7 @@ public class ItemBuilder {
             meta.addEnchant(org.bukkit.enchantments.Enchantment.DURABILITY, 1, true);
             meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS);
         }
-        if(lore.size() > 0) {
+        if(lore != null && lore.size() > 0) {
             meta.setLore(lore);
         }
         if(tagData.size() > 0){

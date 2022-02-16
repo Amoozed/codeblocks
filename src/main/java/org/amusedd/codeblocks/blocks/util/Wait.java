@@ -4,6 +4,7 @@ import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.gui.GUI;
+import org.amusedd.codeblocks.input.ValueSet;
 import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Bukkit;
@@ -16,10 +17,10 @@ import java.util.Map;
 
 public class Wait extends CodeBlock {
 
-    ValueBlock seconds = new ValueBlock(ValueType.INTEGER);
+    ValueSet set;
 
     public Wait(ValueBlock seconds) {
-        this.seconds = seconds;
+        if(seconds != null) this.seconds = seconds;
         item = new ItemBuilder(item).addLore(ChatColor.WHITE + "Seconds: " + ChatColor.GREEN + ( (seconds != null) ? seconds.getValue() : "Undefined" )).build();
     }
 
@@ -30,7 +31,7 @@ public class Wait extends CodeBlock {
 
     @Override
     public boolean canRun() {
-        return seconds.canRun();
+        return
     }
 
     @Override
@@ -41,6 +42,11 @@ public class Wait extends CodeBlock {
     @Override
     public void onGUILeftClick(Player player, GUI gui) {
         seconds.onGUIRightClick(player, gui);
+    }
+
+    @Override
+    public ValueSet getValueSet() {
+        return new ValueSet(new ValueBlock[]{seconds});
     }
 
     @Override

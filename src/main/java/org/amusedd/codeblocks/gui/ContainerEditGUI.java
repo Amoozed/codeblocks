@@ -12,6 +12,7 @@ import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -26,6 +27,7 @@ public class ContainerEditGUI extends GUI {
 
     public ContainerEditGUI(Player player, CodeBlockContainer container) {
         super(player);
+        this.container = container;
     }
 
     @Override
@@ -55,17 +57,34 @@ public class ContainerEditGUI extends GUI {
 
     @Override
     public void onPlayerGUISelection(ItemStack item, InventoryClickEvent event) {
+        System.out.println("Clicked on " + item.getItemMeta().getDisplayName());
         if (item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(CodeBlocksPlugin.getInstance(), "createtype"), PersistentDataType.STRING)) {
+            System.out.println("found tag");
             String type = item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CodeBlocksPlugin.getInstance(), "createtype"), PersistentDataType.STRING);
+            try {
+                if (CodeBlockContainer.class.isAssignableFrom(Class.forName(type))) {
+                    Class<? extends CodeBlockContainer> containerClass = (Class<? extends CodeBlockContainer>) Class.forName(type);
+                    CodeBlockContainer newContainer = containerClass.getConstructor(Object.class).newInstance();
+                }
+            } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | NoSuchMethodException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    @Override
+    public void onPlayerTextResponse(ItemStack item, InventoryClickEvent event, String response) {
+        super.onPlayerTextResponse(item, event, response);
     }
 
     @Override
     public HashMap<Integer, ItemStack> getItems() {
         ArrayList<CodeBlock> codeBlocks = container.getCodeBlocks();
         HashMap<Integer, ItemStack> items = new HashMap<>();
-        for (int i = 0; i < codeBlocks.size(); i++) {
-            items.put(i, codeBlocks.get(i).getItem());
+        if(codeBlocks != null) {
+            for (int i = 0; i < codeBlocks.size(); i++) {
+                items.put(i, codeBlocks.get(i).getItem());
+            }
         }
         items.put(53, addCodeBlock);
         return items;

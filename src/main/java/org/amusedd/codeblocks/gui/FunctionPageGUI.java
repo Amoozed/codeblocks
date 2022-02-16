@@ -41,6 +41,13 @@ public class FunctionPageGUI extends GUI{
         if(item.equals(createFunction)) {
             new ChatInput("Name of function:", (Player) event.getWhoClicked(), event, this).awaitResponse();
             event.getWhoClicked().closeInventory();
+        } else {
+            CodeBlockContainer container = CodeBlocksPlugin.getInstance().getBlockStorage().getContainers().get(event.getSlot());
+            if(event.isLeftClick()){
+                container.onGUILeftClick(getOwner(), this);
+            } else if(event.isRightClick()){
+                container.onGUIRightClick(getOwner(), this);
+            }
         }
     }
 

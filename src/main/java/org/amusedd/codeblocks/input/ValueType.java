@@ -1,12 +1,11 @@
 package org.amusedd.codeblocks.input;
 
+import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public enum ValueType {
     INTEGER,
@@ -16,17 +15,23 @@ public enum ValueType {
     CONDITIONAL(ConditionalType.values()),
     STRING_LIST,
     PLAYER,
+    EVENT_TYPE(CodeBlocksPlugin.getInstance().getEventBlockUtility().getEventNames()),
     ITEMSTACK;
 
 
-    ValueType(){
+    Enum[] values;
+    ArrayList<String> listValues;
+
+    ValueType() {
 
     }
 
-    Enum[] values;
-
-    ValueType(Enum[] values){
+    ValueType(Enum[] values) {
         this.values = values;
+    }
+
+    ValueType(ArrayList<String> listValues) {
+        this.listValues = listValues;
     }
 
     public boolean isOfType(Object value) {
@@ -62,6 +67,8 @@ public enum ValueType {
                         }
                     }
                 }
+            case EVENT_TYPE:
+                return CodeBlocksPlugin.getInstance().getEventBlockUtility().getEventNames().contains(value);
             default:
                 return false;
         }
@@ -79,17 +86,28 @@ public enum ValueType {
                 return Boolean.parseBoolean((String) value);
             case CONDITIONAL:
                 return ConditionalType.valueOf((String) value);
+            case EVENT_TYPE:
+                return value;
             default:
                 return null;
         }
     }
 
-    public ArrayList<ItemStack> getValueSelection(){
-        if(values == null) return null;
+    public ArrayList<ItemStack> getValueSelection() {
+        if (values == null && listValues == null) return null;
         ArrayList<ItemStack> items = new ArrayList<>();
-        for(Enum e : values){
-            ItemStack item = new ItemBuilder(Material.STONE).setName(e.name()).build();
-            items.add(item);
+        if (values != null) {
+            for (Enum value : values) {
+                for (Enum e : values) {
+                    ItemStack item = new ItemBuilder(Material.STONE).setName(e.name()).build();
+                    items.add(item);
+                }
+            }
+        } else if (listValues != null) {
+            for (String value : listValues) {
+                ItemStack item = new ItemBuilder(Material.STONE).setName(value).build();
+                items.add(item);
+            }
         }
         return items;
     }

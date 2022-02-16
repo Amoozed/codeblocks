@@ -13,13 +13,10 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.Map;
 
 public abstract class MessageBlock extends CodeBlock {
-    ValueBlock text;
+    ValueBlock text = new ValueBlock(ValueType.STRING);
 
     public MessageBlock(ValueBlock text) {
-        this.text = text;
-        if(text == null) {
-            text = new ValueBlock(ValueType.STRING);
-        }
+        if(text != null) this.text = text;
     }
 
     @Override
