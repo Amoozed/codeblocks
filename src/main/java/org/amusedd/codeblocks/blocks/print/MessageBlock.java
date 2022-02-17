@@ -17,7 +17,7 @@ public abstract class MessageBlock extends CodeBlock {
     ValueSet set;
 
     public MessageBlock(ValueBlock text) {
-        if(text != null) set.getValueBlock("text").setValue(text.getValue());
+        if(text != null) getValueSet().getValueBlock("text").setValue(text.getValue());
     }
 
 
@@ -34,6 +34,7 @@ public abstract class MessageBlock extends CodeBlock {
     public void execute() {
         String print = (String) getValueSet().getValueBlock("text").getValue();
         print(print);
+        System.out.println("C");
         super.execute();
     }
 
@@ -41,7 +42,7 @@ public abstract class MessageBlock extends CodeBlock {
 
     @Override
     public boolean canRun() {
-        return getValueSet().getValueBlock("text").canRun();
+        return getValueSet().isComplete();
     }
 
     @Override

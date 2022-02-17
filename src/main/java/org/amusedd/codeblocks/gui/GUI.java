@@ -51,7 +51,7 @@ public abstract class GUI implements InventoryHolder {
     }
 
     public void open() {
-        inventory = Bukkit.createInventory(this, getRows() * 9, getName());
+        inventory = Bukkit.createInventory(this, getRows() * 9, (getName() != null) ? getName() : getClass().getSimpleName());
         fillInventory();
         owner.getPlayer().openInventory(inventory);
     }

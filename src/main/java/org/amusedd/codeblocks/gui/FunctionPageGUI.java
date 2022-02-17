@@ -1,8 +1,10 @@
 package org.amusedd.codeblocks.gui;
 
 import org.amusedd.codeblocks.blocks.CodeBlockContainer;
+import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.blocks.functions.FunctionBlock;
 import org.amusedd.codeblocks.input.ChatInput;
+import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.bukkit.Material;
@@ -70,7 +72,7 @@ public class FunctionPageGUI extends GUI{
     @Override
     public void onPlayerTextResponse(ItemStack item, InventoryClickEvent event, String response) {
         if(item.equals(createFunction)) {
-            FunctionBlock function = new FunctionBlock(response, new ArrayList<>());
+            FunctionBlock function = new FunctionBlock(new ValueBlock(ValueType.STRING, response), new ArrayList<>());
             ItemMeta meta = function.getItem().getItemMeta();
             meta.setDisplayName(response);
             function.getItem().setItemMeta(meta);

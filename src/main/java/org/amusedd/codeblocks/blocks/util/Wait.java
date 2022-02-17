@@ -3,6 +3,7 @@ package org.amusedd.codeblocks.blocks.util;
 import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.ValueBlock;
+import org.amusedd.codeblocks.gui.EditVariablesGUI;
 import org.amusedd.codeblocks.gui.GUI;
 import org.amusedd.codeblocks.input.ValueSet;
 import org.amusedd.codeblocks.input.ValueType;
@@ -25,7 +26,7 @@ public class Wait extends CodeBlock {
     }
 
     public Wait(ValueBlock seconds) {
-        if(seconds.getValue() != null) getValueSet().getValueBlock("seconds").setValue(seconds.getValue());
+        if(seconds != null && seconds.getValue() != null) getValueSet().getValueBlock("seconds").setValue(seconds.getValue());
         item = new ItemBuilder(item).addLore(ChatColor.WHITE + "Seconds: " + ChatColor.GREEN + ( (seconds.getValue() != null) ? seconds.getValue() : "Undefined" )).build();
     }
 
@@ -41,7 +42,7 @@ public class Wait extends CodeBlock {
 
     @Override
     public void onGUIRightClick(Player player, GUI gui) {
-        getValueSet().getValueBlock("seconds").onGUIRightClick(player, gui);
+        new EditVariablesGUI(player, getValueSet()).open();
     }
 
     @Override
@@ -52,12 +53,10 @@ public class Wait extends CodeBlock {
     @Override
     public ValueSet getValueSet() {
         if(set == null) {
-            set = new ValueSet();
+            set = super.getValueSet();
             set.addValueBlock("seconds", new ValueBlock(ValueType.INTEGER));
-            return set;
-        } else {
-            return set;
         }
+        return set;
     }
 
     @Override
@@ -76,6 +75,7 @@ public class Wait extends CodeBlock {
         map.put("seconds", getValueSet().getValueBlock("seconds").getValue());
         return map;
     }
+
 
 
     public static Wait deserialize(Map<String, Object> map) {

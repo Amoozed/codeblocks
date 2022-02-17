@@ -7,6 +7,7 @@ import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.entity.Cod;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -17,7 +18,7 @@ import java.util.*;
 public abstract class CodeBlockContainer extends CodeBlock {
     protected ArrayList<CodeBlock> codeBlocks = new ArrayList<>();
     HashMap<String, ValueBlock> variablesInScope = new HashMap<>();
-    protected int blockIndex = 0;
+    protected int blockIndex = -1;
     ValueSet set;
 
 
@@ -36,7 +37,14 @@ public abstract class CodeBlockContainer extends CodeBlock {
     }
 
     public CodeBlockContainer(ValueBlock name, ArrayList<CodeBlock> codeBlocks) {
-        if(codeBlocks != null) this.codeBlocks = codeBlocks;
+        if(codeBlocks != null){
+            for (CodeBlock codeBlock : codeBlocks) {
+                if(codeBlock == null) continue;
+                codeBlock.setContainer(this);
+            }
+            this.codeBlocks = codeBlocks;
+        }
+        System.out.println("FINGER FREDDY: " + codeBlocks);
         if(name != null) getValueSet().getValueBlock("name").setValue(name.getValue());
         setTag("name", name.getValue(), PersistentDataType.STRING);
         ItemMeta meta = item.getItemMeta();
@@ -54,7 +62,8 @@ public abstract class CodeBlockContainer extends CodeBlock {
 
     @Override
     public void execute() {
-        blockIndex = 0;
+        blockIndex = -1;
+        System.out.println("A");
         nextBlock();
     }
 
@@ -70,12 +79,7 @@ public abstract class CodeBlockContainer extends CodeBlock {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> data = super.serialize();
-        HashMap<String, Map<String, Object>> blocks = new HashMap<>();
-        for(CodeBlock codeBlock : codeBlocks){
-            Map<String, Object> codeBlocksData = codeBlock.serialize();
-            blocks.put(indexOf(codeBlock) + "", codeBlocksData);
-        }
-        data.put("blocks", blocks);
+        data.put("blocks", codeBlocks);
         data.put("name", getValueSet().getValueBlock("name"));
         return data;
     }
@@ -98,9 +102,12 @@ public abstract class CodeBlockContainer extends CodeBlock {
     }
 
     public void nextBlock(){
-        codeBlocks.get(blockIndex).execute();
         blockIndex++;
-        if(blockIndex >= codeBlocks.size() && getContainer() != null){
+        if(blockIndex < codeBlocks.size()){
+            CodeBlock block = codeBlocks.get(blockIndex);
+            System.out.println("B");
+            block.execute();
+        } else if(getContainer() != null){
             getContainer().nextBlock();
         }
     }
@@ -148,7 +155,7 @@ public abstract class CodeBlockContainer extends CodeBlock {
 
     @Override
     public CodeBlockContainer getContainer() {
-        return (super.getContainer() == null) ? this : super.getContainer();
+        return super.getContainer();
     }
 
     @Override

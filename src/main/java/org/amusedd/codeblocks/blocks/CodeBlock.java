@@ -32,6 +32,7 @@ public abstract class CodeBlock implements ConfigurationSerializable{
     }
 
     public void execute(){
+        System.out.println("D");
         if(getContainer() != null)
             getContainer().nextBlock();
     }

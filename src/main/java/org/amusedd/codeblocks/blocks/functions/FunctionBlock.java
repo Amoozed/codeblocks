@@ -21,7 +21,8 @@ import java.util.Map;
 public class FunctionBlock extends CodeBlockContainer {
     HashMap<String, ValueBlock> variableScope = new HashMap<>();
 
-    public FunctionBlock(ValueBlock name, ArrayList<CodeBlock> codeBlocks) {
+    public FunctionBlock(ValueBlock name, ArrayList<CodeBlock> codeBlocks)
+    {
         super(name, codeBlocks);
     }
 
@@ -49,9 +50,8 @@ public class FunctionBlock extends CodeBlockContainer {
     }
 
     public static FunctionBlock deserialize(Map<String, Object> map) {
-        ItemStack item = (ItemStack) map.get("block");
         ValueBlock name = (ValueBlock) map.get("name");
-        return new FunctionBlock(name, (LinkedHashMap)map.get("blocks"));
+        return new FunctionBlock(name, (ArrayList<CodeBlock>) map.get("blocks"));
     }
 
     @Override

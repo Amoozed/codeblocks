@@ -18,7 +18,7 @@ public class ItemBuilder {
     String name;
     boolean enchanted;
     ItemStack presetItem;
-    List<String> lore;
+    List<String> lore = new ArrayList<>();
     HashMap<String, Object> tagData = new HashMap<>();
     ArrayList<PersistentDataType> types = new ArrayList<>();
 

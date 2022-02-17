@@ -27,7 +27,7 @@ public class EditVariablesGUI extends GUI{
 
     @Override
     public String getName() {
-        return null;
+        return "Edit Variables";
     }
 
     @Override

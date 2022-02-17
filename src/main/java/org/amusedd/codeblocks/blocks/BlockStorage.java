@@ -26,6 +26,7 @@ public class BlockStorage {
         for (FileConfiguration file : config) {
             MemorySection memory = (MemorySection) file.get("data");
             for (String key : memory.getKeys(false)) {
+                System.out.println(memory.get(key));
                 CodeBlock block = (CodeBlock) memory.get(key);
                 if (block instanceof FunctionBlock) {
                     FunctionBlock functionBlock = (FunctionBlock) block;
