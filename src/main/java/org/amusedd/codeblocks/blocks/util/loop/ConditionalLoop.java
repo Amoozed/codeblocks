@@ -58,21 +58,15 @@ public class ConditionalLoop extends CodeBlockContainer {
 
     @Override
     public void nextBlock() {
-        if(blockIndex >= codeBlocks.size()) {
+        if(isFinished()) {
             if(!getConditionalBlock().evaluate()) {
-                blockIndex = 0;
-                super.nextBlock();
+                super.execute();
             } else{
                 getContainer().nextBlock();
             }
         } else {
             super.nextBlock();
         }
-    }
-
-    @Override
-    public boolean canRun() {
-        return super.canRun() && set.isComplete();
     }
 
     @Override

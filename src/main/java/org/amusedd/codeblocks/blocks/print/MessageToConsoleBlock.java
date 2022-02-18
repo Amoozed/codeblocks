@@ -14,7 +14,8 @@ public class MessageToConsoleBlock extends MessageBlock{
     public MessageToConsoleBlock(ValueBlock text) {
         super(text);
     }
-
+    public MessageToConsoleBlock(){
+    }
 
     @Override
     protected void print(String text) {

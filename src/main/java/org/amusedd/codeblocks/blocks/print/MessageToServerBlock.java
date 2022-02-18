@@ -14,6 +14,7 @@ public class MessageToServerBlock extends MessageBlock{
         super(text);
     }
 
+    public MessageToServerBlock(){}
 
     @Override
     protected void print(String text) {

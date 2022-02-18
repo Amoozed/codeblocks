@@ -18,16 +18,11 @@ public class MessageToPlayerBlock extends MessageBlock{
         if(player.getValue() != null) getValueSet().getValueBlock("player").setValue(player.getValue());
     }
 
-
+    public MessageToPlayerBlock(){}
 
     @Override
     protected void print(String text) {
 
-    }
-
-    @Override
-    public boolean canRun() {
-        return set.isComplete();
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.amusedd.codeblocks.input.ChatInput;
 import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.amusedd.codeblocks.CodeBlocksPlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -14,6 +15,7 @@ import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.lang.management.BufferPoolMXBean;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -72,6 +74,7 @@ public class FunctionPageGUI extends GUI{
     @Override
     public void onPlayerTextResponse(ItemStack item, InventoryClickEvent event, String response) {
         if(item.equals(createFunction)) {
+            Bukkit.broadcastMessage("Name: " + response);
             FunctionBlock function = new FunctionBlock(new ValueBlock(ValueType.STRING, response), new ArrayList<>());
             ItemMeta meta = function.getItem().getItemMeta();
             meta.setDisplayName(response);

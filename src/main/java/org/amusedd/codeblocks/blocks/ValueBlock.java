@@ -19,9 +19,8 @@ public class ValueBlock extends CodeBlock {
     private ValueType type;
 
     public ValueBlock(ValueType type, Object value) {
-        this.value = value;
-        this.type = type;
-        item = new ItemBuilder(getItem()).addLore(ChatColor.WHITE + "Type: " + ChatColor.GREEN + type.name()).addLore(ChatColor.WHITE + "Value:" + ChatColor.GREEN + ( (value == null) ? "Undefined" : value )).build();
+        setType(type);
+        setValue(value);
     }
 
     public ValueBlock(ValueType type) {
@@ -29,14 +28,22 @@ public class ValueBlock extends CodeBlock {
     }
 
 
-    public void setValue(Object t) { this.value = t; }
+    public void setType(ValueType type) {
+        this.type = type;
+        addValueToLore("Value Type", type.name());
+    }
+
+    public void setValue(Object t) {
+        this.value = t;
+        addValueToLore("Value", (t == null ? "Undefined" : t.toString()));
+    }
     public Object getValue() { return value; }
 
 
+
     @Override
-    public void execute() {
-        super.execute();
-        System.out.println("Executing value block, if you see this, something went wrong");
+    public boolean run() {
+       return true;
     }
 
     @Override
@@ -44,10 +51,6 @@ public class ValueBlock extends CodeBlock {
         return new ItemBuilder(Material.DIAMOND).setName("Value Block").build();
     }
 
-    @Override
-    public boolean canRun() {
-        return value != null;
-    }
 
     @Override
     public Map<String, Object> serialize() {
@@ -90,12 +93,18 @@ public class ValueBlock extends CodeBlock {
 
     @Override
     public void onResponse(String response) {
+        System.out.println("Variable edit attempt");
         if(getValueType().isOfType(response)) {
+            System.out.println("Response is of type");
             setValue(getValueType().getTypedValue(response));
         }
     }
     
     public ValueType getValueType() {
         return type;
+    }
+
+    public boolean hasValue() {
+        return value != null;
     }
 }

@@ -63,8 +63,8 @@ public class ContainerEditGUI extends GUI {
             try {
                 Class<? extends CodeBlock> clazz = (Class<? extends CodeBlock>) Class.forName(type);
                 CodeBlock codeBlock = clazz.getConstructor().newInstance();
-                container.addCodeBlock(codeBlock);
-                new EditVariablesGUI(getOwner(), codeBlock.getValueSet()).open();
+                codeBlock.setContainer(container);
+                codeBlock.onGUICreation(getOwner(), this);
             } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | NoSuchMethodException | IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -80,9 +80,13 @@ public class ContainerEditGUI extends GUI {
     public HashMap<Integer, ItemStack> getItems() {
         ArrayList<CodeBlock> codeBlocks = container.getCodeBlocks();
         HashMap<Integer, ItemStack> items = new HashMap<>();
+        int d = 0;
         if (codeBlocks != null) {
             for (int i = 0; i < codeBlocks.size(); i++) {
-                items.put(i, codeBlocks.get(i).getItem());
+                if(codeBlocks.get(i).getItem() != null) {
+                    items.put(d, codeBlocks.get(i).getItem());
+                    d++;
+                }
             }
         }
         items.put(53, addCodeBlock);

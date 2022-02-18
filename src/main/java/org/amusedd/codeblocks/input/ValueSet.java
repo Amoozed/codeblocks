@@ -43,9 +43,13 @@ public class ValueSet implements ConfigurationSerializable {
         return null;
     }
 
+    public boolean hasValues(){
+        return !values.isEmpty();
+    }
+
     public boolean isComplete(){
         for(ValueBlock vb : values.values()){
-            if(!vb.canRun()) return false;
+            if(!vb.hasValue()) return false;
         }
         return true;
     }

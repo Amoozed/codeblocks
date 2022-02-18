@@ -27,7 +27,6 @@ public class Wait extends CodeBlock {
 
     public Wait(ValueBlock seconds) {
         if(seconds != null && seconds.getValue() != null) getValueSet().getValueBlock("seconds").setValue(seconds.getValue());
-        item = new ItemBuilder(item).addLore(ChatColor.WHITE + "Seconds: " + ChatColor.GREEN + ( (seconds.getValue() != null) ? seconds.getValue() : "Undefined" )).build();
     }
 
     @Override
@@ -35,10 +34,6 @@ public class Wait extends CodeBlock {
         return new ItemBuilder(Material.CLOCK).setName("Wait").build();
     }
 
-    @Override
-    public boolean canRun() {
-        return getValueSet().isComplete();
-    }
 
     @Override
     public void onGUIRightClick(Player player, GUI gui) {
@@ -60,19 +55,20 @@ public class Wait extends CodeBlock {
     }
 
     @Override
-    public void execute() {
+    public boolean run() {
         Bukkit.getScheduler().runTaskLater(CodeBlocksPlugin.getInstance(), new Runnable() {
             @Override
             public void run() {
-                Wait.super.execute();
+                setFinishedExecution(true);
             }
         }, (int) getValueSet().getValueBlock("seconds").getValue());
+        return false;
     }
 
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = super.serialize();
-        map.put("seconds", getValueSet().getValueBlock("seconds").getValue());
+        map.put("seconds", getValueSet().getValueBlock("seconds"));
         return map;
     }
 

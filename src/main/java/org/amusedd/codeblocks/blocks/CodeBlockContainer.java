@@ -18,7 +18,7 @@ import java.util.*;
 public abstract class CodeBlockContainer extends CodeBlock {
     protected ArrayList<CodeBlock> codeBlocks = new ArrayList<>();
     HashMap<String, ValueBlock> variablesInScope = new HashMap<>();
-    protected int blockIndex = -1;
+    int blockIndex = -1;
     ValueSet set;
 
 
@@ -61,19 +61,15 @@ public abstract class CodeBlockContainer extends CodeBlock {
     }
 
     @Override
-    public void execute() {
+    public boolean run() {
         blockIndex = -1;
         System.out.println("A");
         nextBlock();
+        return false;
     }
 
     public ArrayList<CodeBlock> getCodeBlocks(){
         return codeBlocks;
-    }
-
-    @Override
-    public boolean canRun() {
-        return getValueSet().isComplete() && codeBlocks.size() > 0;
     }
 
     @Override
@@ -103,12 +99,13 @@ public abstract class CodeBlockContainer extends CodeBlock {
 
     public void nextBlock(){
         blockIndex++;
-        if(blockIndex < codeBlocks.size()){
+        System.out.println(blockIndex + " " + codeBlocks.size() + " " + isFinished());
+        if(!isFinished()){
             CodeBlock block = codeBlocks.get(blockIndex);
-            System.out.println("B");
+            System.out.println("B: " + block);
             block.execute();
         } else if(getContainer() != null){
-            getContainer().nextBlock();
+            
         }
     }
 
@@ -168,4 +165,9 @@ public abstract class CodeBlockContainer extends CodeBlock {
             return set;
         }
     }
+
+    public boolean isFinished(){
+        return blockIndex >= codeBlocks.size();
+    }
+
 }

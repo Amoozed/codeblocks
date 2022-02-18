@@ -22,18 +22,17 @@ public class EventFunctionBlock extends FunctionBlock {
 
     public EventFunctionBlock(ValueBlock name, LinkedHashMap codeBlocks, ValueBlock eventType) {
         super(name, codeBlocks);
+    }
+
+    public EventFunctionBlock(){
 
     }
 
 
     @Override
-    public boolean canRun() {
-        return super.canRun() && set.isComplete();
-    }
-
-    @Override
-    public void execute() {
+    public boolean run() {
         System.out.println("Cannot execute event function block directly!");
+        return true;
     }
 
     public void onEvent(Event event) {

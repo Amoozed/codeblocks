@@ -20,6 +20,7 @@ public abstract class MessageBlock extends CodeBlock {
         if(text != null) getValueSet().getValueBlock("text").setValue(text.getValue());
     }
 
+    public MessageBlock(){}
 
     @Override
     public ValueSet getValueSet() {
@@ -31,19 +32,15 @@ public abstract class MessageBlock extends CodeBlock {
     }
 
     @Override
-    public void execute() {
+    public boolean run() {
         String print = (String) getValueSet().getValueBlock("text").getValue();
         print(print);
         System.out.println("C");
-        super.execute();
+        return true;
     }
 
     protected abstract void print(String text);
 
-    @Override
-    public boolean canRun() {
-        return getValueSet().isComplete();
-    }
 
     @Override
     public ItemStack getBaseItem() {

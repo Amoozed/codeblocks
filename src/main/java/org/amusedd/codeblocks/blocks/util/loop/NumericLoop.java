@@ -9,6 +9,8 @@ import org.amusedd.codeblocks.gui.EditVariablesGUI;
 import org.amusedd.codeblocks.gui.GUI;
 import org.amusedd.codeblocks.input.ValueSet;
 import org.amusedd.codeblocks.input.ValueType;
+import org.amusedd.codeblocks.items.ItemBuilder;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -24,10 +26,12 @@ public class NumericLoop extends CodeBlockContainer {
     ValueSet set;
     int iterations;
 
-    public NumericLoop(ValueBlock name, LinkedHashMap codeBlocks, ValueBlock amount) {
+    public NumericLoop(ValueBlock name, ArrayList<CodeBlock> codeBlocks, ValueBlock amount) {
         super(name, codeBlocks);
         if(amount.getValue() != null) getValueSet().getValueBlock("amount").setValue(amount.getValue());
     }
+
+    public NumericLoop(){}
 
     @Override
     public HashMap<String, ValueBlock> getVariableScope() {
@@ -36,7 +40,7 @@ public class NumericLoop extends CodeBlockContainer {
 
     @Override
     public ItemStack getBaseItem() {
-        return null;
+        return new ItemBuilder(Material.CHAIN_COMMAND_BLOCK).setName("Numeric Loop").build();
     }
 
     @Override
@@ -48,7 +52,7 @@ public class NumericLoop extends CodeBlockContainer {
 
 
     public static NumericLoop deserialize(Map<String, Object> data) {
-        LinkedHashMap lmap = (LinkedHashMap) data.get("blocks");
+        ArrayList<CodeBlock> lmap = (ArrayList<CodeBlock>) data.get("blocks");
         ItemStack item = (ItemStack) data.get("block");
         ValueBlock name = (ValueBlock) data.get("name");
         ValueBlock amount = (ValueBlock) data.get("amount");
@@ -63,11 +67,10 @@ public class NumericLoop extends CodeBlockContainer {
 
     @Override
     public void nextBlock() {
-        if(blockIndex >= codeBlocks.size()) {
+        if(isFinished()) {
             iterations++;
             if(iterations < (int)getValueSet().getValueBlock("amount").getValue()) {
-                blockIndex = 0;
-                super.nextBlock();
+                super.run();
             } else{
                 getContainer().nextBlock();
             }

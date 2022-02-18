@@ -23,6 +23,5 @@ public abstract class ResponseGUI extends GUI {
     @Override
     public void itemClicked(ItemStack item, InventoryClickEvent event) {
         parent.onPlayerGUISelection(item, event);
-        parent.open();
     }
 }

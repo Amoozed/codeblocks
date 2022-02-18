@@ -22,6 +22,8 @@ public class ConditionalBlock extends ValueBlock {
         setTag("conditional_type", type.getValue(), PersistentDataType.STRING);
     }
 
+
+
     @Override
     public ValueSet getValueSet() {
         if(set == null){
@@ -33,10 +35,6 @@ public class ConditionalBlock extends ValueBlock {
         return set;
     }
 
-    @Override
-    public boolean canRun() {
-        return super.canRun() && set.isComplete();
-    }
 
     @Override
     public ItemStack getBaseItem() {
