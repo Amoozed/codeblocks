@@ -4,9 +4,12 @@ import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.gui.GUI;
+import org.amusedd.codeblocks.input.ValueBlockData;
 import org.amusedd.codeblocks.input.ValueSet;
 import org.amusedd.codeblocks.input.ValueType;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Cod;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
@@ -20,7 +23,7 @@ public class EventFunctionBlock extends FunctionBlock {
     Event event;
     ValueSet set;
 
-    public EventFunctionBlock(ValueBlock name, LinkedHashMap codeBlocks, ValueBlock eventType) {
+    public EventFunctionBlock(ValueBlock name, ArrayList<CodeBlock> codeBlocks, ValueBlock eventType) {
         super(name, codeBlocks);
     }
 
@@ -45,7 +48,7 @@ public class EventFunctionBlock extends FunctionBlock {
     public ValueSet getValueSet() {
         if(set == null) {
             set = super.getValueSet();
-            set.addValueBlock("event_type", new ValueBlock(ValueType.EVENT_TYPE));
+            set.addValueBlock("event_type", new ValueBlock(new ValueBlockData(Material.ACACIA_BUTTON, "Event Type", ValueType.EVENT_TYPE, null)));
         }
         return set;
     }
@@ -68,13 +71,12 @@ public class EventFunctionBlock extends FunctionBlock {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> data = super.serialize();
-        data.put("event", set.getValueBlock("event_type").getValue());
+        data.put("event", set.getValueBlock("event_type").getData().getValue());
         return data;
     }
 
     public static EventFunctionBlock deserialize(Map<String, Object> map) {
-        LinkedHashMap lmap = (LinkedHashMap) map.get("blocks");
-        ItemStack block = (ItemStack) map.get("block");
+        ArrayList<CodeBlock> lmap = (ArrayList<CodeBlock>) map.get("blocks");
         ValueBlock name = (ValueBlock) map.get("name");
         ValueBlock eventType = (ValueBlock) map.get("eventType");
         return new EventFunctionBlock(name, lmap, eventType);

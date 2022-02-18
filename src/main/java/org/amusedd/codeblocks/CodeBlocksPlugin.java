@@ -2,10 +2,12 @@ package org.amusedd.codeblocks;
 
 import org.amusedd.codeblocks.blocks.BlockStorage;
 import org.amusedd.codeblocks.blocks.CodeBlock;
+import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.commands.PluginCommand;
 import org.amusedd.codeblocks.commands.data.DataManager;
 import org.amusedd.codeblocks.events.EventBlockUtility;
 import org.amusedd.codeblocks.events.SimpleEventCalls;
+import org.amusedd.codeblocks.input.ValueBlockData;
 import org.amusedd.codeblocks.input.ValueSet;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
@@ -16,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.Objects;
 
 public final class CodeBlocksPlugin extends JavaPlugin {
@@ -29,6 +32,7 @@ public final class CodeBlocksPlugin extends JavaPlugin {
         // Plugin startup logic
         ConfigurationSerialization.registerClass(CodeBlock.class);
         ConfigurationSerialization.registerClass(ValueSet.class);
+        ConfigurationSerialization.registerClass(ValueBlockData.class);
         getServer().getPluginManager().registerEvents(new SimpleEventCalls(), this);
         plugin = this;
         data = new DataManager();
@@ -39,12 +43,12 @@ public final class CodeBlocksPlugin extends JavaPlugin {
                 System.out.println("Registering " + clazz.getSimpleName());
                 ConfigurationSerialization.registerClass(clazz);
                 ItemStack preview = new ItemBuilder((ItemStack) clazz.getMethod("getPreview").invoke(null)).setName(clazz.getSimpleName()).setTag("createtype", clazz.getName(), PersistentDataType.STRING).build();
-                blockStorage.addPreviewBlock(clazz.getSimpleName(), preview);
+                if(!Modifier.isAbstract(clazz.getModifiers()) && !ValueBlock.class.isAssignableFrom(clazz)) blockStorage.addPreviewBlock(clazz.getSimpleName(), preview);
             } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             } catch (NoSuchMethodException e) {
                 ItemStack preview = new ItemBuilder(Material.STONE).setTag("createtype", clazz.getName(), PersistentDataType.STRING).setName(clazz.getSimpleName()).build();
-                blockStorage.addPreviewBlock(clazz.getSimpleName(), preview);
+                if(!Modifier.isAbstract(clazz.getModifiers()) && !ValueBlock.class.isAssignableFrom(clazz)) blockStorage.addPreviewBlock(clazz.getSimpleName(), preview);
             }
         }
         for (Class<? extends PluginCommand> clazz : new Reflections("org.amusedd.codeblocks.commands").getSubTypesOf(PluginCommand.class)) {

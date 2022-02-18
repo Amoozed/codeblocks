@@ -26,10 +26,6 @@ public class FunctionBlock extends CodeBlockContainer {
         super(name, codeBlocks);
     }
 
-    public FunctionBlock(ValueBlock name, LinkedHashMap map) {
-        super(name, map);
-    }
-
     public FunctionBlock() {
 
     }

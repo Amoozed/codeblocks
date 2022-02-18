@@ -1,14 +1,16 @@
 package org.amusedd.codeblocks.blocks.functions;
 
+import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.ValueBlock;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ValueFunctionBlock extends FunctionBlock {
 
     ValueBlock value;
-    public ValueFunctionBlock(ValueBlock name, LinkedHashMap map, ValueBlock value) {
+    public ValueFunctionBlock(ValueBlock name, ArrayList<CodeBlock> map, ValueBlock value) {
         super(name, map);
     }
 
@@ -26,7 +28,7 @@ public class ValueFunctionBlock extends FunctionBlock {
     public static ValueFunctionBlock deserialize(Map<String, Object> data) {
         return new ValueFunctionBlock(
                 (ValueBlock) data.get("name"),
-                (LinkedHashMap) data.get("blocks"),
+                (ArrayList<CodeBlock>) data.get("blocks"),
                 (ValueBlock) data.get("value")
         );
     }

@@ -24,11 +24,7 @@ public class ValueSet implements ConfigurationSerializable {
 
     public boolean setValue(String name, Object value){
         ValueBlock vb = values.get(name);
-        if(vb.getValueType().isOfType(value)){
-            vb.setValue(value);
-            return true;
-        }
-        return false;
+        return vb.getData().setValue(value);
     }
 
     public ArrayList<ValueBlock> getValueBlocks(){
