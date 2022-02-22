@@ -1,12 +1,10 @@
 package org.amusedd.codeblocks.blocks;
 
 import org.amusedd.codeblocks.gui.GUI;
-import org.amusedd.codeblocks.gui.PaginatedGUI;
 import org.amusedd.codeblocks.gui.PaginatedSelectGUI;
 import org.amusedd.codeblocks.gui.SelectGUI;
 import org.amusedd.codeblocks.input.ChatInput;
-import org.amusedd.codeblocks.input.ValueBlockData;
-import org.amusedd.codeblocks.input.ValueSet;
+import org.amusedd.codeblocks.values.ValueBlockData;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;

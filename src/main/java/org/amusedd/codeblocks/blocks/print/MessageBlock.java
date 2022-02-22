@@ -3,17 +3,14 @@ package org.amusedd.codeblocks.blocks.print;
 import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.gui.GUI;
-import org.amusedd.codeblocks.input.ValueBlockData;
-import org.amusedd.codeblocks.input.ValueSet;
-import org.amusedd.codeblocks.input.ValueType;
+import org.amusedd.codeblocks.values.ValueBlockData;
+import org.amusedd.codeblocks.values.ValueSet;
+import org.amusedd.codeblocks.values.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
-
-import java.util.Map;
 
 public abstract class MessageBlock extends CodeBlock {
     ValueSet set;

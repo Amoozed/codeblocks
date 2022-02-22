@@ -1,6 +1,5 @@
-package org.amusedd.codeblocks.input;
+package org.amusedd.codeblocks.values;
 
-import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 

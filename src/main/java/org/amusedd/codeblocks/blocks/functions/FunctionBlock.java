@@ -5,19 +5,16 @@ import org.amusedd.codeblocks.blocks.CodeBlockContainer;
 import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.gui.CreateWithVariablesGUI;
 import org.amusedd.codeblocks.gui.GUI;
-import org.amusedd.codeblocks.input.ValueSet;
+import org.amusedd.codeblocks.values.ValueSet;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class FunctionBlock extends CodeBlockContainer {

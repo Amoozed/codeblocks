@@ -1,7 +1,7 @@
 package org.amusedd.codeblocks.gui;
 
 import org.amusedd.codeblocks.blocks.ValueBlock;
-import org.amusedd.codeblocks.input.ValueSet;
+import org.amusedd.codeblocks.values.ValueSet;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;

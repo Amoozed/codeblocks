@@ -1,7 +1,8 @@
-package org.amusedd.codeblocks.input;
+package org.amusedd.codeblocks.values;
 
 import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.amusedd.codeblocks.blocks.CodeBlock;
+import org.amusedd.codeblocks.input.ConditionalType;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -19,6 +20,7 @@ public enum ValueType {
     EVENT_TYPE(CodeBlocksPlugin.getInstance().getEventBlockUtility().getEventNames()),
     ITEMSTACK,
     CODEBLOCK,
+    WORLD,
     ANY;
 
 
@@ -74,10 +76,8 @@ public enum ValueType {
                 return CodeBlocksPlugin.getInstance().getEventBlockUtility().getEventNames().contains(value);
             case CODEBLOCK:
                 return value instanceof CodeBlock;
-            case ANY:
-                return true;
             default:
-                return false;
+                return true;
         }
     }
 

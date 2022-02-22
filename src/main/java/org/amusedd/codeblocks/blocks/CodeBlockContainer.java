@@ -1,17 +1,13 @@
 package org.amusedd.codeblocks.blocks;
 
-import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.amusedd.codeblocks.gui.ContainerEditGUI;
 import org.amusedd.codeblocks.gui.CreateWithVariablesGUI;
 import org.amusedd.codeblocks.gui.GUI;
-import org.amusedd.codeblocks.input.ValueBlockData;
-import org.amusedd.codeblocks.input.ValueSet;
-import org.amusedd.codeblocks.input.ValueType;
+import org.amusedd.codeblocks.values.ValueBlockData;
+import org.amusedd.codeblocks.values.ValueSet;
+import org.amusedd.codeblocks.values.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.entity.Cod;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;

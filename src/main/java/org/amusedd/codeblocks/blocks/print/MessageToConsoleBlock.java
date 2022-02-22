@@ -1,11 +1,8 @@
 package org.amusedd.codeblocks.blocks.print;
 
-import org.amusedd.codeblocks.blocks.ValueBlock;
-import org.amusedd.codeblocks.input.ValueSet;
+import org.amusedd.codeblocks.values.ValueSet;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;

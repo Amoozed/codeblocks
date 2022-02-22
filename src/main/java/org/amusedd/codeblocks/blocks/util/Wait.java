@@ -5,9 +5,9 @@ import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.gui.EditVariablesGUI;
 import org.amusedd.codeblocks.gui.GUI;
-import org.amusedd.codeblocks.input.ValueBlockData;
-import org.amusedd.codeblocks.input.ValueSet;
-import org.amusedd.codeblocks.input.ValueType;
+import org.amusedd.codeblocks.values.ValueBlockData;
+import org.amusedd.codeblocks.values.ValueSet;
+import org.amusedd.codeblocks.values.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -16,7 +16,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class Wait extends CodeBlock {

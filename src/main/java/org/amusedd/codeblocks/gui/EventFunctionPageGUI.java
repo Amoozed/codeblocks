@@ -1,22 +1,12 @@
 package org.amusedd.codeblocks.gui;
 
 import org.amusedd.codeblocks.CodeBlocksPlugin;
-import org.amusedd.codeblocks.blocks.CodeBlockContainer;
-import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.blocks.functions.EventFunctionBlock;
-import org.amusedd.codeblocks.blocks.functions.FunctionBlock;
-import org.amusedd.codeblocks.input.ChatInput;
-import org.amusedd.codeblocks.input.ValueBlockData;
-import org.amusedd.codeblocks.input.ValueSet;
-import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.HashMap;

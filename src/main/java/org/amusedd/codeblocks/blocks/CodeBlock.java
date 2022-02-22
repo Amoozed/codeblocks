@@ -4,7 +4,7 @@ import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.amusedd.codeblocks.gui.CreateWithVariablesGUI;
 import org.amusedd.codeblocks.gui.EditVariablesGUI;
 import org.amusedd.codeblocks.gui.GUI;
-import org.amusedd.codeblocks.input.ValueSet;
+import org.amusedd.codeblocks.values.ValueSet;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -16,7 +16,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.lang.annotation.Inherited;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

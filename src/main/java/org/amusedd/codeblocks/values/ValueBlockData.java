@@ -1,4 +1,4 @@
-package org.amusedd.codeblocks.input;
+package org.amusedd.codeblocks.values;
 
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Bukkit;

@@ -1,12 +1,10 @@
 package org.amusedd.codeblocks.gui;
 
 import org.amusedd.codeblocks.blocks.CodeBlock;
-import org.amusedd.codeblocks.blocks.ValueBlock;
-import org.amusedd.codeblocks.input.ValueSet;
+import org.amusedd.codeblocks.values.ValueSet;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Cod;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
