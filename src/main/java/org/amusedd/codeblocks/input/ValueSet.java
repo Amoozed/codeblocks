@@ -1,5 +1,6 @@
 package org.amusedd.codeblocks.input;
 
+import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
@@ -53,17 +54,15 @@ public class ValueSet implements ConfigurationSerializable {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, ValueBlock>  saveValues = new HashMap<String, ValueBlock>();
         for(String key : values.keySet()){
-            map.put(key, values.get(key));
+            saveValues.put(key, values.get(key));
         }
+        map.put("values", saveValues);
         return map;
     }
 
     public static ValueSet deserialize(Map<String, Object> map){
-        HashMap<String, ValueBlock> values = new HashMap<String, ValueBlock>();
-        for(String key : map.keySet()){
-            values.put(key, (ValueBlock)map.get(key));
-        }
-        return new ValueSet(values);
+        return new ValueSet((HashMap<String, ValueBlock>) map.get("values"));
     }
 }

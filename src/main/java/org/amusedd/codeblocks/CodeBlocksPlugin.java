@@ -4,7 +4,7 @@ import org.amusedd.codeblocks.blocks.BlockStorage;
 import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.commands.PluginCommand;
-import org.amusedd.codeblocks.commands.data.DataManager;
+import org.amusedd.codeblocks.data.DataManager;
 import org.amusedd.codeblocks.events.EventBlockUtility;
 import org.amusedd.codeblocks.events.SimpleEventCalls;
 import org.amusedd.codeblocks.input.ValueBlockData;

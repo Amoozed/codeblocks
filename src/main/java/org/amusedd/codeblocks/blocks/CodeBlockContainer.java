@@ -1,14 +1,19 @@
 package org.amusedd.codeblocks.blocks;
 
+import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.amusedd.codeblocks.gui.ContainerEditGUI;
+import org.amusedd.codeblocks.gui.CreateWithVariablesGUI;
 import org.amusedd.codeblocks.gui.GUI;
+import org.amusedd.codeblocks.input.ValueBlockData;
 import org.amusedd.codeblocks.input.ValueSet;
 import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Cod;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -18,25 +23,12 @@ import java.util.*;
 public abstract class CodeBlockContainer extends CodeBlock {
     protected ArrayList<CodeBlock> codeBlocks = new ArrayList<>();
     HashMap<String, ValueBlock> variablesInScope = new HashMap<>();
-    int blockIndex = -1;
+    int blockIndex = 0;
     ValueSet set;
 
 
-    public CodeBlockContainer(ValueBlock name, LinkedHashMap data) {
-        if(data != null)
-        for (Object o : data.values()) {
-            CodeBlock block = (CodeBlock) o;
-            block.setContainer(this);
-            codeBlocks.add(block);
-        }
-        if(name != null) getValueSet().getValueBlock("name").setValue(name.getValue());
-        setTag("name", name.getValue(), PersistentDataType.STRING);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName((String) name.getValue());
-        item.setItemMeta(meta);
-    }
 
-    public CodeBlockContainer(ValueBlock name, ArrayList<CodeBlock> codeBlocks) {
+    public CodeBlockContainer(ValueSet set, ArrayList<CodeBlock> codeBlocks) {
         if(codeBlocks != null){
             for (CodeBlock codeBlock : codeBlocks) {
                 if(codeBlock == null) continue;
@@ -44,15 +36,16 @@ public abstract class CodeBlockContainer extends CodeBlock {
             }
             this.codeBlocks = codeBlocks;
         }
+        this.set = set;
         System.out.println("FINGER FREDDY: " + codeBlocks);
-        if(name != null) getValueSet().getValueBlock("name").setValue(name.getValue());
-        setTag("name", name.getValue(), PersistentDataType.STRING);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName((String) name.getValue());
-        item.setItemMeta(meta);
+        //if(name != null) getValueSet().getValueBlock("name").getData().setValue(name.getValue());
+        setTag("name", set.getValueBlock("name").getData().getValue(), PersistentDataType.STRING);
+        ItemMeta meta = getItem().getItemMeta();
+        meta.setDisplayName((String) set.getValueBlock("name").getData().getValue());
+        getItem().setItemMeta(meta);
     }
 
-    public CodeBlockContainer(ValueBlock name) {
+    public CodeBlockContainer(ValueSet name) {
         this(name, new ArrayList<>());
     }
 
@@ -61,11 +54,19 @@ public abstract class CodeBlockContainer extends CodeBlock {
     }
 
     @Override
-    public boolean run() {
+    public void run() {
         blockIndex = -1;
-        System.out.println("A");
         nextBlock();
-        return false;
+    }
+
+    public void nextBlock(){
+        blockIndex++;
+        if(blockIndex < codeBlocks.size()){
+            CodeBlock block = codeBlocks.get(blockIndex);
+            block.run();
+        } else {
+            onContainerFinish();
+        }
     }
 
     public ArrayList<CodeBlock> getCodeBlocks(){
@@ -76,7 +77,6 @@ public abstract class CodeBlockContainer extends CodeBlock {
     public Map<String, Object> serialize() {
         Map<String, Object> data = super.serialize();
         data.put("blocks", codeBlocks);
-        data.put("name", getValueSet().getValueBlock("name"));
         return data;
     }
 
@@ -97,20 +97,13 @@ public abstract class CodeBlockContainer extends CodeBlock {
         codeBlocks.remove(index);
     }
 
-    public void nextBlock(){
-        blockIndex++;
-        System.out.println(blockIndex + " " + codeBlocks.size() + " " + isFinished());
-        if(!isFinished()){
-            CodeBlock block = codeBlocks.get(blockIndex);
-            System.out.println("B: " + block);
-            block.execute();
-        } else if(getContainer() != null){
-            
-        }
+
+    public void onContainerFinish(){
+        if(getContainer() != null) getContainer().nextBlock();
     }
 
     @Override
-    public void onGUILeftClick(Player player, GUI gui) {
+    public void onGUILeftClick(Player player, GUI gui, InventoryClickEvent event) {
         new ContainerEditGUI(player,this).open();
     }
 
@@ -135,9 +128,16 @@ public abstract class CodeBlockContainer extends CodeBlock {
     }
 
     public String getName(){
-        return (String)getValueSet().getValueBlock("name").getValue();
+        String name = (String)getValueSet().getValueBlock("name").getData().getValue();
+        return (name == null) ? "Undefined Name" : name;
     }
 
+    @Override
+    public void onVariableCreation(Player player, CreateWithVariablesGUI gui, InventoryClickEvent event) {
+        ItemMeta meta = getItem().getItemMeta();
+        meta.setDisplayName((String) getValueSet().getValueBlock("name").getData().getValue());
+        getItem().setItemMeta(meta);
+    }
 
 
 
@@ -146,8 +146,8 @@ public abstract class CodeBlockContainer extends CodeBlock {
     }
 
     @Override
-    public void onGUIRightClick(Player player, GUI gui) {
-        execute();
+    public void onGUIRightClick(Player player, GUI gui, InventoryClickEvent event) {
+        run();
     }
 
     @Override
@@ -159,15 +159,10 @@ public abstract class CodeBlockContainer extends CodeBlock {
     public ValueSet getValueSet() {
         if(set == null) {
             set = new ValueSet();
-            set.addValueBlock("name", new ValueBlock(ValueType.STRING));
-            return set;
-        } else {
-            return set;
+            set.addValueBlock("name", new ValueBlock(new ValueBlockData(Material.NAME_TAG, "Name", ValueType.STRING, null)));
         }
+        return set;
     }
 
-    public boolean isFinished(){
-        return blockIndex >= codeBlocks.size();
-    }
 
 }

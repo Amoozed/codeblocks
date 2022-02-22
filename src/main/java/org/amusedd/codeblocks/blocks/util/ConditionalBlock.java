@@ -1,93 +1,137 @@
 package org.amusedd.codeblocks.blocks.util;
 
+import org.amusedd.codeblocks.blocks.CodeBlock;
+import org.amusedd.codeblocks.blocks.CodeBlockContainer;
 import org.amusedd.codeblocks.blocks.ValueBlock;
-import org.amusedd.codeblocks.input.ConditionalType;
+import org.amusedd.codeblocks.blocks.functions.FunctionBlock;
+import org.amusedd.codeblocks.gui.ConditionalGUI;
+import org.amusedd.codeblocks.gui.EditVariablesGUI;
+import org.amusedd.codeblocks.gui.GUI;
+import org.amusedd.codeblocks.input.ValueBlockData;
 import org.amusedd.codeblocks.input.ValueSet;
 import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class ConditionalBlock extends ValueBlock {
+public class ConditionalBlock extends CodeBlockContainer {
     ValueSet set;
 
-    public ConditionalBlock(ValueBlock type, ValueBlock a, ValueBlock b) {
-        super(ValueType.BOOLEAN);
-        if(type.getValue() != null) getValueSet().setValue("conditional_type", type.getValue());
-        if(a.getValue() != null) getValueSet().setValue("a", a.getValue());
-        if(b.getValue() != null) getValueSet().setValue("b", b.getValue());
-        setTag("conditional_type", type.getValue(), PersistentDataType.STRING);
+    private FunctionBlock trueFunction;
+    private FunctionBlock falseFunction;
+
+
+    public ConditionalBlock(ValueSet name, FunctionBlock trueFunction, FunctionBlock falseFunction) {
+        super(name, new ArrayList<CodeBlock>(List.of(new FunctionBlock[]{trueFunction, falseFunction})));
+        this.set = name;
+        this.trueFunction = trueFunction;
+        this.falseFunction = falseFunction;
+        this.trueFunction.setContainer(this);
+        this.falseFunction.setContainer(this);
+        item = new ItemBuilder(Material.CHAIN).addLore(ChatColor.GREEN + "Right Click to Edit Required Values").build();
     }
 
-
+    public ConditionalBlock(){
+        getValueSet();
+        ValueSet sets = new ValueSet();
+        sets.addValueBlock("name", new ValueBlock(new ValueBlockData(Material.NAME_TAG, "True", ValueType.STRING, "True Function")));
+        trueFunction = new FunctionBlock(sets, new ArrayList<>());
+        ValueSet set1 = new ValueSet();
+        set1.addValueBlock("name", new ValueBlock(new ValueBlockData(Material.NAME_TAG, "False", ValueType.STRING, "False Function")));
+        falseFunction = new FunctionBlock(set1, new ArrayList<>());
+        trueFunction.setContainer(this);
+        falseFunction.setContainer(this);
+    }
 
     @Override
     public ValueSet getValueSet() {
-        if(set == null){
-            set = new ValueSet();
-            set.addValueBlock("a", new ValueBlock(ValueType.ANY));
-            set.addValueBlock("b", new ValueBlock(ValueType.ANY));
-            set.addValueBlock("conditional_type", new ValueBlock(ValueType.CONDITIONAL));
+        if(set == null) {
+            set = super.getValueSet();
+            ValueSet cond = new ValueSet();
+            cond.addValueBlock("a", new ValueBlock(new ValueBlockData(Material.BLUE_WOOL, "Value A", ValueType.INTEGER, null)));
+            cond.addValueBlock("b", new ValueBlock(new ValueBlockData(Material.GREEN_WOOL, "Value B", ValueType.INTEGER, null)));
+            cond.addValueBlock("conditional_type", new ValueBlock(new ValueBlockData(Material.OAK_FENCE_GATE, "Conditional Type", ValueType.CONDITIONAL, null)));
+            set.addValueBlock("conditionalBlock", new ConditionalValueBlock(new ValueBlockData(Material.REDSTONE, "Conditional Block", ValueType.BOOLEAN, null), cond));
         }
         return set;
     }
 
+    @Override
+    public HashMap<String, ValueBlock> getVariableScope() {
+        return null;
+    }
+
+    @Override
+    public boolean isRunnable() {
+        return super.isRunnable() && trueFunction != null && falseFunction != null;
+    }
+
+    @Override
+    public void run() {
+        ConditionalValueBlock valueBlock = (ConditionalValueBlock) getValueSet().getValueBlock("conditionalBlock");
+        if(valueBlock.evaluate()){
+            trueFunction.run();
+        } else {
+            falseFunction.run();
+        }
+    }
+
+    @Override
+    public void nextBlock() {
+        getContainer().nextBlock();
+    }
+
+    @Override
+    public void onGUILeftClick(Player player, GUI gui, InventoryClickEvent event) {
+        new ConditionalGUI(player, this).open();
+    }
+
+    @Override
+    public void onGUIRightClick(Player player, GUI gui, InventoryClickEvent event) {
+        new EditVariablesGUI(player, set).open();
+    }
 
     @Override
     public ItemStack getBaseItem() {
-        return new ItemBuilder(Material.REDSTONE_BLOCK).setName("Conditional Block").build();
+        return new ItemBuilder(Material.CHAIN).setName("Conditional Loop").build();
     }
-
-    public boolean evaluate(){
-        ValueBlock a = getA();
-        ValueBlock b = getB();
-        ConditionalType type = (ConditionalType) getValueSet().getValueBlock("conditional_type").getValue();
-        if(type == ConditionalType.EQUALS){
-            return a.getValue().equals(b.getValue());
-        } else if(type == ConditionalType.NOT_EQUALS){
-            return !a.getValue().equals(b.getValue());
-        } else{
-            if(a.getValue() instanceof Number){
-                switch(type){
-                    case GREATER_THAN:
-                        return ((Number) a.getValue()).doubleValue() > ((Number) b.getValue()).doubleValue();
-                    case GREATER_THAN_EQUALS:
-                        return ((Number) a.getValue()).doubleValue() >= ((Number) b.getValue()).doubleValue();
-                    case LESS_THAN:
-                        return ((Number) a.getValue()).doubleValue() < ((Number) b.getValue()).doubleValue();
-                    case LESS_THAN_EQUALS:
-                        return ((Number) a.getValue()).doubleValue() <= ((Number) b.getValue()).doubleValue();
-                }
-            }
-        }
-        return false;
-    }
-
-    public ValueBlock getA(){
-        return set.getValueBlock("a");
-    }
-
-    public ValueBlock getB(){
-        return set.getValueBlock("b");
-    }
-
 
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> data = super.serialize();
-        data.put("conditional_type", getValueSet().getValueBlock("conditional_type").getValue());
-        data.put("value_a", getA());
-        data.put("value_b", getB());
+        data.put("trueFunction", trueFunction);
+        data.put("falseFunction", falseFunction);
         return data;
     }
 
-    public static ConditionalBlock deserialize(Map<String, Object> data){
-        ValueBlock type = (ValueBlock) data.get("conditional_type");
-        ValueBlock a = (ValueBlock) data.get("value_a");
-        ValueBlock b = (ValueBlock) data.get("value_b");
-        return new ConditionalBlock(type, a, b);
+    public static ConditionalBlock deserialize(Map<String, Object> data) {
+        ArrayList<CodeBlock> lmap = (ArrayList<CodeBlock>) data.get("blocks");
+        ValueSet name = (ValueSet) data.get("name");
+        FunctionBlock trueFunction = (FunctionBlock) data.get("trueFunction");
+        FunctionBlock falseFunction = (FunctionBlock) data.get("falseFunction");
+        ConditionalBlock fin = new ConditionalBlock(name, trueFunction, falseFunction);
+        return fin;
+    }
+
+
+
+    public ConditionalValueBlock getConditionalBlock() {
+        return (ConditionalValueBlock) getValueSet().getValueBlock("conditionalBlock");
+    }
+
+    public FunctionBlock getTrueFunction() {
+        return trueFunction;
+    }
+
+    public FunctionBlock getFalseFunction() {
+        return falseFunction;
     }
 }

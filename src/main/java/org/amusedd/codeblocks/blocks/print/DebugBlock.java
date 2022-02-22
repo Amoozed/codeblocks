@@ -11,8 +11,8 @@ import java.util.Map;
 
 public class DebugBlock extends MessageBlock {
 
-    public DebugBlock() {
-        super(new ValueBlock(new ValueBlockData(Material.PAPER, "Debug Message", ValueType.STRING, "Debug Block executed successfully")));
+    public DebugBlock(ValueSet valueSet) {
+        super(valueSet);
     }
 
     @Override
@@ -21,7 +21,7 @@ public class DebugBlock extends MessageBlock {
     }
 
     public static DebugBlock deserialize(Map<String, Object> data){
-        return new DebugBlock();
+        return new DebugBlock((ValueSet) data.get("valueSet"));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.amusedd.codeblocks.gui;
 
+import org.amusedd.codeblocks.blocks.util.ConditionalBlock;
 import org.amusedd.codeblocks.blocks.util.loop.ConditionalLoop;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 
 public class ConditionalGUI extends GUI{
 
-    ConditionalLoop loop;
+    ConditionalBlock loop;
 
     ItemStack trueBlock;
     {
@@ -22,7 +23,7 @@ public class ConditionalGUI extends GUI{
         falseBlock = new ItemBuilder(Material.REDSTONE_BLOCK).setName("When False").build();
     }
 
-    public ConditionalGUI(Player player, ConditionalLoop loop) {
+    public ConditionalGUI(Player player, ConditionalBlock loop) {
         super(player);
         this.loop = loop;
     }
@@ -59,4 +60,7 @@ public class ConditionalGUI extends GUI{
     public ItemStack blankSpot() {
         return null;
     }
+
+    @Override
+    public void onClose() {}
 }

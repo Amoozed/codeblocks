@@ -42,4 +42,8 @@ public class CodeBlocksSelection extends ResponseGUI{
     public ItemStack blankSpot() {
         return null;
     }
+
+    @Override
+    public void onClose() {
+    }
 }

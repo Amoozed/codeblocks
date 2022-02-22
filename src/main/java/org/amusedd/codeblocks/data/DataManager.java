@@ -1,4 +1,4 @@
-package org.amusedd.codeblocks.commands.data;
+package org.amusedd.codeblocks.data;
 
 import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.bukkit.configuration.file.FileConfiguration;

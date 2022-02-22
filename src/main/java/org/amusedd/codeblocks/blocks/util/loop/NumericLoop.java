@@ -7,12 +7,14 @@ import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.gui.ContainerEditGUI;
 import org.amusedd.codeblocks.gui.EditVariablesGUI;
 import org.amusedd.codeblocks.gui.GUI;
+import org.amusedd.codeblocks.input.ValueBlockData;
 import org.amusedd.codeblocks.input.ValueSet;
 import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -24,11 +26,12 @@ import java.util.ArrayList;
 public class NumericLoop extends CodeBlockContainer {
     HashMap<String, ValueBlock> variableScope = new HashMap<>();
     ValueSet set;
-    int iterations;
+    int iterations = 1;
 
-    public NumericLoop(ValueBlock name, ArrayList<CodeBlock> codeBlocks, ValueBlock amount) {
+    public NumericLoop(ValueSet name, ArrayList<CodeBlock> codeBlocks) {
         super(name, codeBlocks);
-        if(amount.getValue() != null) getValueSet().getValueBlock("amount").setValue(amount.getValue());
+        this.set = name;
+        //if(getValueSet().getValueBlock("amount") != null && getValueSet().getValueBlock("amount").getData().getValue() != null) getValueSet().getValueBlock("amount").getData().setValue(amount.getData().getValue());
     }
 
     public NumericLoop(){}
@@ -43,39 +46,34 @@ public class NumericLoop extends CodeBlockContainer {
         return new ItemBuilder(Material.CHAIN_COMMAND_BLOCK).setName("Numeric Loop").build();
     }
 
-    @Override
-    public Map<String, Object> serialize() {
-        Map<String, Object> data = super.serialize();
-        data.put("amount", getValueSet().getValueBlock("amount"));
-        return data;
-    }
-
-
     public static NumericLoop deserialize(Map<String, Object> data) {
         ArrayList<CodeBlock> lmap = (ArrayList<CodeBlock>) data.get("blocks");
-        ItemStack item = (ItemStack) data.get("block");
-        ValueBlock name = (ValueBlock) data.get("name");
-        ValueBlock amount = (ValueBlock) data.get("amount");
-        NumericLoop fin = new NumericLoop(name, lmap, amount);
-        return fin;
+        //ItemStack item = (ItemStack) data.get("block");
+        //ValueBlock name = (ValueBlock) data.get("name");
+        //ValueBlock amount = (ValueBlock) data.get("amount");
+        return new NumericLoop((ValueSet) data.get("valueset"), lmap);
     }
 
     @Override
-    public void onGUIRightClick(Player player, GUI gui) {
+    public void onGUIRightClick(Player player, GUI gui, InventoryClickEvent event) {
         new EditVariablesGUI(player, set).open();
     }
 
     @Override
-    public void nextBlock() {
-        if(isFinished()) {
+    public void run() {
+        iterations = 1;
+        super.run();
+    }
+
+    @Override
+    public void onContainerFinish() {
+        System.out.println("finished :(");
+        System.out.println("Iteration: " + iterations + " of " + getValueSet().getValueBlock("amount").getData().getValue());
+        if(iterations < (int)getValueSet().getValueBlock("amount").getData().getValue()) {
             iterations++;
-            if(iterations < (int)getValueSet().getValueBlock("amount").getValue()) {
-                super.run();
-            } else{
-                getContainer().nextBlock();
-            }
-        } else {
-            super.nextBlock();
+            super.run();
+        } else{
+            getContainer().nextBlock();
         }
     }
 
@@ -83,7 +81,8 @@ public class NumericLoop extends CodeBlockContainer {
     public ValueSet getValueSet() {
         if(set == null) {
             set = super.getValueSet();
-            set.addValueBlock("amount", new ValueBlock(ValueType.INTEGER));
+            System.out.println("tis season of null");
+            set.addValueBlock("amount", new ValueBlock(new ValueBlockData(Material.GOLDEN_PICKAXE, "Amount", ValueType.INTEGER,  null)));
         }
         return set;
     }

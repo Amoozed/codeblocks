@@ -1,5 +1,6 @@
 package org.amusedd.codeblocks.gui;
 
+import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -7,6 +8,8 @@ import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,10 +53,13 @@ public abstract class GUI implements InventoryHolder {
         }
     }
 
+
     public void open() {
-        inventory = Bukkit.createInventory(this, getRows() * 9, (getName() != null) ? getName() : getClass().getSimpleName());
-        fillInventory();
-        owner.getPlayer().openInventory(inventory);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CodeBlocksPlugin.getInstance(), () -> {
+            inventory = Bukkit.createInventory(this, getRows() * 9, (getName() != null) ? getName() : getClass().getSimpleName());
+            fillInventory();
+            owner.getPlayer().openInventory(inventory);
+        }, 2);
     }
 
     public Player getOwner() {
@@ -72,8 +78,18 @@ public abstract class GUI implements InventoryHolder {
         System.out.println("No text response needed.");
     }
 
-    public void onPlayerGUISelection(ItemStack item, InventoryClickEvent event) {
+    public void onPlayerGUISelection(ItemStack item, InventoryClickEvent event, int from) {
         System.out.println("No GUI selection needed.");
     }
 
+    public void closeEvent(){
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CodeBlocksPlugin.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                onClose();
+            }
+        }, 3);
+    }
+
+    public abstract void onClose();
 }

@@ -103,7 +103,10 @@ public enum ValueType {
     }
 
     public ArrayList<ItemStack> getValueSelection() {
-        if (values == null && listValues == null) return null;
+        if (values == null && listValues == null) {
+            System.out.println("ValueType " + this + " has no values");
+            return null;
+        }
         ArrayList<ItemStack> items = new ArrayList<>();
         if (values != null) {
             for (Enum value : values) {
@@ -112,11 +115,13 @@ public enum ValueType {
                     items.add(item);
                 }
             }
-        } else if (listValues != null) {
+        } else if (listValues.size() > 0) {
             for (String value : listValues) {
+                System.out.println(value);
                 ItemStack item = new ItemBuilder(Material.STONE).setName(value).build();
                 items.add(item);
             }
+            System.out.println(items.size());
         }
         return items;
     }

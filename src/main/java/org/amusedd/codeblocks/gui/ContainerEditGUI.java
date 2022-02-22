@@ -7,6 +7,7 @@ import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.ItemStack;
@@ -47,15 +48,18 @@ public class ContainerEditGUI extends GUI {
         } else {
             CodeBlock codeBlock = container.getCodeBlock(event.getSlot());
             if (event.getClick().isRightClick()) {
-                codeBlock.onGUIRightClick(getOwner(), this);
+                codeBlock.onGUIRightClick(getOwner(), this, event);
             } else if (event.getClick().isLeftClick()) {
-                codeBlock.onGUILeftClick(getOwner(), this);
+                codeBlock.onGUILeftClick(getOwner(), this, event);
+            } else if(event.getClick().equals(ClickType.MIDDLE)){
+                container.removeCodeBlock(codeBlock);
+                open();
             }
         }
     }
 
     @Override
-    public void onPlayerGUISelection(ItemStack item, InventoryClickEvent event) {
+    public void onPlayerGUISelection(ItemStack item, InventoryClickEvent event, int from) {
         System.out.println("Clicked on " + item.getItemMeta().getDisplayName());
         if (item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(CodeBlocksPlugin.getInstance(), "createtype"), PersistentDataType.STRING)) {
             System.out.println("found tag");
@@ -72,6 +76,10 @@ public class ContainerEditGUI extends GUI {
     }
 
     @Override
+    public void onClose() {
+    }
+
+    @Override
     public void onPlayerTextResponse(ItemStack item, InventoryClickEvent event, String response) {
         super.onPlayerTextResponse(item, event, response);
     }
@@ -82,9 +90,9 @@ public class ContainerEditGUI extends GUI {
         HashMap<Integer, ItemStack> items = new HashMap<>();
         int d = 0;
         if (codeBlocks != null) {
-            for (int i = 0; i < codeBlocks.size(); i++) {
-                if(codeBlocks.get(i).getItem() != null) {
-                    items.put(d, codeBlocks.get(i).getItem());
+            for (CodeBlock codeBlock : codeBlocks) {
+                if (codeBlock != null && codeBlock.getItem() != null) {
+                    items.put(d, codeBlock.getRefreshedItem());
                     d++;
                 }
             }

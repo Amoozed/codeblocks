@@ -5,6 +5,7 @@ import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.ValueBlock;
 import org.amusedd.codeblocks.gui.EditVariablesGUI;
 import org.amusedd.codeblocks.gui.GUI;
+import org.amusedd.codeblocks.input.ValueBlockData;
 import org.amusedd.codeblocks.input.ValueSet;
 import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
@@ -12,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -25,8 +27,8 @@ public class Wait extends CodeBlock {
         item = new ItemBuilder(item).addLore(ChatColor.WHITE + "Seconds: " + ChatColor.GREEN + "Undefined").build();
     }
 
-    public Wait(ValueBlock seconds) {
-        if(seconds != null && seconds.getValue() != null) getValueSet().getValueBlock("seconds").setValue(seconds.getValue());
+    public Wait(ValueSet set) {
+        this.set = set;
     }
 
     @Override
@@ -36,45 +38,35 @@ public class Wait extends CodeBlock {
 
 
     @Override
-    public void onGUIRightClick(Player player, GUI gui) {
+    public void onGUIRightClick(Player player, GUI gui, InventoryClickEvent event) {
         new EditVariablesGUI(player, getValueSet()).open();
     }
 
     @Override
-    public void onGUILeftClick(Player player, GUI gui) {
-        getValueSet().getValueBlock("seconds").onGUIRightClick(player, gui);
+    public void onGUILeftClick(Player player, GUI gui, InventoryClickEvent event) {
+        getValueSet().getValueBlock("seconds").onGUIRightClick(player, gui, event);
     }
 
     @Override
     public ValueSet getValueSet() {
         if(set == null) {
             set = super.getValueSet();
-            set.addValueBlock("seconds", new ValueBlock(ValueType.INTEGER));
+            set.addValueBlock("seconds", new ValueBlock(new ValueBlockData(Material.CLOCK, "Seconds", ValueType.INTEGER, null)));
         }
         return set;
     }
 
     @Override
-    public boolean run() {
+    public void run() {
         Bukkit.getScheduler().runTaskLater(CodeBlocksPlugin.getInstance(), new Runnable() {
             @Override
             public void run() {
-                setFinishedExecution(true);
+                Wait.super.run();
             }
-        }, (int) getValueSet().getValueBlock("seconds").getValue());
-        return false;
+        }, (int) getValueSet().getValueBlock("seconds").getData().getValue());
     }
-
-    @Override
-    public Map<String, Object> serialize() {
-        Map<String, Object> map = super.serialize();
-        map.put("seconds", getValueSet().getValueBlock("seconds"));
-        return map;
-    }
-
-
 
     public static Wait deserialize(Map<String, Object> map) {
-        return new Wait((ValueBlock) map.get("seconds"));
+        return new Wait((ValueSet) map.get("valueset"));
     }
 }

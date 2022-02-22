@@ -1,6 +1,7 @@
 package org.amusedd.codeblocks.events;
 
 import org.amusedd.codeblocks.CodeBlocksPlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Cod;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
@@ -34,6 +35,7 @@ public class EventBlockUtility implements Listener {
             eventNames.add(eventClass.getSimpleName());
         });
 
+        System.out.println("Hehe: " + eventNames.size());
 
         // register events
         EventExecutor eventExecutor = (listener, event) -> OnEvent(event);
@@ -48,7 +50,8 @@ public class EventBlockUtility implements Listener {
         if (Arrays.stream(ignored).anyMatch(ignored -> event.getEventName().equals(ignored))) {
             return;
         }
-        CodeBlocksPlugin.getInstance().getLogger().info(event.getEventName() + " was called!");
+        Bukkit.getLogger().info(event.getEventName() + " was called!");
+        CodeBlocksPlugin.getInstance().getBlockStorage().runEventBlock(event);
     }
 
     public ArrayList<String> getEventNames() {

@@ -3,16 +3,22 @@ package org.amusedd.codeblocks.blocks.functions;
 import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.CodeBlocksPlugin;
 import org.amusedd.codeblocks.blocks.ValueBlock;
+import org.amusedd.codeblocks.gui.CreateWithVariablesGUI;
+import org.amusedd.codeblocks.gui.EditVariablesGUI;
 import org.amusedd.codeblocks.gui.GUI;
 import org.amusedd.codeblocks.input.ValueBlockData;
 import org.amusedd.codeblocks.input.ValueSet;
 import org.amusedd.codeblocks.input.ValueType;
+import org.amusedd.codeblocks.items.ItemBuilder;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Cod;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
@@ -23,24 +29,28 @@ public class EventFunctionBlock extends FunctionBlock {
     Event event;
     ValueSet set;
 
-    public EventFunctionBlock(ValueBlock name, ArrayList<CodeBlock> codeBlocks, ValueBlock eventType) {
+    public EventFunctionBlock(ValueSet name, ArrayList<CodeBlock> codeBlocks) {
         super(name, codeBlocks);
+        this.set = name;
     }
 
     public EventFunctionBlock(){
 
     }
 
+    @Override
+    public ItemStack getBaseItem() {
+        return new ItemBuilder(Material.COMMAND_BLOCK_MINECART).setName(getName()).addLore(ChatColor.GRAY + "Called on: " + ChatColor.WHITE + getEventType()).build();
+    }
 
     @Override
-    public boolean run() {
+    public void run() {
         System.out.println("Cannot execute event function block directly!");
-        return true;
     }
 
     public void onEvent(Event event) {
         this.event = event;
-        super.execute();
+        super.run();
     }
 
 
@@ -48,7 +58,7 @@ public class EventFunctionBlock extends FunctionBlock {
     public ValueSet getValueSet() {
         if(set == null) {
             set = super.getValueSet();
-            set.addValueBlock("event_type", new ValueBlock(new ValueBlockData(Material.ACACIA_BUTTON, "Event Type", ValueType.EVENT_TYPE, null)));
+            set.addValueBlock("event_type", new ValueBlock(new ValueBlockData(Material.MINECART, "Event Type", ValueType.EVENT_TYPE, null)));
         }
         return set;
     }
@@ -60,28 +70,26 @@ public class EventFunctionBlock extends FunctionBlock {
         }
     }
 
-
     @Override
-    public void onGUIRightClick(Player player, GUI gui) {}
-
-    public String getEventType(){
-       return event.getEventName();
+    public void onGUIRightClick(Player player, GUI gui, InventoryClickEvent event) {
+        new EditVariablesGUI(player, set).open();
     }
 
-    @Override
-    public Map<String, Object> serialize() {
-        Map<String, Object> data = super.serialize();
-        data.put("event", set.getValueBlock("event_type").getData().getValue());
-        return data;
+    public String getEventType(){
+       Object eventType = getValueSet().getValueBlock("event_type").getData().getValue();
+       System.out.println(getValueSet().getValueBlock("event_type").getData().getValue());
+       return (eventType == null) ? "Undefined" : "" + eventType;
     }
 
     public static EventFunctionBlock deserialize(Map<String, Object> map) {
-        ArrayList<CodeBlock> lmap = (ArrayList<CodeBlock>) map.get("blocks");
-        ValueBlock name = (ValueBlock) map.get("name");
-        ValueBlock eventType = (ValueBlock) map.get("eventType");
-        return new EventFunctionBlock(name, lmap, eventType);
+        return new EventFunctionBlock((ValueSet) map.get("valueset"), (ArrayList<CodeBlock>) map.get("blocks"));
     }
 
-
-
+    @Override
+    public void onVariableCreation(Player player, CreateWithVariablesGUI gui, InventoryClickEvent event) {
+        ItemMeta meta = getItem().getItemMeta();
+        meta.setDisplayName((String) getValueSet().getValueBlock("name").getData().getValue());
+        getItem().setItemMeta(meta);
+        CodeBlocksPlugin.getInstance().getBlockStorage().addEventBlock(this);
+    }
 }

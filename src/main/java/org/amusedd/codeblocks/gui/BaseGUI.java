@@ -39,6 +39,8 @@ public class BaseGUI extends GUI {
     public void itemClicked(ItemStack item, InventoryClickEvent event) {
         if (item.equals(functionPage)) {
             new FunctionPageGUI((Player) event.getWhoClicked()).open();
+        } else if (item.equals(eventPage)) {
+            new EventFunctionPageGUI(getOwner()).open();
         }
     }
 
@@ -53,5 +55,10 @@ public class BaseGUI extends GUI {
     @Override
     public ItemStack blankSpot() {
         return null;
+    }
+
+    @Override
+    public void onClose() {
+
     }
 }

@@ -1,9 +1,11 @@
 package org.amusedd.codeblocks.blocks.print;
 
 import org.amusedd.codeblocks.blocks.ValueBlock;
+import org.amusedd.codeblocks.input.ValueBlockData;
 import org.amusedd.codeblocks.input.ValueSet;
 import org.amusedd.codeblocks.input.ValueType;
 import org.amusedd.codeblocks.items.ItemBuilder;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -13,9 +15,8 @@ public class MessageToPlayerBlock extends MessageBlock{
 
     ValueSet set;
 
-    public MessageToPlayerBlock(ValueBlock text, ValueBlock player) {
+    public MessageToPlayerBlock(ValueSet text) {
         super(text);
-        if(player.getValue() != null) getValueSet().getValueBlock("player").setValue(player.getValue());
     }
 
     public MessageToPlayerBlock(){}
@@ -38,16 +39,15 @@ public class MessageToPlayerBlock extends MessageBlock{
     }
 
     public static MessageToPlayerBlock deserialize(Map<String, Object> data) {
-        ValueBlock text = (ValueBlock) data.get("text");
-        ValueBlock player = (ValueBlock) data.get("player");
-        return new MessageToPlayerBlock(text, player);
+        ValueSet set = (ValueSet) data.get("valueSet");
+        return new MessageToPlayerBlock(set);
     }
 
     @Override
     public ValueSet getValueSet() {
         if(set == null) {
             set = super.getValueSet();
-            set.addValueBlock("player", new ValueBlock(ValueType.PLAYER));
+            set.addValueBlock("player", new ValueBlock(new ValueBlockData(Material.PLAYER_HEAD, "Player", ValueType.PLAYER, null)));
         }
         return set;
     }

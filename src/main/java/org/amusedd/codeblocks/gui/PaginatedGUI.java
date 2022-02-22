@@ -24,7 +24,12 @@ public abstract class PaginatedGUI extends GUI {
 
     public PaginatedGUI(Player player) {
         super(player);
-        nextPage = new ItemStack(Material.ARROW);
+        //nextPage = new ItemStack(Material.ARROW);
+    }
+
+    @Override
+    public int getRows() {
+        return 6;
     }
 
     @Override
@@ -33,7 +38,7 @@ public abstract class PaginatedGUI extends GUI {
         items.put(45, nextPage);
         items.put(53, lastPage);
         for(int i = 46; i < 53; i++){
-            items.put(i, new ItemBuilder("", Material.GRAY_STAINED_GLASS_PANE).build());
+            items.put(i, new ItemBuilder(" ", Material.GRAY_STAINED_GLASS_PANE).build());
         }
         return items;
     }
@@ -44,17 +49,13 @@ public abstract class PaginatedGUI extends GUI {
 
     @Override
     public void itemClicked(ItemStack item, InventoryClickEvent event) {
-        boolean cancelled = true;
         if(item.equals(nextPage)) {
             currentPage = (currentPage + 1 > getPages()) ? 1 : currentPage + 1;
         } else if(item.equals(lastPage)) {
             currentPage = (currentPage - 1 < 1) ? getPages() : currentPage - 1;
         } else{
-            cancelled = false;
+
         }
-        event.setCancelled(cancelled);
-        if(cancelled) {
-            open();
-        }
+        open();
     }
 }

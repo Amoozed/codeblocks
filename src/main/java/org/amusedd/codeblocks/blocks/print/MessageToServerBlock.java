@@ -1,6 +1,7 @@
 package org.amusedd.codeblocks.blocks.print;
 
 import org.amusedd.codeblocks.blocks.ValueBlock;
+import org.amusedd.codeblocks.input.ValueSet;
 import org.amusedd.codeblocks.items.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -10,7 +11,7 @@ import java.util.Map;
 
 public class MessageToServerBlock extends MessageBlock{
 
-    public MessageToServerBlock(ValueBlock text) {
+    public MessageToServerBlock(ValueSet text) {
         super(text);
     }
 
@@ -28,6 +29,6 @@ public class MessageToServerBlock extends MessageBlock{
     }
 
     public static MessageToServerBlock deserialize(Map<String, Object> map) {
-        return new MessageToServerBlock((ValueBlock) map.get("text"));
+        return new MessageToServerBlock((ValueSet) map.get("valueset"));
     }
 }

@@ -27,6 +27,7 @@ public class ValueBlockData implements ConfigurationSerializable {
         this.type = type;
         this.isRequired = isRequired;
         this.value = value;
+        System.out.println("Pussy Woo-- " + name + ": " + value);
         item = new ItemBuilder(mat).setName(ChatColor.WHITE + "" + ChatColor.BOLD + name).build();
         updateLore();
     }

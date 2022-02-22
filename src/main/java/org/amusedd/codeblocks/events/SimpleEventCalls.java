@@ -5,6 +5,7 @@ import org.amusedd.codeblocks.input.ChatInput;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class SimpleEventCalls implements Listener {
@@ -25,6 +26,14 @@ public class SimpleEventCalls implements Listener {
             if(event.getCurrentItem() == null) return;
             GUI gui = (GUI) event.getInventory().getHolder();
             gui.itemClicked(event.getCurrentItem(), event);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onInventoryClose(InventoryCloseEvent event) {
+        if(event.getInventory().getHolder() instanceof GUI){
+            GUI gui = (GUI) event.getInventory().getHolder();
+            gui.closeEvent();
         }
     }
 }

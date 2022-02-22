@@ -3,6 +3,7 @@ package org.amusedd.codeblocks.blocks;
 import org.amusedd.codeblocks.blocks.functions.EventFunctionBlock;
 import org.amusedd.codeblocks.blocks.functions.FunctionBlock;
 import org.amusedd.codeblocks.CodeBlocksPlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Event;
@@ -26,23 +27,40 @@ public class BlockStorage {
         for (FileConfiguration file : config) {
             MemorySection memory = (MemorySection) file.get("data");
             for (String key : memory.getKeys(false)) {
-                System.out.println(memory.get(key));
-                CodeBlock block = (CodeBlock) memory.get(key);
-                if (block instanceof FunctionBlock) {
-                    FunctionBlock functionBlock = (FunctionBlock) block;
-                    containers.put(functionBlock.getName(), functionBlock);
+                try{
+                    CodeBlock block = (CodeBlock) memory.get(key);
+                    if (block instanceof EventFunctionBlock) {
+                        EventFunctionBlock eventBlock = (EventFunctionBlock) block;
+                        if (eventBlocks.containsKey(eventBlock.getEventType())) {
+                            eventBlocks.get(eventBlock.getEventType()).add(eventBlock);
+                        } else {
+                            ArrayList<EventFunctionBlock> blocks = new ArrayList<>();
+                            blocks.add(eventBlock);
+                            eventBlocks.put(eventBlock.getEventType(), blocks);
+                        }
+                    } else if (block instanceof FunctionBlock) {
+                        FunctionBlock functionBlock = (FunctionBlock) block;
+                        containers.put(functionBlock.getName(), functionBlock);
+                    }
+                } catch (Exception e){
+                    Bukkit.getLogger().warning("Cannot load codeblock named \"" + key  + "\" due to " + e.getCause().toString());
                 }
             }
-            /*
-                       for (String key : data.keySet()) {
-                Map<String, Object> blockData = (Map<String, Object>) data.get(key);
-                CodeBlock block = deserializeCodeBlock(blockData);
-                if (block instanceof FunctionBlock) {
-                    FunctionBlock functionBlock = (FunctionBlock) block;
-                    functionBlocks.put(functionBlock.getName(), functionBlock);
-                }
-            }
-             */
+        }
+    }
+
+    public void addEventBlock(EventFunctionBlock block) {
+        String eventName = block.getEventType();
+        if(eventName.equals("Undefined")) {
+            Bukkit.getLogger().warning("Cannot add event block with undefined event type");
+            return;
+        }
+        if (eventBlocks.containsKey(eventName)) {
+            eventBlocks.get(eventName).add(block);
+        } else {
+            ArrayList<EventFunctionBlock> blocks = new ArrayList<>();
+            blocks.add(block);
+            eventBlocks.put(eventName, blocks);
         }
     }
 
@@ -50,7 +68,6 @@ public class BlockStorage {
         String eventName = event.getEventName();
         if (eventBlocks.containsKey(eventName)) {
             for (EventFunctionBlock block : eventBlocks.get(eventName)) {
-                //Class<? extends Event> eventClass = (Class<? extends Event>) Class.forName(eventName);
                 block.onEvent(event);
             }
         }
@@ -77,6 +94,27 @@ public class BlockStorage {
         return new ArrayList<>(containers.values());
     }
 
+    public void removeContainer(String name){
+        containers.remove(name);
+    }
+
+    public ArrayList<EventFunctionBlock> getEventBlocks(){
+        return eventBlocks.values().stream().reduce(new ArrayList<>(), (a, b) -> {
+            a.addAll(b);
+            return a;
+        });
+    }
+
+    public EventFunctionBlock getEventBlock(String name){
+        for(ArrayList<EventFunctionBlock> blocks : eventBlocks.values()){
+            for(EventFunctionBlock block : blocks){
+                if(block.getName().equals(name)) return block;
+            }
+        }
+        Bukkit.getLogger().warning("Cannot find event block named \"" + name + "\"");
+        return null;
+    }
+
     public void prepareSave(){
         Map<String, Object> data = new HashMap<>();
         for(CodeBlockContainer block : containers.values()){
@@ -89,22 +127,4 @@ public class BlockStorage {
         }
         instance.getDataManager().directSave("data", "data", data);
     }
-
-    /*
-    CodeBlock deserializeCodeBlock(Map<String, Object> blockData){
-        try{
-            if (blockData.containsKey("type")) {
-                String type = (String) blockData.get("type");
-                Class<? extends CodeBlock> clazz = (Class<? extends CodeBlock>) Class.forName(type);
-                Method m = clazz.getMethod("deserialize", Map.class);
-                CodeBlock block = (CodeBlock) m.invoke(clazz, blockData);
-                return block;
-            }
-        } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-     */
 }
