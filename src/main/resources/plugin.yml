@@ -1,6 +1,6 @@
 name: CodeBlocks
 version: 'DEV'
-main: org.amusedd.codeblocks.CodeBlocksPlugin
+main: org.amusedd.codeblocks.CodeBlocks
 api-version: 1.16
 prefix: CodeBlocks
 authors: [ Amusedd ]
