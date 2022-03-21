@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 public class ValueWrapper {
     HashMap<Class, Wrapper> wrappers;
+    HashMap<Class, SpecifiedSet> sets;
     Wrapper anyWrapper;
     public ValueWrapper(){
         wrappers = new HashMap<Class, Wrapper>();
@@ -21,15 +22,24 @@ public class ValueWrapper {
             }
         }
         anyWrapper = new AnyWrapper();
+        sets = new HashMap<Class, SpecifiedSet>();
+        for (Class<? extends SpecifiedSet> clazz : new Reflections("org.amusedd.codeblocks.util.values.sets").getSubTypesOf(SpecifiedSet.class)) {
+            try {
+                SpecifiedSet set = clazz.getDeclaredConstructor().newInstance();
+                sets.put(set.getType(), set);
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    public Class getClass(Object value){
+    Class getClass(Object value){
         if(wrappers.containsKey(value.getClass())){
             return wrappers.get(value.getClass()).getType();
         } else {
             for (Class clazz : wrappers.keySet()) {
                 if (clazz.isAssignableFrom(value.getClass())) {
-                    return get(clazz).getType();
+                    return getWrapper(clazz).getType();
                 }
             }
         }
@@ -37,7 +47,8 @@ public class ValueWrapper {
     }
 
     public ValueBlock getWrappedValue(Class type, Object value){
-        Wrapper wrapper = get(type);
+        Wrapper wrapper = getWrapper(type);
+        if(wrapper == null) wrapper = anyWrapper;
         if(wrapper.isOfType(value)){
             return (value instanceof String) ? wrapper.wrap((String) value) : wrapper.wrap(value);
         } else {
@@ -65,11 +76,30 @@ public class ValueWrapper {
         return null;
     }
 
-    Wrapper get(Class type){
+    public boolean hasWrapper(Class type){
+        System.out.println("wrapp er " + type.getSimpleName());
+        return getWrapper(type) != null;
+    }
+
+    public String unwrapToString(ValueBlock value){
+        Wrapper wrapper = wrappers.get(value.getData().getType());
+        if(wrapper.isOfType(value)){
+            return wrapper.unwrapToString(value);
+        }
+        Bukkit.getLogger().warning("Value " + value + " is not of type " + value.getData().getType().getSimpleName());
+        return null;
+    }
+
+    Wrapper getWrapper(Class type){
+        System.out.println("dee derr " + type.getSimpleName());
         if(type.equals(Object.class)){
             return anyWrapper;
         }
         return wrappers.get(type);
+    }
+
+    public SpecifiedSet getSet(Class type){
+        return sets.get(type);
     }
 
 }

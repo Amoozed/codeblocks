@@ -7,3 +7,6 @@ authors: [ Amusedd ]
 description: Create your own plugins in game without coding.
 commands:
   codeblocks:
+    aliases: [ cb ]
+    description: Open main menu for CodeBlocks
+    usage: /codeblocks or /cb

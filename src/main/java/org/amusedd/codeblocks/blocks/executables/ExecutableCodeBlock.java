@@ -1,8 +1,11 @@
 package org.amusedd.codeblocks.blocks.executables;
 
-import org.amusedd.codeblocks.blocks.CodeBlockContainer;
+import org.amusedd.codeblocks.blocks.Viewable;
+import org.amusedd.codeblocks.blocks.executables.containers.CodeBlockContainer;
+import org.amusedd.codeblocks.menu.InitializeBlockMenu;
+import org.bukkit.entity.Player;
 
-public interface ExecutableCodeBlock {
+public interface ExecutableCodeBlock extends Viewable {
     default void execute(){
         if(run()){
             finishExecution();
@@ -11,6 +14,10 @@ public interface ExecutableCodeBlock {
 
     boolean run();
     CodeBlockContainer getContainer();
+    default void addToContainer(CodeBlockContainer container){
+        setContainer(container);
+        container.add(this);
+    }
     void setContainer(CodeBlockContainer container);
     default void finishExecution(){
         if(getContainer() != null){

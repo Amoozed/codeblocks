@@ -15,6 +15,11 @@ public class AnyWrapper implements Wrapper<Object>{
     }
 
     @Override
+    public String unwrapToString(Object value) {
+        return value + "";
+    }
+
+    @Override
     public Object unwrap(ValueBlock value) {
         return value.getValue();
     }
