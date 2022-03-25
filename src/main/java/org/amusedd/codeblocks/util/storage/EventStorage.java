@@ -3,9 +3,7 @@ package org.amusedd.codeblocks.util.storage;
 import org.amusedd.codeblocks.CodeBlockConstants;
 import org.amusedd.codeblocks.CodeBlocks;
 import org.amusedd.codeblocks.blocks.executables.containers.EventFunctionBlock;
-import org.amusedd.codeblocks.blocks.value.ValueBlock;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
@@ -119,7 +117,7 @@ public class EventStorage implements Listener {
         for(String key : eventBlocks.keySet()) {
             ArrayList<EventFunctionBlock> blocks = eventBlocks.get(key);
             for(EventFunctionBlock block : blocks) {
-                if(block.getType().equals(name)){
+                if(block.getCodeBlockType().equals(name)){
                     return block;
                 }
             }

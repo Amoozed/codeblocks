@@ -4,7 +4,6 @@ import org.amusedd.codeblocks.blocks.Viewable;
 import org.amusedd.codeblocks.blocks.executables.containers.CodeBlockContainer;
 import org.amusedd.codeblocks.blocks.value.ValueBlock;
 import org.amusedd.codeblocks.blocks.value.ValueSetBlock;
-import org.amusedd.codeblocks.commands.input.communication.Receiver;
 import org.amusedd.codeblocks.menu.InitializeBlockMenu;
 import org.bukkit.entity.Player;
 
@@ -26,7 +25,7 @@ public interface ValueHolder {
         return getValueSet().get(name);
     }
 
-    default void setValue(String name, Object value) {
+    default void setValueInSet(String name, Object value) {
         getValueSet().get(name).setValue(value);
         if (this instanceof Viewable) {
             ((Viewable) this).updateItemLore();

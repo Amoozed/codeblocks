@@ -2,6 +2,7 @@ package org.amusedd.codeblocks.blocks.value;
 
 import org.amusedd.codeblocks.menu.Menu;
 import org.amusedd.codeblocks.util.ViewData;
+import org.amusedd.codeblocks.util.values.ValueBlockData;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -23,6 +24,9 @@ public class ConditionalValueBlock extends ValueBlock {
     }
 
     public static ConditionalValueBlock deserialize(Map<String, Object> map){
-        return new ConditionalValueBlock((String)map.get("name"), (List<String>)map.get("description"), (boolean)map.get("value"));
+        ValueBlockData data = (ValueBlockData) map.get("data");
+        return new ConditionalValueBlock(data.getName(), data.getViewData().getDescription(), (boolean) data.getValue());
     }
+
+
 }

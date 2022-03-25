@@ -1,9 +1,12 @@
 package org.amusedd.codeblocks.blocks.value;
 
 import org.amusedd.codeblocks.blocks.CodeBlock;
+import org.amusedd.codeblocks.blocks.CodeBlockInfo;
 import org.amusedd.codeblocks.blocks.executables.ExecutableCodeBlock;
 import org.amusedd.codeblocks.blocks.executables.ValueHolder;
 import org.amusedd.codeblocks.blocks.executables.containers.CodeBlockContainer;
+import org.amusedd.codeblocks.commands.input.communication.Conversation;
+import org.amusedd.codeblocks.commands.input.communication.Receiver;
 import org.amusedd.codeblocks.util.ViewData;
 import org.amusedd.codeblocks.util.items.ItemBuilder;
 import org.amusedd.codeblocks.util.values.ValueBlockData;
@@ -13,19 +16,30 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SetVariableBlock extends CodeBlock implements ExecutableCodeBlock, ValueHolder {
+@CodeBlockInfo(viewName = "Set Variable", viewMaterial = Material.EMERALD_BLOCK, description = {"&7Sets a defined variable to a given value at runtime."})
+public class SetVariableBlock extends CodeBlock implements ExecutableCodeBlock, ValueHolder, Receiver {
     ValueSetBlock valueSetBlock;
     CodeBlockContainer container;
 
     public SetVariableBlock(ValueSetBlock valueSetBlock) {
         this.valueSetBlock = valueSetBlock;
+        getValueSet().setChangeCallback(this);
     }
 
     public SetVariableBlock(){
         HashMap<String, ValueBlock> valueBlocks = new HashMap<String, ValueBlock>();
-        valueBlocks.put("variable", new ValueBlock(new ValueBlockData(new ViewData("Name of Variable", Material.NAME_TAG), String.class, null)));
+        valueBlocks.put("variable", new ValueBlock(new ValueBlockData(new ViewData("Name of Variable", Material.DIAMOND_BLOCK), VariableBlock.class, null)));
         valueBlocks.put("value", new ValueBlock(new ValueBlockData(new ViewData("Value", Material.DIAMOND), Object.class, null, false)));
         this.valueSetBlock = new ValueSetBlock(valueBlocks);
+        getValueSet().setChangeCallback(this);
+    }
+
+    public VariableBlock getVariableBlock(){
+        return (VariableBlock)valueSetBlock.get("variable").getRawValue();
+    }
+
+    public Object getValue(){
+        return getValueBlock("value").getValue();
     }
 
     @Override
@@ -35,6 +49,8 @@ public class SetVariableBlock extends CodeBlock implements ExecutableCodeBlock, 
 
     @Override
     public boolean run() {
+        VariableBlock variableBlock = getVariableBlock();
+        variableBlock.setValue(getValue(), false);
         return true;
     }
 
@@ -55,5 +71,15 @@ public class SetVariableBlock extends CodeBlock implements ExecutableCodeBlock, 
 
     public static SetVariableBlock deserialize(Map<String, Object> data){
         return new SetVariableBlock((ValueSetBlock) data.get("valueset"));
+    }
+
+    @Override
+    public void onValueBlockEdit(Conversation conversation, ValueBlock valueBlock) {
+        System.out.println("ValueBlockEdit");
+        if(valueBlock.equals(getValueBlock("variable"))){
+            System.out.println("farvk");
+            getValueBlock("value").getData().setType(getVariableBlock().getVariableType());
+        }
+        conversation.complete();
     }
 }

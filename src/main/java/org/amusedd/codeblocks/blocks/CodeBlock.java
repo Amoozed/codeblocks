@@ -17,7 +17,7 @@ public abstract class CodeBlock implements ConfigurationSerializable {
         return map;
     }
 
-    public String getType(){
+    public String getCodeBlockType(){
         return this.getClass().getSimpleName();
     }
     public CodeBlockInfo getInfo(){return getClass().getAnnotation(CodeBlockInfo.class);}

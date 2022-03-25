@@ -1,5 +1,6 @@
 package org.amusedd.codeblocks.blocks.value;
 
+import org.amusedd.codeblocks.blocks.executables.ValueHolder;
 import org.amusedd.codeblocks.commands.input.communication.Conversation;
 import org.amusedd.codeblocks.commands.input.communication.Receiver;
 import org.amusedd.codeblocks.menu.EditVariablesMenu;
@@ -14,6 +15,7 @@ import java.util.Map;
 public class ValueSetBlock extends ValueBlock {
     HashMap<String, ValueBlock> values;
     Receiver changeCallback;
+    ValueHolder valueHolder;
 
     public ValueSetBlock(String name, HashMap<String, ValueBlock> values) {
         super(name, Material.EMERALD_BLOCK, ValueSetBlock.class, null);
@@ -23,14 +25,28 @@ public class ValueSetBlock extends ValueBlock {
         }
     }
 
+
+    public ValueSetBlock(String name, HashMap<String,ValueBlock> values, ValueHolder valueHolder) {
+        this(name, values);
+        setHolder(valueHolder);
+    }
+
     public ValueSetBlock(String name, ValueBlock... values) {
         super(name, Material.EMERALD_BLOCK, ValueSetBlock.class, null);
-        HashMap<String, ValueBlock> map = new HashMap<String, ValueBlock>();
+        HashMap<String, ValueBlock> map = new HashMap<>();
         for (ValueBlock value : values) {
             map.put(value.getData().getName(), value);
             value.setParent(this);
         }
         this.values = map;
+    }
+
+    public ValueHolder getHolder() {
+        return valueHolder;
+    }
+
+    public void setHolder(ValueHolder valueHolder) {
+        this.valueHolder = valueHolder;
     }
 
     public ValueSetBlock(HashMap<String, ValueBlock> values) {

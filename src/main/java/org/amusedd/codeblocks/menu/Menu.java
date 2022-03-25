@@ -72,11 +72,15 @@ public abstract class Menu implements InventoryHolder {
         return parent;
     }
 
+    public void setParent(Menu parent){
+        this.parent = parent;
+    }
+
     public final void open() {
         forceClosed = false;
         if(owner.getOpenInventory().getTopInventory().getHolder() instanceof Menu){
             if(parent == null) {
-                parent = (Menu) owner.getOpenInventory().getTopInventory().getHolder();
+                setParent((Menu)owner.getOpenInventory().getTopInventory().getHolder());
                 parent.forceClose();
             }
             else ((Menu) owner.getOpenInventory().getTopInventory().getHolder()).forceClose();
@@ -113,6 +117,12 @@ public abstract class Menu implements InventoryHolder {
         if (parent != null) {
             parent.open();
         }
+    }
+
+    public Menu getFirstParentOfType(Class<? extends Menu> menuClass){
+        if(parent == null) return null;
+        if(menuClass.isAssignableFrom(parent.getClass())) return parent;
+        return parent.getFirstParentOfType(menuClass);
     }
 
     public void forceClose(){

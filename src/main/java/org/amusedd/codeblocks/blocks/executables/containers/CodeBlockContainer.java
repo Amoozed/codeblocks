@@ -69,6 +69,12 @@ public abstract class CodeBlockContainer extends CodeBlock implements Executable
         }
     }
 
+    @Override
+    public void finishExecution() {
+        getVariables().forEach(VariableBlock::reset);
+        ExecutableCodeBlock.super.finishExecution();
+    }
+
     public ArrayList<ExecutableCodeBlock> getBlocks(){
         return new ArrayList<>(blocks);
     }

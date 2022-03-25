@@ -3,9 +3,11 @@ package org.amusedd.codeblocks.blocks.value;
 import org.amusedd.codeblocks.CodeBlocks;
 import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.Viewable;
+import org.amusedd.codeblocks.blocks.executables.containers.CodeBlockContainer;
 import org.amusedd.codeblocks.commands.input.ChatInput;
 import org.amusedd.codeblocks.commands.input.communication.Conversation;
 import org.amusedd.codeblocks.commands.input.communication.Receiver;
+import org.amusedd.codeblocks.menu.ContainerEditMenu;
 import org.amusedd.codeblocks.menu.Menu;
 import org.amusedd.codeblocks.menu.SelectMenu;
 import org.amusedd.codeblocks.util.ViewData;
@@ -58,25 +60,18 @@ public class ValueBlock extends CodeBlock implements Viewable, Receiver {
     }
 
     public Object getValue() {
-        if(data.getValue() instanceof VariableBlock){
+        if (data.getValue() instanceof VariableBlock) {
             return ((VariableBlock) data.getValue()).getValue();
         }
-        if(CodeBlocks.getPlugin().getValueWrapper().hasWrapper(data.getType())) {
+        if (CodeBlocks.getPlugin().getValueWrapper().hasWrapper(data.getType())) {
             return CodeBlocks.getPlugin().getValueWrapper().getUnwrappedValue(this);
         } else {
             return getRawValue();
         }
     }
 
-    public String getValueAsString(){
-        if(CodeBlocks.getPlugin().getValueWrapper().hasWrapper(data.getType())) {
-            return CodeBlocks.getPlugin().getValueWrapper().unwrapToString(this);
-        }
-        return getValue().toString();
-    }
-
     public void setValue(Object value) {
-        if(value instanceof VariableBlock){
+        if (value instanceof VariableBlock) {
             data.setValue(value);
         } else if (CodeBlocks.getPlugin().getValueWrapper().hasWrapper(data.getType())) {
             ValueBlock block = CodeBlocks.getPlugin().getValueWrapper().getWrappedValue(data.getType(), value);
@@ -84,7 +79,8 @@ public class ValueBlock extends CodeBlock implements Viewable, Receiver {
                 block.getData().setViewData(data.getViewData());
                 block.getData().setType(data.getType());
                 getParent().replace(this, block);
-                if(getParent() != null) getParent().callChange(block);
+                if (getParent() != null) getParent().callChange(block);
+                return;
             } else {
                 CodeBlocks.getPlugin().getLogger().warning("Could not find value block for type: " + data.getType().getSimpleName() + " and value: " + value);
             }
@@ -92,7 +88,14 @@ public class ValueBlock extends CodeBlock implements Viewable, Receiver {
             data.setValue(value);
             CodeBlocks.getPlugin().getLogger().info("No wrapper for type: " + data.getType().getSimpleName() + " and value: " + value);
         }
+        if (getParent() != null) getParent().callChange(this);
+    }
 
+    public String getValueAsString() {
+        if (CodeBlocks.getPlugin().getValueWrapper().hasWrapper(data.getType())) {
+            return CodeBlocks.getPlugin().getValueWrapper().unwrapToString(this);
+        }
+        return getValue().toString();
     }
 
     @Override
@@ -113,7 +116,22 @@ public class ValueBlock extends CodeBlock implements Viewable, Receiver {
 
     @Override
     public void onGUIItemLeftClick(InventoryClickEvent event) {
-        if (CodeBlocks.getPlugin().getValueWrapper().getSet(data.getType()) != null) {
+        if (isRepresentingVariable()) {
+            Menu menu = (Menu) event.getClickedInventory().getHolder();
+            Menu parent = menu.getFirstParentOfType(ContainerEditMenu.class);
+            System.out.println("aught " + menu.getParent().getName() + " : " + (parent instanceof ContainerEditMenu));
+            if (parent instanceof ContainerEditMenu) {
+                ContainerEditMenu containerEditMenu = (ContainerEditMenu) parent;
+                CodeBlockContainer container = containerEditMenu.getContainer();
+                ArrayList<VariableBlock> variableBlocks = container.getAllVariables();
+                ArrayList<ItemStack> items = new ArrayList<>();
+                for (VariableBlock variableBlock : variableBlocks) {
+                    items.add(variableBlock.getGUIItem());
+                }
+                new SelectMenu((Player) event.getWhoClicked(), items, this, 1).open();
+            }
+        }
+        else if (CodeBlocks.getPlugin().getValueWrapper().getSet(data.getType()) != null) {
             SpecifiedSet set = CodeBlocks.getPlugin().getValueWrapper().getSet(data.getType());
             new SelectMenu((Player) event.getWhoClicked(), (ArrayList<ItemStack>) set.getAsItems(), this).open();
         } else {
@@ -123,14 +141,50 @@ public class ValueBlock extends CodeBlock implements Viewable, Receiver {
     }
 
     @Override
-    public void onItemResponse(Conversation conversation, InventoryClickEvent event, int position) {
-        System.out.println("Response: " + position);
-        String value = event.getCurrentItem().getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CodeBlocks.getPlugin(), "type"), PersistentDataType.STRING);
+    public void onGUIItemRightClick(InventoryClickEvent event) {
+        if(isRepresentingVariable()) {
+            onGUIItemLeftClick(event);
+            return;
+        }
+        Menu menu = (Menu) event.getClickedInventory().getHolder();
+        Menu parent = menu.getFirstParentOfType(ContainerEditMenu.class);
+        System.out.println("aught " + menu.getParent().getName() + " : " + (parent instanceof ContainerEditMenu));
+        if (parent instanceof ContainerEditMenu) {
+            ContainerEditMenu containerEditMenu = (ContainerEditMenu) parent;
+            CodeBlockContainer container = containerEditMenu.getContainer();
+            ArrayList<VariableBlock> variableBlocks = container.getAllVariables();
+            ArrayList<ItemStack> items = new ArrayList<>();
+            for (VariableBlock variableBlock : variableBlocks) {
+                items.add(variableBlock.getGUIItem());
+            }
+            new SelectMenu((Player) event.getWhoClicked(), items, this, 1).open();
+        }
+    }
+
+
+    public boolean isRepresentingVariable(){
+        return getValueType().equals(VariableBlock.class);
+    }
+
+    @Override
+    public void onItemResponse(Conversation conversation, InventoryClickEvent event, int from) {
+        System.out.println("Response: " + from);
+        Object value = event.getCurrentItem().getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CodeBlocks.getPlugin(), "type"), PersistentDataType.STRING);
+        if (from == 1) {
+            System.out.println("Setting value to: " + value);
+            SelectMenu menu = (SelectMenu) conversation.getSender();
+            ContainerEditMenu containerEditMenu = ((ContainerEditMenu) menu.getFirstParentOfType(ContainerEditMenu.class));
+            CodeBlockContainer container = containerEditMenu.getContainer();
+            // Get the first variable block from the container that shares the same name as the value
+            String name = value + "";
+            value = container.getAllVariables().stream().filter(v -> v.getName().equals(name)).findFirst().orElse(null);
+        }
         if (value != null) {
             setValue(value);
         } else {
             CodeBlocks.getPlugin().getLogger().warning("Could not find value block for type: " + data.getType().getSimpleName() + " and value: " + value);
         }
+        conversation.complete();
     }
 
     @Override
@@ -141,7 +195,7 @@ public class ValueBlock extends CodeBlock implements Viewable, Receiver {
             block.getData().setType(data.getType());
             getParent().replace(this, block);
             if (sender != null) sender.complete();
-            if(getParent() != null) getParent().callChange(block);
+            if (getParent() != null) getParent().callChange(block);
         } else {
             CodeBlocks.getPlugin().getLogger().warning("Could not find value block for type: " + data.getType().getSimpleName() + " and value: " + text);
         }

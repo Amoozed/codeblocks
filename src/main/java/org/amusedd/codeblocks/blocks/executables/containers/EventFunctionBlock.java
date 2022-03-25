@@ -33,7 +33,7 @@ public class EventFunctionBlock extends CodeBlockContainer implements ValueHolde
         HashMap<String, ValueBlock> map = new HashMap<>();
         map.put("name", new ValueBlock("Name of Event Function", Material.NAME_TAG, String.class, null));
         map.put("event_type", new ValueBlock("Activation Event", Material.BEACON, EventType.class, null));
-        addVariable("event", new VariableBlock("Event", Event.class, null), true);
+        addVariable("event", new VariableBlock("Event", Event.class, null, false), true);
         this.valueSetBlock = new ValueSetBlock(map);
     }
 

@@ -22,7 +22,7 @@ public class ViewData implements ConfigurationSerializable {
         this.viewName = viewName;
         this.material = material;
         this.description = description;
-        this.item = new ItemBuilder(material).setName(ChatColor.WHITE + viewName).setLore(description).build();
+        refreshItem();
     }
 
     public ViewData(String viewName, Material material){
@@ -35,10 +35,19 @@ public class ViewData implements ConfigurationSerializable {
 
     public void setMaterial(Material material) {
         this.material = material;
+        refreshItem();
+    }
+
+    public void refreshItem(){
+        this.item = new ItemBuilder(material).setName(ChatColor.WHITE + viewName).setLore(description).build();
     }
 
     public ItemStack getItem() {
         return item;
+    }
+
+    public List<String> getDescription(){
+        return description;
     }
 
     @Override
