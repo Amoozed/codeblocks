@@ -11,7 +11,9 @@ import org.bukkit.event.Listener;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class DataManager {
     final HashMap<String, ConfigurationSerializable> queuedSaves = new HashMap<>();
@@ -35,6 +37,11 @@ public class DataManager {
         return configs;
     }
 
+    public void purge(){
+        queuedSaves.clear();
+        ArrayList<File> files = new ArrayList<File>(List.of(new File(CodeBlocks.getPlugin().getDataFolder() + "").listFiles()));
+        files.forEach(File::delete);
+    }
 
 
     public void unloadAll() {

@@ -14,5 +14,6 @@ public @interface CodeBlockInfo {
     String viewName();
     Material viewMaterial() default Material.STONE;
     String[] description() default {};
+    String category() default "miscellaneous";
     boolean creatable() default true;
 }

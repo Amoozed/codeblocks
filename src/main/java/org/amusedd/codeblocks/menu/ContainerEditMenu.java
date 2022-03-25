@@ -34,7 +34,6 @@ public class ContainerEditMenu extends Menu implements Receiver {
         variables = new ItemBuilder(Material.PAPER).setName(ChatColor.WHITE + "Variables").build();
     }
 
-
     public ContainerEditMenu(Player player, CodeBlockContainer container) {
         super(player);
         this.container = container;

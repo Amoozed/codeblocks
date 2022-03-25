@@ -10,3 +10,6 @@ commands:
     aliases: [ cb ]
     description: Open main menu for CodeBlocks
     usage: /codeblocks or /cb
+  executefunction:
+    description: Execute a function in CodeBlocks
+    usage: /executefunction <name of standalone>

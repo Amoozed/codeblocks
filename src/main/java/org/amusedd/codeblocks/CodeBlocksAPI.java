@@ -30,6 +30,7 @@ import java.util.Map;
 
 public class CodeBlocksAPI {
     HashMap<Class<? extends CodeBlock>, ViewData> blockPreviews = new HashMap<>();
+    HashMap<String, ViewData> categoryPreviews = new HashMap<>();
     protected CodeBlocksAPI() {
         initalizeBaseBlocks();
         // String, Integer, Double, Boolean, Event
@@ -38,6 +39,7 @@ public class CodeBlocksAPI {
         registerType(new TypeData(Double.class, Material.RABBIT_STEW, List.of(ChatColor.GRAY + "Represents a value that can contain decimal numbers")));
         registerType(new TypeData(Boolean.class, Material.COMPARATOR, List.of(ChatColor.GRAY + "Represents a value (conditional) that can be true or false")));
         registerType(new TypeData(Event.class, Material.BEACON, List.of(ChatColor.GRAY + "Represents an event that can be triggered")));
+        categoryPreviews.put("miscellaneous", new ViewData("Miscellaneous", Material.TNT, List.of(ChatColor.GRAY + "Miscellaneous/Uncategorized CodeBlocks")));
     }
 
     public void registerCodeBlock(Class<? extends CodeBlock> codeBlockClass) {
@@ -74,21 +76,50 @@ public class CodeBlocksAPI {
     }
 
     public ArrayList<ItemStack> getPreviews(){
-        //TODO: Add category support
-        ArrayList<ItemStack> items = new ArrayList<>();
+        HashMap<String, ArrayList<ItemStack>> items = new HashMap<>();
         for (Class<? extends CodeBlock> clazz : blockPreviews.keySet()) {
             ViewData data = blockPreviews.get(clazz);
             ItemStack preview = data.getItem();
+            String category = clazz.getAnnotation(CodeBlockInfo.class).category();
             ItemMeta meta = preview.getItemMeta();
             meta.getPersistentDataContainer().set(new NamespacedKey(CodeBlocks.getPlugin(), "type"), PersistentDataType.STRING, clazz.getName());
             preview.setItemMeta(meta);
-            items.add(preview);
+            if(items.containsKey(category)){
+                items.get(category).add(preview);
+            } else {
+                ArrayList<ItemStack> list = new ArrayList<>();
+                list.add(preview);
+                items.put(category, list);
+            }
+        }
+        for (String category : items.keySet()) {
+            if(category.contains("/")){
+                String[] split = category.split("/");
+                for(String s : split){
+                    if(items.containsKey(s)){
+                        items.get(s).add(categoryPreviews.get(s).getItem());
+                    } else {
+                        ArrayList<ItemStack> list = new ArrayList<>();
+                        list.add(categoryPreviews.get(s).getItem());
+                        items.put(s, list);
+                    }
+                }
+                items.remove(category);
+            }
         }
         return items;
     }
 
     public void registerType(TypeData data){
         TypeSelection.addType(data.getType(), data);
+    }
+    public ViewData getCategoryPreview(String category){
+        if(categoryPreviews.containsKey(category)) return categoryPreviews.get(category);
+        ViewData data = new ViewData(category, Material.STONE, List.of(ChatColor.GRAY + "Preview for " + ChatColor.GREEN + category, ChatColor.RED + "TODO: Add Category Preview"));
+        return categoryPreviews.put(category, data);
+    }
+    public void registerCategory(String category, ViewData data){
+        categoryPreviews.put("addon/" + category, data);
     }
 
 }

@@ -21,7 +21,7 @@ public class PluginCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public final boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(commandInfo.permissions().isEmpty())) {
             if(!sender.hasPermission(commandInfo.permissions()) || (commandInfo.devOnly() && !sender.isOp())) {
                 sender.sendMessage(ChatColor.RED + "You don't have permission to execute this command.");

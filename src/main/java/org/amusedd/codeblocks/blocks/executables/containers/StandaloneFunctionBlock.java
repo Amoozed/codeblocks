@@ -7,6 +7,7 @@ import org.amusedd.codeblocks.blocks.executables.ExecutableCodeBlock;
 import org.amusedd.codeblocks.blocks.executables.ValueHolder;
 import org.amusedd.codeblocks.blocks.value.ValueBlock;
 import org.amusedd.codeblocks.blocks.value.ValueSetBlock;
+import org.amusedd.codeblocks.blocks.value.VariableBlock;
 import org.amusedd.codeblocks.menu.ContainerEditMenu;
 import org.amusedd.codeblocks.menu.EditVariablesMenu;
 import org.amusedd.codeblocks.menu.Menu;
@@ -25,6 +26,14 @@ import java.util.Map;
 public class StandaloneFunctionBlock extends CodeBlockContainer implements ValueHolder {
     CodeBlockContainer container;
     ValueSetBlock set;
+
+
+    public StandaloneFunctionBlock(String name, ArrayList<ExecutableCodeBlock> blocks, HashMap<String, VariableBlock> startingVariables){
+        super(blocks, startingVariables);
+        HashMap<String, ValueBlock> map = new HashMap<>();
+        map.put("name", new ValueBlock("Name of Function", Material.NAME_TAG, String.class, name));
+        this.set = new ValueSetBlock(map);
+    }
 
     public StandaloneFunctionBlock(ValueSetBlock valueSet, Map<String, Object> map) {
         super(map);
