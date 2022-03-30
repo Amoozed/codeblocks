@@ -22,6 +22,14 @@ public class PageableItem extends OverridableItemStack{
         this.items = items;
     }
 
+    public void addItem(ItemStack item) {
+        items.add(item);
+    }
+
+    public ArrayList<ItemStack> getItems() {
+        return items;
+    }
+
     @Override
     public void onClick(Menu menu, InventoryClickEvent event) {
         SelectMenu selectMenu = new SelectMenu((Player) event.getWhoClicked(), items);

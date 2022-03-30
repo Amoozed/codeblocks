@@ -12,7 +12,7 @@ import java.util.Map;
 public class ConditionalValueBlock extends ValueBlock {
 
     public ConditionalValueBlock(String name, List<String> description, boolean start) {
-        super(new ViewData(name, start ? Material.RED_CONCRETE : Material.GREEN_CONCRETE, description), Boolean.class, start);
+        super(new ViewData(name, !start ? Material.RED_CONCRETE : Material.GREEN_CONCRETE, description), Boolean.class, start);
     }
 
     @Override
@@ -25,7 +25,7 @@ public class ConditionalValueBlock extends ValueBlock {
 
     public static ConditionalValueBlock deserialize(Map<String, Object> map){
         ValueBlockData data = (ValueBlockData) map.get("data");
-        return new ConditionalValueBlock(data.getName(), data.getViewData().getDescription(), (boolean) data.getValue());
+        return new ConditionalValueBlock(data.getName(), data.getViewData().getDescription(), Boolean.parseBoolean((String) map.get("value")));
     }
 
 

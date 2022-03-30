@@ -31,7 +31,8 @@ public class VariableBlock extends CodeBlock implements Viewable, ValueHolder, R
         values.put("static", new ConditionalValueBlock("Static", new ArrayList<String>(List.of(ChatColor.GRAY + "If set to " + ChatColor.GREEN + "true" + ChatColor.GRAY + ", any changes to this variable will be retained", ChatColor.GRAY + "Otherwise, the value of this variable will be reset each execution")), staticVariable));
         values.put("name", new ValueBlock("Name of Variable", Material.NAME_TAG, String.class, name));
         values.put("type", new ValueBlock("Type", Material.FLINT, Class.class, type));
-        values.put("value", new ValueBlock(new ValueBlockData(new ViewData("Value", Material.DIAMOND), Object.class, value, false)));this.set = new ValueSetBlock(values);
+        values.put("value", new ValueBlock(new ValueBlockData(new ViewData("Value", Material.DIAMOND), Object.class, false), value));
+        this.set = new ValueSetBlock(values);
         this.set.setChangeCallback(this);
         startingValue = value;
     }
@@ -41,7 +42,7 @@ public class VariableBlock extends CodeBlock implements Viewable, ValueHolder, R
         values.put("static", new ConditionalValueBlock("Static", new ArrayList<String>(List.of(ChatColor.GRAY + "If set to " + ChatColor.GREEN + "true" + ChatColor.GRAY + ", any changes to this variable will be retained", ChatColor.GRAY + "Otherwise, the value of this variable will be reset each execution")), false));
         values.put("name", new ValueBlock("Name of Variable", Material.NAME_TAG, String.class, null));
         values.put("type", new ValueBlock("Type", Material.FLINT, Class.class, null));
-        values.put("value", new ValueBlock(new ValueBlockData(new ViewData("Value", Material.DIAMOND), Object.class, null, false)));
+        values.put("value", new ValueBlock(new ValueBlockData(new ViewData("Value", Material.DIAMOND), Object.class, false), null));
         this.set = new ValueSetBlock(values);
         this.set.setChangeCallback(this);
     }
@@ -86,7 +87,7 @@ public class VariableBlock extends CodeBlock implements Viewable, ValueHolder, R
     }
 
     public void reset(){
-        setValue(startingValue, false);
+        if(startingValue != null) setValue(startingValue, false);
     }
 
     @Override

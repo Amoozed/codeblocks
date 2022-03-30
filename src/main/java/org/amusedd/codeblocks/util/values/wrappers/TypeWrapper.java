@@ -23,7 +23,7 @@ public class TypeWrapper implements Wrapper<Class> {
 
     @Override
     public Class unwrap(ValueBlock value) {
-        return stringToClass((String) value.getRawValue());
+        return stringToClass((String) value.getCurrentValue());
     }
 
     @Override

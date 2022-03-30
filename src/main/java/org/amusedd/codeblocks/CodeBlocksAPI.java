@@ -5,8 +5,11 @@ import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.CodeBlockInfo;
 import org.amusedd.codeblocks.blocks.Viewable;
 import org.amusedd.codeblocks.blocks.executables.ExecutableCodeBlock;
+import org.amusedd.codeblocks.blocks.executables.methods.MethodExecutor;
+import org.amusedd.codeblocks.blocks.executables.methods.RunnableMethod;
 import org.amusedd.codeblocks.util.ViewData;
 import org.amusedd.codeblocks.util.items.ItemBuilder;
+import org.amusedd.codeblocks.util.items.PageableItem;
 import org.amusedd.codeblocks.util.values.TypeData;
 import org.amusedd.codeblocks.util.values.sets.TypeSelection;
 import org.bukkit.ChatColor;
@@ -31,6 +34,8 @@ import java.util.Map;
 public class CodeBlocksAPI {
     HashMap<Class<? extends CodeBlock>, ViewData> blockPreviews = new HashMap<>();
     HashMap<String, ViewData> categoryPreviews = new HashMap<>();
+    HashMap<Class<?>, ArrayList<RunnableMethod>> methods = new HashMap<>();
+    HashMap<Class<?>, ArrayList<RunnableMethod>> autoGenerateMethods = new HashMap<>();
     protected CodeBlocksAPI() {
         initalizeBaseBlocks();
         // String, Integer, Double, Boolean, Event
@@ -40,6 +45,73 @@ public class CodeBlocksAPI {
         registerType(new TypeData(Boolean.class, Material.COMPARATOR, List.of(ChatColor.GRAY + "Represents a value (conditional) that can be true or false")));
         registerType(new TypeData(Event.class, Material.BEACON, List.of(ChatColor.GRAY + "Represents an event that can be triggered")));
         categoryPreviews.put("miscellaneous", new ViewData("Miscellaneous", Material.TNT, List.of(ChatColor.GRAY + "Miscellaneous/Uncategorized CodeBlocks")));
+        methods.put(Integer.class, new ArrayList<>(List.of(
+                new RunnableMethod("Addition", Integer.class, new Class[]{Integer.class}, data -> (int)data.getArg(0) + (int) data.getSource()),
+                new RunnableMethod("Subtraction", Integer.class, new Class[]{Integer.class}, data -> (int)data.getSource() - (int) data.getArg(0)),
+                new RunnableMethod("Multiplication", Integer.class, new Class[]{Integer.class}, data -> (int)data.getSource() * (int) data.getArg(0)),
+                new RunnableMethod("Division", Integer.class, new Class[]{Integer.class}, data -> (int)data.getSource() / (int) data.getArg(0))
+        )));
+        methods.put(Double.class, new ArrayList<>(List.of(
+                new RunnableMethod("Addition", Double.class, new Class[]{Double.class}, data -> (double)data.getArg(0) + (double) data.getSource()),
+                new RunnableMethod("Subtraction", Double.class, new Class[]{Double.class}, data -> (double)data.getSource() - (double) data.getArg(0)),
+                new RunnableMethod("Multiplication", Double.class, new Class[]{Double.class}, data -> (double)data.getSource() * (double) data.getArg(0)),
+                new RunnableMethod("Division", Double.class, new Class[]{Double.class}, data -> (double)data.getSource() / (double) data.getArg(0))
+        )));
+        methods.put(String.class, new ArrayList<>(List.of(
+                new RunnableMethod("Concatenation", String.class, new Class[]{String.class}, data -> (String)data.getArg(0) + (String) data.getSource()),
+                new RunnableMethod("Length", Integer.class, new Class[]{}, data -> ((String)data.getSource()).length())
+        )));
+        methods.put(Boolean.class, new ArrayList<>(List.of(
+                new RunnableMethod("Not", Boolean.class, new Class[]{}, data -> !(boolean) data.getSource())
+        )));
+
+    }
+
+    public void addRunnableMethod(Class<?> clazz, RunnableMethod method) {
+        if(!methods.containsKey(clazz)) {
+            methods.put(clazz, new ArrayList<>());
+        }
+        methods.get(clazz).add(method);
+    }
+
+    public void addAutoGenerateMethod(Class<?> clazz) {
+        autoGenerateMethods.put(clazz, null);
+    }
+
+    boolean generateAtRuntime(Class<?> clazz) {
+        if(autoGenerateMethods.containsKey(clazz)) return true;
+        else {
+            for(Class<?> c : autoGenerateMethods.keySet()) {
+                if(c.isAssignableFrom(clazz)) return true;
+            }
+        }
+        return false;
+    }
+
+    public ArrayList<RunnableMethod> getMethods(Class<?> clazz) {
+        ArrayList<RunnableMethod> allMethods = methods.get(clazz);
+        if(generateAtRuntime(clazz)) {
+            for(Method method : clazz.getMethods()){
+                String name = method.getName();
+                Class[] params = method.getParameterTypes();
+                Class returnType = method.getReturnType() == void.class ? null : method.getReturnType();
+                addRunnableMethod(clazz, new RunnableMethod(name, returnType, params, data -> {
+                        try {
+                            if(returnType == null) {
+                                method.invoke(data.getSource(), data.getArgs());
+                                return null;
+                            } else {
+                                return method.invoke(data.getSource(), data.getArgs());
+                            }
+                        } catch (InvocationTargetException | IllegalAccessException e) {
+                            e.printStackTrace();
+                            return null;
+                        }
+                }));
+            }
+            allMethods.addAll(autoGenerateMethods.get(clazz));
+        }
+        return allMethods;
     }
 
     public void registerCodeBlock(Class<? extends CodeBlock> codeBlockClass) {
@@ -76,38 +148,41 @@ public class CodeBlocksAPI {
     }
 
     public ArrayList<ItemStack> getPreviews(){
-        HashMap<String, ArrayList<ItemStack>> items = new HashMap<>();
+        HashMap<String, PageableItem> items = new HashMap<>();
         for (Class<? extends CodeBlock> clazz : blockPreviews.keySet()) {
             ViewData data = blockPreviews.get(clazz);
             ItemStack preview = data.getItem();
-            String category = clazz.getAnnotation(CodeBlockInfo.class).category();
+            String category = clazz.getAnnotation(CodeBlockInfo.class) != null ? clazz.getAnnotation(CodeBlockInfo.class).category() : "miscellaneous";
             ItemMeta meta = preview.getItemMeta();
             meta.getPersistentDataContainer().set(new NamespacedKey(CodeBlocks.getPlugin(), "type"), PersistentDataType.STRING, clazz.getName());
             preview.setItemMeta(meta);
             if(items.containsKey(category)){
-                items.get(category).add(preview);
+                items.get(category).addItem(preview);
             } else {
-                ArrayList<ItemStack> list = new ArrayList<>();
-                list.add(preview);
-                items.put(category, list);
+                items.put(category, new PageableItem(getCategoryPreview(category).getItem(), new ArrayList<>(List.of(preview))));
             }
+
         }
-        for (String category : items.keySet()) {
+        for(String category : items.keySet()) {
             if(category.contains("/")){
                 String[] split = category.split("/");
-                for(String s : split){
-                    if(items.containsKey(s)){
-                        items.get(s).add(categoryPreviews.get(s).getItem());
-                    } else {
-                        ArrayList<ItemStack> list = new ArrayList<>();
-                        list.add(categoryPreviews.get(s).getItem());
-                        items.put(s, list);
-                    }
+                String root = split[0];
+                String path = root;
+                PageableItem parent = items.containsKey(root) ? items.get(root) : items.put(root, new PageableItem(getCategoryPreview(root).getItem(), new ArrayList<>()));
+                for(int i = 1; i < split.length; i++){
+                    String sub = split[i];
+                    path += "/" + sub;
+                    PageableItem subItem = items.containsKey(path) ? items.get(path) : new PageableItem(getCategoryPreview(path).getItem(), new ArrayList<>());
+                    parent.addItem(subItem);
+                    parent = subItem;
                 }
+                PageableItem last = (PageableItem) parent.getItems().get(parent.getItems().size() - 1);
+                last.addItem(items.get(category));
                 items.remove(category);
             }
         }
-        return items;
+        ArrayList<ItemStack> result = new ArrayList<>(items.values());
+        return result;
     }
 
     public void registerType(TypeData data){

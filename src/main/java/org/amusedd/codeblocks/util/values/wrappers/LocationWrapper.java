@@ -38,7 +38,7 @@ public class LocationWrapper implements Wrapper<Location> {
     @Override
     public Location unwrap(ValueBlock value) {
         assert value instanceof ValueSetBlock;
-        return new Location(Bukkit.getWorld((String) ((ValueSetBlock) value).get("world").getRawValue()), (Double) ((ValueSetBlock) value).get("x").getRawValue(), (Double) ((ValueSetBlock) value).get("y").getRawValue(), (Double) ((ValueSetBlock) value).get("z").getRawValue());
+        return new Location(Bukkit.getWorld((String) ((ValueSetBlock) value).get("world").getCurrentValue()), (Double) ((ValueSetBlock) value).get("x").getCurrentValue(), (Double) ((ValueSetBlock) value).get("y").getCurrentValue(), (Double) ((ValueSetBlock) value).get("z").getCurrentValue());
     }
 
     @Override
@@ -51,7 +51,7 @@ public class LocationWrapper implements Wrapper<Location> {
         if(value instanceof Location) {
             return true;
         } else if(value instanceof ValueSetBlock){
-            return ((ValueSetBlock) value).get("x").getRawValue() != null && ((ValueSetBlock) value).get("y").getRawValue() != null && ((ValueSetBlock) value).get("z").getRawValue() != null && ((ValueSetBlock) value).get("world").getRawValue() != null;
+            return ((ValueSetBlock) value).get("x").getCurrentValue() != null && ((ValueSetBlock) value).get("y").getCurrentValue() != null && ((ValueSetBlock) value).get("z").getCurrentValue() != null && ((ValueSetBlock) value).get("world").getCurrentValue() != null;
         }
         else {
             if(value instanceof String) {

@@ -1,10 +1,12 @@
 package org.amusedd.codeblocks.util.values;
 
+import org.amusedd.codeblocks.blocks.executables.methods.RunnableMethod;
 import org.amusedd.codeblocks.blocks.value.ValueBlock;
 import org.bukkit.Bukkit;
 import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ValueWrapper {
@@ -52,7 +54,7 @@ public class ValueWrapper {
         if(wrapper.isOfType(value)){
             return (value instanceof String) ? wrapper.wrap((String) value) : wrapper.wrap(value);
         } else {
-            Bukkit.getLogger().warning("Value " + value.toString() + " is not of type " + type.getSimpleName());
+            Bukkit.getLogger().warning("Wrapper: Value " + value.toString() + " is not of type " + type.getSimpleName());
             return null;
         }
     }
@@ -62,17 +64,17 @@ public class ValueWrapper {
         if(clazz != null){
             return getWrappedValue(clazz, value);
         } else {
-            Bukkit.getLogger().warning("No wrapper found for class " + value.getClass().getName());
+            Bukkit.getLogger().warning("WrapperValueBlock: No wrapper found for class " + value.getClass().getName());
             return null;
         }
     }
 
-    public Object getUnwrappedValue(ValueBlock value){
+    public Object getUnwrappedValue(ValueBlock value, Object currentValue){
         Wrapper wrapper = wrappers.get(value.getData().getType());
-        if(wrapper.isOfType(value)){
+        if(wrapper.isOfType(value) && wrapper.isWrappedValue(currentValue)){
             return wrapper.unwrap(value);
         }
-        Bukkit.getLogger().warning("Value " + value.toString() + " is not of type " + value.getData().getType().getSimpleName());
+        Bukkit.getLogger().warning("Unwrapper: Value " + value.toString() + " is not of type " + value.getData().getType().getSimpleName());
         return null;
     }
 

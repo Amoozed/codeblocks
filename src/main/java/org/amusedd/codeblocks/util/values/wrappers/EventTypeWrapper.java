@@ -28,7 +28,7 @@ public class EventTypeWrapper implements Wrapper<EventType> {
 
     @Override
     public EventType unwrap(ValueBlock value) {
-        return new EventType(value.getRawValue() + "");
+        return new EventType(value.getCurrentValue() + "");
     }
 
     @Override
@@ -39,7 +39,7 @@ public class EventTypeWrapper implements Wrapper<EventType> {
     @Override
     public boolean isOfType(Object value) {
         if (value instanceof String) {
-            return CodeBlocks.getPlugin().getEventStorage().getEventNames().contains((String) value);
+            return true;
         }
         return value instanceof EventType;
     }

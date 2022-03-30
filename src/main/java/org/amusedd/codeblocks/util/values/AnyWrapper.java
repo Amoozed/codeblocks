@@ -16,12 +16,18 @@ public class AnyWrapper implements Wrapper<Object>{
 
     @Override
     public String unwrapToString(Object value) {
-        return value + "";
+        if(value instanceof Class){
+            return ((Class) value).getSimpleName();
+        } else if(value instanceof String){
+            String s = (String) value;
+            return s.split("\\.")[s.split("\\.").length - 1];
+        }
+        return value.toString();
     }
 
     @Override
     public Object unwrap(ValueBlock value) {
-        return value.getValue();
+        return value.getCurrentValue();
     }
 
     @Override
@@ -33,4 +39,18 @@ public class AnyWrapper implements Wrapper<Object>{
     public boolean isOfType(Object value) {
         return true;
     }
+
+    @Override
+    public boolean isOfType(ValueBlock value) {
+        return true;
+    }
+
+    @Override
+    public boolean isWrappedValue(ValueBlock value) {
+        return true;    }
+
+    @Override
+    public boolean isWrappedValue(Object value) {
+        return true;    }
+
 }

@@ -2,8 +2,6 @@ package org.amusedd.codeblocks.blocks.executables;
 
 import org.amusedd.codeblocks.blocks.Viewable;
 import org.amusedd.codeblocks.blocks.executables.containers.CodeBlockContainer;
-import org.amusedd.codeblocks.menu.InitializeBlockMenu;
-import org.bukkit.entity.Player;
 
 public interface ExecutableCodeBlock extends Viewable {
     default void execute(){

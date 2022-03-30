@@ -23,7 +23,7 @@ public class PlayerWrapper implements Wrapper<Player> {
 
     @Override
     public Player unwrap(ValueBlock value) {
-        return getPlayerFromString((String) value.getRawValue());
+        return getPlayerFromString((String) value.getCurrentValue());
     }
 
     @Override

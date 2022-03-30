@@ -28,14 +28,14 @@ public class SetVariableBlock extends CodeBlock implements ExecutableCodeBlock, 
 
     public SetVariableBlock(){
         HashMap<String, ValueBlock> valueBlocks = new HashMap<String, ValueBlock>();
-        valueBlocks.put("variable", new ValueBlock(new ValueBlockData(new ViewData("Name of Variable", Material.DIAMOND_BLOCK), VariableBlock.class, null)));
-        valueBlocks.put("value", new ValueBlock(new ValueBlockData(new ViewData("Value", Material.DIAMOND), Object.class, null, false)));
+        valueBlocks.put("variable", new ValueBlock(new ValueBlockData(new ViewData("Name of Variable", Material.DIAMOND_BLOCK), VariableBlock.class), null));
+        valueBlocks.put("value", new ValueBlock(new ValueBlockData(new ViewData("Value", Material.DIAMOND), Object.class, false), null));
         this.valueSetBlock = new ValueSetBlock(valueBlocks);
         getValueSet().setChangeCallback(this);
     }
 
     public VariableBlock getVariableBlock(){
-        return (VariableBlock)valueSetBlock.get("variable").getRawValue();
+        return (VariableBlock)valueSetBlock.get("variable").getCurrentValue();
     }
 
     public Object getValue(){

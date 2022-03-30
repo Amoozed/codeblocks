@@ -16,7 +16,7 @@ public interface ValueHolder {
 
     default boolean isRunnable() {
         for (ValueBlock value : getValueSet().getValues()) {
-            if (value.getData().getValue() == null) return false;
+            if (value.getValue() == null) return false;
         }
         return true;
     }
