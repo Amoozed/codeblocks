@@ -8,25 +8,27 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class RunnableMethod {
     String methodName;
     Class<?>[] parameterTypes;
     Class<?> returnType;
-    MethodExecutor methodExecutor;
+    Function<MethodExecutionData, Object> methodExecutor;
 
     List<String> description;
 
     CodeBlockContainer container;
 
-    public RunnableMethod(String methodName, Class<?> returnType, Class<?>[] parameterTypes , MethodExecutor methodExecutor) {
+    public RunnableMethod(String methodName, Class<?> returnType, Class<?>[] parameterTypes , Function<MethodExecutionData, Object> methodExecutor) {
         this.methodName = methodName;
         this.parameterTypes = parameterTypes;
         this.returnType = returnType;
         this.methodExecutor = methodExecutor;
     }
 
-    public RunnableMethod(String methodName, Class<?> returnType , Class<?>[] parameterTypes, List<String> description, MethodExecutor methodExecutor){
+    public RunnableMethod(String methodName, Class<?> returnType , Class<?>[] parameterTypes, List<String> description, Function<MethodExecutionData, Object> methodExecutor){
         this(methodName, returnType, parameterTypes, methodExecutor);
         this.description = description;
     }
@@ -42,10 +44,10 @@ public class RunnableMethod {
     public void call(VariableBlock variable, CodeBlockContainer container, Object[] args) {
         MethodExecutionData data = new MethodExecutionData(container, args, variable.getValue());
         if(returnType != null) {
-            Object returnValue = methodExecutor.execute(data);
+            Object returnValue = methodExecutor.apply(data);
             if(returnValue != null) variable.setValue(returnValue, false);
         } else {
-            methodExecutor.execute(data);
+            methodExecutor.apply(data);
         }
     }
 }

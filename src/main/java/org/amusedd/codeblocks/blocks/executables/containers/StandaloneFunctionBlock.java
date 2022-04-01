@@ -8,9 +8,7 @@ import org.amusedd.codeblocks.blocks.executables.ValueHolder;
 import org.amusedd.codeblocks.blocks.value.ValueBlock;
 import org.amusedd.codeblocks.blocks.value.ValueSetBlock;
 import org.amusedd.codeblocks.blocks.value.VariableBlock;
-import org.amusedd.codeblocks.menu.ContainerEditMenu;
-import org.amusedd.codeblocks.menu.EditVariablesMenu;
-import org.amusedd.codeblocks.menu.Menu;
+import org.amusedd.codeblocks.menu.ViewValueMenu;
 import org.amusedd.codeblocks.util.items.ExecuteButton;
 import org.amusedd.codeblocks.util.items.ItemBuilder;
 import org.bukkit.Material;
@@ -89,7 +87,7 @@ public class StandaloneFunctionBlock extends CodeBlockContainer implements Value
     @Override
     public void onGUIItemRightClick(InventoryClickEvent event) {
         ValueSetBlock valueSet = getValueSet();
-        new EditVariablesMenu((Player) event.getWhoClicked(), valueSet, new ExecuteButton(this)).open();
+        new ViewValueMenu((Player) event.getWhoClicked(), valueSet, new ExecuteButton(this)).open();
     }
 
 }

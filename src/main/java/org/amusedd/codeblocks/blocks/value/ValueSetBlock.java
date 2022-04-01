@@ -3,7 +3,7 @@ package org.amusedd.codeblocks.blocks.value;
 import org.amusedd.codeblocks.blocks.executables.ValueHolder;
 import org.amusedd.codeblocks.commands.input.communication.Conversation;
 import org.amusedd.codeblocks.commands.input.communication.Receiver;
-import org.amusedd.codeblocks.menu.EditVariablesMenu;
+import org.amusedd.codeblocks.menu.ViewValueMenu;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -75,7 +75,7 @@ public class ValueSetBlock extends ValueBlock {
 
     @Override
     public void onGUIItemLeftClick(InventoryClickEvent event) {
-        new EditVariablesMenu((Player) event.getWhoClicked(),  this).open();
+        new ViewValueMenu((Player) event.getWhoClicked(),  this).open();
     }
 
     public boolean canRun(){

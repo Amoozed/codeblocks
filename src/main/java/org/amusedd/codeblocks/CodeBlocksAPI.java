@@ -1,14 +1,10 @@
 package org.amusedd.codeblocks;
 
-import org.amusedd.codeblocks.CodeBlocks;
 import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.CodeBlockInfo;
-import org.amusedd.codeblocks.blocks.Viewable;
 import org.amusedd.codeblocks.blocks.executables.ExecutableCodeBlock;
-import org.amusedd.codeblocks.blocks.executables.methods.MethodExecutor;
 import org.amusedd.codeblocks.blocks.executables.methods.RunnableMethod;
 import org.amusedd.codeblocks.util.ViewData;
-import org.amusedd.codeblocks.util.items.ItemBuilder;
 import org.amusedd.codeblocks.util.items.PageableItem;
 import org.amusedd.codeblocks.util.values.TypeData;
 import org.amusedd.codeblocks.util.values.sets.TypeSelection;
@@ -16,7 +12,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -58,7 +53,7 @@ public class CodeBlocksAPI {
                 new RunnableMethod("Division", Double.class, new Class[]{Double.class}, data -> (double)data.getSource() / (double) data.getArg(0))
         )));
         methods.put(String.class, new ArrayList<>(List.of(
-                new RunnableMethod("Concatenation", String.class, new Class[]{String.class}, data -> (String)data.getArg(0) + (String) data.getSource()),
+                new RunnableMethod("Concatenation", String.class, new Class[]{String.class}, data -> data.getArg(0) + (String) data.getSource()),
                 new RunnableMethod("Length", Integer.class, new Class[]{}, data -> ((String)data.getSource()).length())
         )));
         methods.put(Boolean.class, new ArrayList<>(List.of(
@@ -97,12 +92,7 @@ public class CodeBlocksAPI {
                 Class returnType = method.getReturnType() == void.class ? null : method.getReturnType();
                 addRunnableMethod(clazz, new RunnableMethod(name, returnType, params, data -> {
                         try {
-                            if(returnType == null) {
-                                method.invoke(data.getSource(), data.getArgs());
-                                return null;
-                            } else {
-                                return method.invoke(data.getSource(), data.getArgs());
-                            }
+                            return method.invoke(data.getSource(), data.getArgs());
                         } catch (InvocationTargetException | IllegalAccessException e) {
                             e.printStackTrace();
                             return null;

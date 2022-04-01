@@ -1,10 +1,8 @@
 package org.amusedd.codeblocks.menu;
 
-import org.amusedd.codeblocks.blocks.executables.ExecutableCodeBlock;
 import org.amusedd.codeblocks.blocks.executables.ValueHolder;
 import org.amusedd.codeblocks.blocks.executables.containers.CodeBlockContainer;
 import org.amusedd.codeblocks.blocks.value.ValueSetBlock;
-import org.amusedd.codeblocks.commands.input.communication.Receiver;
 import org.amusedd.codeblocks.util.items.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -14,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 
-public class InitializeBlockMenu extends EditVariablesMenu{
+public class InitializeBlockMenu extends ViewValueMenu {
 
     ValueHolder creationCallback;
     CodeBlockContainer container;

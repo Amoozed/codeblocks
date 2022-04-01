@@ -6,7 +6,7 @@ import org.amusedd.codeblocks.blocks.executables.containers.CodeBlockContainer;
 import org.amusedd.codeblocks.blocks.value.ValueBlock;
 import org.amusedd.codeblocks.blocks.value.ValueSetBlock;
 import org.amusedd.codeblocks.menu.ContainerEditMenu;
-import org.amusedd.codeblocks.menu.EditVariablesMenu;
+import org.amusedd.codeblocks.menu.ViewValueMenu;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -39,7 +39,7 @@ public interface Viewable {
     default void onGUIItemRightClick(InventoryClickEvent event) {
         if(this instanceof ValueHolder) {
             ValueSetBlock valueSet = ((ValueHolder) this).getValueSet();
-            new EditVariablesMenu((Player) event.getWhoClicked(), valueSet).open();
+            new ViewValueMenu((Player) event.getWhoClicked(), valueSet).open();
         }
     }
 

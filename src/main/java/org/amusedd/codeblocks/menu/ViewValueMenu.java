@@ -11,17 +11,17 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 
-public class EditVariablesMenu extends Menu implements Receiver {
+public class ViewValueMenu extends Menu implements Receiver {
     ValueSetBlock valueSetBlock;
     OverridableItemStack[] extraItems;
     Receiver callback;
 
-    public EditVariablesMenu(Player player, ValueSetBlock valueSetBlock) {
+    public ViewValueMenu(Player player, ValueSetBlock valueSetBlock) {
         super(player);
         this.valueSetBlock = valueSetBlock;
     }
 
-    public EditVariablesMenu(Player player, ValueSetBlock valueSetBlock, OverridableItemStack... extraItems) {
+    public ViewValueMenu(Player player, ValueSetBlock valueSetBlock, OverridableItemStack... extraItems) {
         this(player, valueSetBlock);
         this.extraItems = extraItems;
     }
