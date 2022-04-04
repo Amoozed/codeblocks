@@ -33,7 +33,7 @@ public class StandaloneFunctionsMenu extends Menu{
     public void itemClicked(ItemStack item, InventoryClickEvent event) {
         if(item.equals(createStandaloneFunction)) {
             StandaloneFunctionBlock function = new StandaloneFunctionBlock();
-            function.create(getOwner(), null);
+            function.onInitialize(getOwner(), null);
         }
         else {
             StandaloneFunctionBlock function = functions.get(event.getSlot());

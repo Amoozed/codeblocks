@@ -1,8 +1,8 @@
 package org.amusedd.codeblocks.menu;
 
 import org.amusedd.codeblocks.CodeBlocks;
+import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.CodeBlockInfo;
-import org.amusedd.codeblocks.blocks.Viewable;
 import org.amusedd.codeblocks.blocks.executables.ExecutableCodeBlock;
 import org.amusedd.codeblocks.blocks.executables.ValueHolder;
 import org.amusedd.codeblocks.blocks.executables.containers.CodeBlockContainer;
@@ -10,16 +10,13 @@ import org.amusedd.codeblocks.blocks.executables.containers.StandaloneFunctionBl
 import org.amusedd.codeblocks.commands.input.communication.Conversation;
 import org.amusedd.codeblocks.commands.input.communication.Receiver;
 import org.amusedd.codeblocks.util.items.ItemBuilder;
-import org.amusedd.codeblocks.util.items.OverridableItemStack;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 public class ContainerEditMenu extends Menu implements Receiver {
@@ -106,20 +103,14 @@ public class ContainerEditMenu extends Menu implements Receiver {
     }
 
     @Override
-    public void onItemResponse(Conversation conversation, InventoryClickEvent event, int position) {
-        ItemStack item = event.getCurrentItem();
-        if(item == null || item.getItemMeta() == null || !item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(CodeBlocks.getPlugin(), "type"), PersistentDataType.STRING)){
-            CodeBlocks.getPlugin().getLogger().warning("Invalid item selected: Could not find item meta, or it does not have a type.");
-            return;
-        }
-        String name = item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CodeBlocks.getPlugin(), "type"), PersistentDataType.STRING);
-        try{
-            Class<? extends ValueHolder> clazz = Class.forName(name).asSubclass(ValueHolder.class);
-            ValueHolder block = clazz.getDeclaredConstructor().newInstance();
-            block.create(getOwner(), container);
-            if(block instanceof ExecutableCodeBlock) ((ExecutableCodeBlock)block).addToContainer(container);
-        } catch(Exception e){
-            CodeBlocks.getPlugin().getLogger().warning("Could not create block: " + e.getMessage());
+    public void onObjectResponse(Conversation conversation, Object object) {
+        Class<? extends CodeBlock> clazz = (Class<? extends CodeBlock>) object;
+        try {
+            CodeBlock block = clazz.getDeclaredConstructor().newInstance();
+            if(block instanceof ValueHolder) ((ValueHolder)block).onInitialize(getOwner(), container);
+            else if(block instanceof ExecutableCodeBlock) ((ExecutableCodeBlock)block).addToContainer(container); // Only adds if it isn't a value holder. It is expected that the value holder will add it to the container itself if need be.
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
         }
     }
 

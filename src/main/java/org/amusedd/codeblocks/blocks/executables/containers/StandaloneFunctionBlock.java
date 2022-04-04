@@ -6,7 +6,7 @@ import org.amusedd.codeblocks.blocks.CodeBlockInfo;
 import org.amusedd.codeblocks.blocks.executables.ExecutableCodeBlock;
 import org.amusedd.codeblocks.blocks.executables.ValueHolder;
 import org.amusedd.codeblocks.blocks.value.ValueBlock;
-import org.amusedd.codeblocks.blocks.value.ValueSetBlock;
+import org.amusedd.codeblocks.blocks.value.ValueSet;
 import org.amusedd.codeblocks.blocks.value.VariableBlock;
 import org.amusedd.codeblocks.menu.ViewValueMenu;
 import org.amusedd.codeblocks.util.items.ExecuteButton;
@@ -23,17 +23,17 @@ import java.util.Map;
 @CodeBlockInfo(viewName = "Standalone Function", viewMaterial = Material.COMMAND_BLOCK, description = "A standalone function block", creatable = false)
 public class StandaloneFunctionBlock extends CodeBlockContainer implements ValueHolder {
     CodeBlockContainer container;
-    ValueSetBlock set;
+    ValueSet set;
 
 
     public StandaloneFunctionBlock(String name, ArrayList<ExecutableCodeBlock> blocks, HashMap<String, VariableBlock> startingVariables){
         super(blocks, startingVariables);
         HashMap<String, ValueBlock> map = new HashMap<>();
         map.put("name", new ValueBlock("Name of Function", Material.NAME_TAG, String.class, name));
-        this.set = new ValueSetBlock(map);
+        this.set = new ValueSet(map);
     }
 
-    public StandaloneFunctionBlock(ValueSetBlock valueSet, Map<String, Object> map) {
+    public StandaloneFunctionBlock(ValueSet valueSet, Map<String, Object> map) {
         super(map);
         this.set = valueSet;
     }
@@ -41,7 +41,7 @@ public class StandaloneFunctionBlock extends CodeBlockContainer implements Value
     public StandaloneFunctionBlock(){
         HashMap<String, ValueBlock> map = new HashMap<>();
         map.put("name", new ValueBlock("Name of Function", Material.NAME_TAG, String.class, null));
-        this.set = new ValueSetBlock(map);
+        this.set = new ValueSet(map);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class StandaloneFunctionBlock extends CodeBlockContainer implements Value
     }
 
     @Override
-    public ValueSetBlock getValueSet() {
+    public ValueSet getValueSet() {
         return this.set;
     }
 
@@ -76,17 +76,17 @@ public class StandaloneFunctionBlock extends CodeBlockContainer implements Value
 
 
     public static StandaloneFunctionBlock deserialize(Map<String, Object> map){
-        return new StandaloneFunctionBlock((ValueSetBlock) map.get("valueset"), map);
+        return new StandaloneFunctionBlock((ValueSet) map.get("valueset"), map);
     }
 
     @Override
-    public void onCreate(CodeBlockContainer container) {
+    public void onCreation(CodeBlockContainer container) {
         CodeBlocks.getPlugin().getFunctionStorage().addFunction(this);
     }
 
     @Override
     public void onGUIItemRightClick(InventoryClickEvent event) {
-        ValueSetBlock valueSet = getValueSet();
+        ValueSet valueSet = getValueSet();
         new ViewValueMenu((Player) event.getWhoClicked(), valueSet, new ExecuteButton(this)).open();
     }
 

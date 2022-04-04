@@ -18,11 +18,11 @@ import java.util.Map;
 
 @CodeBlockInfo(viewName = "Set Variable", viewMaterial = Material.EMERALD_BLOCK, description = {"&7Sets a defined variable to a given value at runtime."})
 public class SetVariableBlock extends CodeBlock implements ExecutableCodeBlock, ValueHolder, Receiver {
-    ValueSetBlock valueSetBlock;
+    ValueSet valueSet;
     CodeBlockContainer container;
 
-    public SetVariableBlock(ValueSetBlock valueSetBlock) {
-        this.valueSetBlock = valueSetBlock;
+    public SetVariableBlock(ValueSet valueSet) {
+        this.valueSet = valueSet;
         getValueSet().setChangeCallback(this);
     }
 
@@ -30,12 +30,12 @@ public class SetVariableBlock extends CodeBlock implements ExecutableCodeBlock, 
         HashMap<String, ValueBlock> valueBlocks = new HashMap<String, ValueBlock>();
         valueBlocks.put("variable", new ValueBlock(new ValueBlockData(new ViewData("Name of Variable", Material.DIAMOND_BLOCK), VariableBlock.class), null));
         valueBlocks.put("value", new ValueBlock(new ValueBlockData(new ViewData("Value", Material.DIAMOND), Object.class, false), null));
-        this.valueSetBlock = new ValueSetBlock(valueBlocks);
+        this.valueSet = new ValueSet(valueBlocks);
         getValueSet().setChangeCallback(this);
     }
 
     public VariableBlock getVariableBlock(){
-        return (VariableBlock)valueSetBlock.get("variable").getCurrentValue();
+        return (VariableBlock) valueSet.get("variable").getCurrentValue();
     }
 
     public Object getValue(){
@@ -65,12 +65,12 @@ public class SetVariableBlock extends CodeBlock implements ExecutableCodeBlock, 
     }
 
     @Override
-    public ValueSetBlock getValueSet() {
-        return valueSetBlock;
+    public ValueSet getValueSet() {
+        return valueSet;
     }
 
     public static SetVariableBlock deserialize(Map<String, Object> data){
-        return new SetVariableBlock((ValueSetBlock) data.get("valueset"));
+        return new SetVariableBlock((ValueSet) data.get("valueset"));
     }
 
     @Override

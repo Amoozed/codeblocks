@@ -16,23 +16,41 @@ public class RunnableMethod {
     Class<?>[] parameterTypes;
     Class<?> returnType;
     Function<MethodExecutionData, Object> methodExecutor;
-
+    boolean staticMethod;
     List<String> description;
+    String id;
 
-    CodeBlockContainer container;
-
-    public RunnableMethod(String methodName, Class<?> returnType, Class<?>[] parameterTypes , Function<MethodExecutionData, Object> methodExecutor) {
+    public RunnableMethod(String methodName, Class<?> returnType, Class<?>[] parameterTypes, boolean staticMethod, Function<MethodExecutionData, Object> methodExecutor) {
         this.methodName = methodName;
         this.parameterTypes = parameterTypes;
         this.returnType = returnType;
         this.methodExecutor = methodExecutor;
+        this.staticMethod = staticMethod;
+        String id = methodName;
+        if(parameterTypes != null) {
+            for (Class<?> parameterType : parameterTypes) {
+                id += "-" + parameterType.getSimpleName();
+            }
+        }
+        this.id = id;
     }
 
-    public RunnableMethod(String methodName, Class<?> returnType , Class<?>[] parameterTypes, List<String> description, Function<MethodExecutionData, Object> methodExecutor){
-        this(methodName, returnType, parameterTypes, methodExecutor);
+    public RunnableMethod(String methodName, Class<?> returnType, Class<?>[] parameterTypes, Function<MethodExecutionData, Object> methodExecutor) {
+        this(methodName, returnType, parameterTypes, false, methodExecutor);
+    }
+
+    public RunnableMethod(String methodName, Class<?> returnType , Class<?>[] parameterTypes, List<String> description,  Function<MethodExecutionData, Object> methodExecutor){
+        this(methodName, returnType, parameterTypes, description, false, methodExecutor);
+    }
+
+    public RunnableMethod(String methodName, Class<?> returnType , Class<?>[] parameterTypes, List<String> description, boolean staticMethod,  Function<MethodExecutionData, Object> methodExecutor){
+        this(methodName, returnType, parameterTypes, staticMethod, methodExecutor);
         this.description = description;
     }
 
+    public String getID(){
+        return id;
+    }
 
     public ItemStack getItem() {
         return new ItemBuilder(Material.BOW).setName(ChatColor.WHITE + methodName + "")
@@ -49,5 +67,13 @@ public class RunnableMethod {
         } else {
             methodExecutor.apply(data);
         }
+    }
+
+    public boolean isStatic() {
+        return staticMethod;
+    }
+
+    public String getMethodName() {
+        return methodName;
     }
 }

@@ -1,7 +1,7 @@
 package org.amusedd.codeblocks.menu;
 
 import org.amusedd.codeblocks.blocks.value.ValueBlock;
-import org.amusedd.codeblocks.blocks.value.ValueSetBlock;
+import org.amusedd.codeblocks.blocks.value.ValueSet;
 import org.amusedd.codeblocks.commands.input.communication.Conversation;
 import org.amusedd.codeblocks.commands.input.communication.Receiver;
 import org.amusedd.codeblocks.util.items.OverridableItemStack;
@@ -12,17 +12,17 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 
 public class ViewValueMenu extends Menu implements Receiver {
-    ValueSetBlock valueSetBlock;
+    ValueSet valueSet;
     OverridableItemStack[] extraItems;
     Receiver callback;
 
-    public ViewValueMenu(Player player, ValueSetBlock valueSetBlock) {
+    public ViewValueMenu(Player player, ValueSet valueSet) {
         super(player);
-        this.valueSetBlock = valueSetBlock;
+        this.valueSet = valueSet;
     }
 
-    public ViewValueMenu(Player player, ValueSetBlock valueSetBlock, OverridableItemStack... extraItems) {
-        this(player, valueSetBlock);
+    public ViewValueMenu(Player player, ValueSet valueSet, OverridableItemStack... extraItems) {
+        this(player, valueSet);
         this.extraItems = extraItems;
     }
 
@@ -36,7 +36,7 @@ public class ViewValueMenu extends Menu implements Receiver {
     @Override
     public void itemClicked(ItemStack item, InventoryClickEvent event) {
         if(item != null) {
-            ValueBlock valueBlock = valueSetBlock.getValues().get(event.getSlot());
+            ValueBlock valueBlock = valueSet.getValues().get(event.getSlot());
             if(event.isLeftClick()) valueBlock.onGUIItemLeftClick(event);
             else if(event.isRightClick()) valueBlock.onGUIItemRightClick(event);
         }
@@ -45,12 +45,12 @@ public class ViewValueMenu extends Menu implements Receiver {
     @Override
     public HashMap<Integer, ItemStack> getItems() {
         HashMap<Integer, ItemStack> items = new HashMap<>();
-        for(int i = 0; i < valueSetBlock.getValues().size(); i++) {
-            items.put(i, valueSetBlock.getValues().get(i).getGUIItem());
+        for(int i = 0; i < valueSet.getValues().size(); i++) {
+            items.put(i, valueSet.getValues().get(i).getGUIItem());
         }
         if(extraItems != null) {
             for(int i = 0; i < extraItems.length; i++) {
-                items.put(i + valueSetBlock.getValues().size(), extraItems[i]);
+                items.put(i + valueSet.getValues().size(), extraItems[i]);
             }
         }
         return items;
@@ -61,8 +61,8 @@ public class ViewValueMenu extends Menu implements Receiver {
         return null;
     }
 
-    public ValueSetBlock getValueSetBlock() {
-        return valueSetBlock;
+    public ValueSet getValueSetBlock() {
+        return valueSet;
     }
 
     @Override

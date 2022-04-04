@@ -2,10 +2,9 @@ package org.amusedd.codeblocks.blocks.executables.containers;
 
 import org.amusedd.codeblocks.CodeBlocks;
 import org.amusedd.codeblocks.blocks.CodeBlockInfo;
-import org.amusedd.codeblocks.blocks.executables.ExecutableCodeBlock;
 import org.amusedd.codeblocks.blocks.executables.ValueHolder;
 import org.amusedd.codeblocks.blocks.value.ValueBlock;
-import org.amusedd.codeblocks.blocks.value.ValueSetBlock;
+import org.amusedd.codeblocks.blocks.value.ValueSet;
 import org.amusedd.codeblocks.blocks.value.VariableBlock;
 import org.amusedd.codeblocks.util.fake.EventType;
 import org.amusedd.codeblocks.util.items.ItemBuilder;
@@ -14,7 +13,6 @@ import org.bukkit.Material;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,11 +20,11 @@ import java.util.Map;
 public class EventFunctionBlock extends CodeBlockContainer implements ValueHolder {
 
     CodeBlockContainer container;
-    ValueSetBlock valueSetBlock;
+    ValueSet valueSet;
 
-    public EventFunctionBlock(ValueSetBlock valueSetBlock, Map<String, Object> map) {
+    public EventFunctionBlock(ValueSet valueSet, Map<String, Object> map) {
         super(map);
-        this.valueSetBlock = valueSetBlock;
+        this.valueSet = valueSet;
     }
 
     public EventFunctionBlock(){
@@ -34,7 +32,7 @@ public class EventFunctionBlock extends CodeBlockContainer implements ValueHolde
         map.put("name", new ValueBlock("Name of Event Function", Material.NAME_TAG, String.class, null));
         map.put("event_type", new ValueBlock("Activation Event", Material.BEACON, EventType.class, null));
         addVariable("event", new VariableBlock("Event", Event.class, null, false), true);
-        this.valueSetBlock = new ValueSetBlock(map);
+        this.valueSet = new ValueSet(map);
     }
 
     @Override
@@ -43,11 +41,11 @@ public class EventFunctionBlock extends CodeBlockContainer implements ValueHolde
     }
 
     public String getName(){
-        return valueSetBlock.get("name").getValue() == null ? "Undefined Event Function" : valueSetBlock.get("name").getValue().toString();
+        return valueSet.get("name").getValue() == null ? "Undefined Event Function" : valueSet.get("name").getValue().toString();
     }
 
     public EventType getEventType(){
-        return (EventType) valueSetBlock.get("event_type").getValue();
+        return (EventType) valueSet.get("event_type").getValue();
     }
 
     @Override
@@ -56,8 +54,8 @@ public class EventFunctionBlock extends CodeBlockContainer implements ValueHolde
     }
 
     @Override
-    public ValueSetBlock getValueSet() {
-        return valueSetBlock;
+    public ValueSet getValueSet() {
+        return valueSet;
     }
 
     @Override
@@ -66,11 +64,11 @@ public class EventFunctionBlock extends CodeBlockContainer implements ValueHolde
     }
 
     public static EventFunctionBlock deserialize(Map<String, Object> map){
-        return new EventFunctionBlock((ValueSetBlock) map.get("valueset"), map);
+        return new EventFunctionBlock((ValueSet) map.get("valueset"), map);
     }
 
     @Override
-    public void onCreate(CodeBlockContainer container) {
+    public void onCreation(CodeBlockContainer container) {
         CodeBlocks.getPlugin().getEventStorage().addEventFunction(this);
     }
 }

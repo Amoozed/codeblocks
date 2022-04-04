@@ -4,7 +4,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.amusedd.codeblocks.blocks.executables.ValueHolder;
 import org.amusedd.codeblocks.blocks.executables.containers.CodeBlockContainer;
 import org.amusedd.codeblocks.blocks.value.ValueBlock;
-import org.amusedd.codeblocks.blocks.value.ValueSetBlock;
+import org.amusedd.codeblocks.blocks.value.ValueSet;
 import org.amusedd.codeblocks.menu.ContainerEditMenu;
 import org.amusedd.codeblocks.menu.ViewValueMenu;
 import org.bukkit.entity.Player;
@@ -38,7 +38,7 @@ public interface Viewable {
 
     default void onGUIItemRightClick(InventoryClickEvent event) {
         if(this instanceof ValueHolder) {
-            ValueSetBlock valueSet = ((ValueHolder) this).getValueSet();
+            ValueSet valueSet = ((ValueHolder) this).getValueSet();
             new ViewValueMenu((Player) event.getWhoClicked(), valueSet).open();
         }
     }

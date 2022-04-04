@@ -1,6 +1,6 @@
 package org.amusedd.codeblocks.blocks.executables.print;
 
-import org.amusedd.codeblocks.blocks.value.ValueSetBlock;
+import org.amusedd.codeblocks.blocks.value.ValueSet;
 import org.amusedd.codeblocks.util.items.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class PrintToConsoleBlock extends PrintBlock {
 
-    public PrintToConsoleBlock(ValueSetBlock valueset) {
+    public PrintToConsoleBlock(ValueSet valueset) {
         super(valueset);
     }
 
@@ -31,7 +31,7 @@ public class PrintToConsoleBlock extends PrintBlock {
     }
 
     public static PrintToConsoleBlock deserialize(Map<String, Object> map){
-        return new PrintToConsoleBlock((ValueSetBlock) map.get("valueset"));
+        return new PrintToConsoleBlock((ValueSet) map.get("valueset"));
     }
 
 

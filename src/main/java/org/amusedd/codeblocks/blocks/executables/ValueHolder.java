@@ -3,12 +3,12 @@ package org.amusedd.codeblocks.blocks.executables;
 import org.amusedd.codeblocks.blocks.Viewable;
 import org.amusedd.codeblocks.blocks.executables.containers.CodeBlockContainer;
 import org.amusedd.codeblocks.blocks.value.ValueBlock;
-import org.amusedd.codeblocks.blocks.value.ValueSetBlock;
+import org.amusedd.codeblocks.blocks.value.ValueSet;
 import org.amusedd.codeblocks.menu.InitializeBlockMenu;
 import org.bukkit.entity.Player;
 
 public interface ValueHolder {
-    ValueSetBlock getValueSet();
+    ValueSet getValueSet();
 
     default void addValue(String name, ValueBlock value) {
         getValueSet().add(name, value);
@@ -32,13 +32,15 @@ public interface ValueHolder {
         }
     }
 
-    default void create(Player player, CodeBlockContainer container) {
+    default void onInitialize(Player player, CodeBlockContainer container) {
         if (!getValueSet().canRun()) {
             new InitializeBlockMenu(player, getValueSet(), container, this).open();
         }
     }
 
-    default void onCreate(CodeBlockContainer container) {
-
+    default void onCreation(CodeBlockContainer container) {
+        if(this instanceof ExecutableCodeBlock) {
+            ((ExecutableCodeBlock) this).addToContainer(container);
+        }
     }
 }

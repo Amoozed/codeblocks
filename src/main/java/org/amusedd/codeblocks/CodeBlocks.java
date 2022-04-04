@@ -1,6 +1,7 @@
 package org.amusedd.codeblocks;
 
 import org.amusedd.codeblocks.blocks.CodeBlock;
+import org.amusedd.codeblocks.blocks.value.ValueSet;
 import org.amusedd.codeblocks.commands.PluginCommand;
 import org.amusedd.codeblocks.events.SelfEvents;
 import org.amusedd.codeblocks.util.ViewData;
@@ -41,6 +42,7 @@ public final class CodeBlocks extends JavaPlugin {
         }
         for(Class<? extends CodeBlock> clazz : new Reflections("org.amusedd.codeblocks.blocks").getSubTypesOf(CodeBlock.class)) ConfigurationSerialization.registerClass(clazz);
         ConfigurationSerialization.registerClass(ViewData.class);
+        ConfigurationSerialization.registerClass(ValueSet.class);
         ConfigurationSerialization.registerClass(CodeBlock.class);
         ConfigurationSerialization.registerClass(ValueBlockData.class);
         valueWrapper = new ValueWrapper();

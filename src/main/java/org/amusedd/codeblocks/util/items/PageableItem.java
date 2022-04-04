@@ -8,26 +8,27 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class PageableItem extends OverridableItemStack{
-    ArrayList<ItemStack> items;
-    public PageableItem(Material material, String name, List<String> lore, ArrayList<ItemStack> items) {
+    HashMap<Object, ItemStack> items;
+    public PageableItem(Material material, String name, List<String> lore,  HashMap<Object, ItemStack> items) {
         super(material, name, lore);
         this.items = items;
     }
 
-    public PageableItem(ItemStack item, ArrayList<ItemStack> items) {
+    public PageableItem(ItemStack item,  HashMap<Object, ItemStack> items) {
         super(item);
         this.items = items;
     }
 
-    public void addItem(ItemStack item) {
-        items.add(item);
+    public void addItem(Object obj, ItemStack item) {
+        items.put(obj, item);
     }
 
     public ArrayList<ItemStack> getItems() {
-        return items;
+        return items.values().stream().collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
     }
 
     @Override

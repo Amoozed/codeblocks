@@ -5,6 +5,8 @@ import org.amusedd.codeblocks.commands.input.communication.Conversation;
 import org.amusedd.codeblocks.commands.input.communication.Receiver;
 import org.amusedd.codeblocks.menu.ViewValueMenu;
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -12,13 +14,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ValueSetBlock extends ValueBlock {
+public class ValueSet implements ConfigurationSerializable, Receiver {
     HashMap<String, ValueBlock> values;
     Receiver changeCallback;
     ValueHolder valueHolder;
 
-    public ValueSetBlock(String name, HashMap<String, ValueBlock> values) {
-        super(name, Material.EMERALD_BLOCK, ValueSetBlock.class, null);
+    public ValueSet(HashMap<String, ValueBlock> values) {
         this.values = values;
         for(ValueBlock value : values.values()){
             value.setParent(this);
@@ -26,13 +27,7 @@ public class ValueSetBlock extends ValueBlock {
     }
 
 
-    public ValueSetBlock(String name, HashMap<String,ValueBlock> values, ValueHolder valueHolder) {
-        this(name, values);
-        setHolder(valueHolder);
-    }
-
-    public ValueSetBlock(String name, ValueBlock... values) {
-        super(name, Material.EMERALD_BLOCK, ValueSetBlock.class, null);
+    public ValueSet(ValueBlock... values) {
         HashMap<String, ValueBlock> map = new HashMap<>();
         for (ValueBlock value : values) {
             map.put(value.getData().getName(), value);
@@ -49,13 +44,6 @@ public class ValueSetBlock extends ValueBlock {
         this.valueHolder = valueHolder;
     }
 
-    public ValueSetBlock(HashMap<String, ValueBlock> values) {
-        this("data", values);
-    }
-
-    public ValueSetBlock(String name){
-        this(name, new HashMap<String, ValueBlock>());
-    }
 
     public void add(String name, ValueBlock value) {
         values.put(name, value);
@@ -73,10 +61,6 @@ public class ValueSetBlock extends ValueBlock {
         return new ArrayList<ValueBlock>(values.values());
     }
 
-    @Override
-    public void onGUIItemLeftClick(InventoryClickEvent event) {
-        new ViewValueMenu((Player) event.getWhoClicked(),  this).open();
-    }
 
     public boolean canRun(){
         for(ValueBlock value : values.values()){
@@ -99,15 +83,14 @@ public class ValueSetBlock extends ValueBlock {
 
     @Override
     public Map<String, Object> serialize() {
-        Map<String, Object> map =  super.serialize();
+        Map<String, Object> map = new HashMap<>();
         map.put("values", values);
         return map;
     }
 
-    public static ValueSetBlock deserialize(Map<String, Object> map){
-        String name = (String) map.get("name");
+    public static ValueSet deserialize(Map<String, Object> map){
         HashMap<String, ValueBlock> values = (HashMap<String, ValueBlock>) map.get("values");
-        return new ValueSetBlock(name, values);
+        return new ValueSet(values);
     }
 
     void callChange(ValueBlock value){

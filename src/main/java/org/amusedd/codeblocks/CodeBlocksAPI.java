@@ -25,12 +25,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class CodeBlocksAPI {
     HashMap<Class<? extends CodeBlock>, ViewData> blockPreviews = new HashMap<>();
     HashMap<String, ViewData> categoryPreviews = new HashMap<>();
     HashMap<Class<?>, ArrayList<RunnableMethod>> methods = new HashMap<>();
-    HashMap<Class<?>, ArrayList<RunnableMethod>> autoGenerateMethods = new HashMap<>();
+    ArrayList<Class<?>> autoGenerateMethods = new ArrayList<>();
     protected CodeBlocksAPI() {
         initalizeBaseBlocks();
         // String, Integer, Double, Boolean, Event
@@ -70,27 +71,33 @@ public class CodeBlocksAPI {
     }
 
     public void addAutoGenerateMethod(Class<?> clazz) {
-        autoGenerateMethods.put(clazz, null);
+        autoGenerateMethods.add(clazz);
     }
 
     boolean generateAtRuntime(Class<?> clazz) {
-        if(autoGenerateMethods.containsKey(clazz)) return true;
+        if(autoGenerateMethods.contains(clazz)) return true;
         else {
-            for(Class<?> c : autoGenerateMethods.keySet()) {
+            for(Class<?> c : autoGenerateMethods) {
                 if(c.isAssignableFrom(clazz)) return true;
             }
         }
         return false;
     }
 
-    public ArrayList<RunnableMethod> getMethods(Class<?> clazz) {
+    public ArrayList<RunnableMethod> getAllMethods(Class<?> clazz) {
         ArrayList<RunnableMethod> allMethods = methods.get(clazz);
+        if(clazz.equals(Object.class)){
+            for(Class<?> c : methods.keySet()) {
+                allMethods.addAll(getAllMethods(c));
+            }
+            return allMethods;
+        }
         if(generateAtRuntime(clazz)) {
             for(Method method : clazz.getMethods()){
                 String name = method.getName();
                 Class[] params = method.getParameterTypes();
                 Class returnType = method.getReturnType() == void.class ? null : method.getReturnType();
-                addRunnableMethod(clazz, new RunnableMethod(name, returnType, params, data -> {
+                allMethods.add(new RunnableMethod(name, returnType, params, Modifier.isStatic(method.getModifiers()) ,data -> {
                         try {
                             return method.invoke(data.getSource(), data.getArgs());
                         } catch (InvocationTargetException | IllegalAccessException e) {
@@ -99,9 +106,38 @@ public class CodeBlocksAPI {
                         }
                 }));
             }
-            allMethods.addAll(autoGenerateMethods.get(clazz));
+        }
+        if(clazz.getSuperclass() != null) allMethods.addAll(getAllMethods(clazz.getSuperclass()));
+        return allMethods;
+    }
+
+    public ArrayList<RunnableMethod> getStaticMethods(Class<?> clazz) {
+        ArrayList<RunnableMethod> allMethods = new ArrayList<>();
+        if(clazz.equals(Object.class)){
+            for(Class<?> c : methods.keySet()) {
+                allMethods.addAll(getAllMethods(c).stream().filter(RunnableMethod::isStatic).collect(Collectors.toList()));
+            }
+            return allMethods;
         }
         return allMethods;
+    }
+
+    public ArrayList<RunnableMethod> getNonStaticMethods(Class<?> clazz) {
+        ArrayList<RunnableMethod> allMethods = new ArrayList<>();
+        if(clazz.equals(Object.class)){
+            for(Class<?> c : methods.keySet()) {
+                allMethods.addAll(getAllMethods(c).stream().filter(method -> !method.isStatic()).collect(Collectors.toList()));
+            }
+            return allMethods;
+        }
+        return allMethods;
+    }
+
+    public RunnableMethod getMethodByID(Class<?> clazz, String id) {
+        for(RunnableMethod method : getAllMethods(clazz)) {
+            if(method.getID().equals(id)) return method;
+        }
+        return null;
     }
 
     public void registerCodeBlock(Class<? extends CodeBlock> codeBlockClass) {
@@ -137,8 +173,8 @@ public class CodeBlocksAPI {
         }
     }
 
-    public ArrayList<ItemStack> getPreviews(){
-        HashMap<String, PageableItem> items = new HashMap<>();
+    public HashMap<Object, ItemStack> getPreviews(){
+        HashMap<Object, ItemStack> items = new HashMap<>();
         for (Class<? extends CodeBlock> clazz : blockPreviews.keySet()) {
             ViewData data = blockPreviews.get(clazz);
             ItemStack preview = data.getItem();
@@ -147,32 +183,35 @@ public class CodeBlocksAPI {
             meta.getPersistentDataContainer().set(new NamespacedKey(CodeBlocks.getPlugin(), "type"), PersistentDataType.STRING, clazz.getName());
             preview.setItemMeta(meta);
             if(items.containsKey(category)){
-                items.get(category).addItem(preview);
+                ((PageableItem)(items.get(category))).addItem(clazz, preview);
             } else {
-                items.put(category, new PageableItem(getCategoryPreview(category).getItem(), new ArrayList<>(List.of(preview))));
+                HashMap<Object, ItemStack> cat = new HashMap<>();
+                cat.put(clazz, preview);
+                items.put(category, new PageableItem(getCategoryPreview(category).getItem(), cat));
             }
 
         }
-        for(String category : items.keySet()) {
+        for(Object key : items.keySet()) {
+            String category = key.toString();
             if(category.contains("/")){
                 String[] split = category.split("/");
                 String root = split[0];
                 String path = root;
-                PageableItem parent = items.containsKey(root) ? items.get(root) : items.put(root, new PageableItem(getCategoryPreview(root).getItem(), new ArrayList<>()));
+                PageableItem parent = items.containsKey(root) ? (PageableItem) items.get(root) : (PageableItem) items.put(root, new PageableItem(getCategoryPreview(root).getItem(), new HashMap<>()));
                 for(int i = 1; i < split.length; i++){
                     String sub = split[i];
                     path += "/" + sub;
-                    PageableItem subItem = items.containsKey(path) ? items.get(path) : new PageableItem(getCategoryPreview(path).getItem(), new ArrayList<>());
-                    parent.addItem(subItem);
+                    PageableItem subItem = items.containsKey(path) ? (PageableItem) items.get(path) : new PageableItem(getCategoryPreview(path).getItem(), new HashMap<>());
+                    parent.addItem(category, subItem);
                     parent = subItem;
                 }
                 PageableItem last = (PageableItem) parent.getItems().get(parent.getItems().size() - 1);
-                last.addItem(items.get(category));
+                last.addItem(category, items.get(category));
                 items.remove(category);
             }
         }
         ArrayList<ItemStack> result = new ArrayList<>(items.values());
-        return result;
+        return items;
     }
 
     public void registerType(TypeData data){

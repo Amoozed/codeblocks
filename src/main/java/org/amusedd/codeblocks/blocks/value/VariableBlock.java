@@ -1,6 +1,7 @@
 package org.amusedd.codeblocks.blocks.value;
 
 import org.amusedd.codeblocks.blocks.CodeBlock;
+import org.amusedd.codeblocks.blocks.RetrievableValue;
 import org.amusedd.codeblocks.blocks.Viewable;
 import org.amusedd.codeblocks.blocks.executables.ValueHolder;
 import org.amusedd.codeblocks.blocks.executables.containers.CodeBlockContainer;
@@ -18,10 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class VariableBlock extends CodeBlock implements Viewable, ValueHolder, Receiver {
-    ValueSetBlock set;
+public class VariableBlock extends CodeBlock implements Viewable, ValueHolder, Receiver, RetrievableValue {
+    ValueSet set;
     Object startingValue;
-    public VariableBlock(ValueSetBlock set) {
+    public VariableBlock(ValueSet set) {
         this.set = set;
         this.set.setChangeCallback(this);
     }
@@ -32,7 +33,7 @@ public class VariableBlock extends CodeBlock implements Viewable, ValueHolder, R
         values.put("name", new ValueBlock("Name of Variable", Material.NAME_TAG, String.class, name));
         values.put("type", new ValueBlock("Type", Material.FLINT, Class.class, type));
         values.put("value", new ValueBlock(new ValueBlockData(new ViewData("Value", Material.DIAMOND), Object.class, false), value));
-        this.set = new ValueSetBlock(values);
+        this.set = new ValueSet(values);
         this.set.setChangeCallback(this);
         startingValue = value;
     }
@@ -43,7 +44,7 @@ public class VariableBlock extends CodeBlock implements Viewable, ValueHolder, R
         values.put("name", new ValueBlock("Name of Variable", Material.NAME_TAG, String.class, null));
         values.put("type", new ValueBlock("Type", Material.FLINT, Class.class, null));
         values.put("value", new ValueBlock(new ValueBlockData(new ViewData("Value", Material.DIAMOND), Object.class, false), null));
-        this.set = new ValueSetBlock(values);
+        this.set = new ValueSet(values);
         this.set.setChangeCallback(this);
     }
 
@@ -76,12 +77,12 @@ public class VariableBlock extends CodeBlock implements Viewable, ValueHolder, R
     }
 
     @Override
-    public ValueSetBlock getValueSet() {
+    public ValueSet getValueSet() {
         return set;
     }
 
     @Override
-    public void onCreate(CodeBlockContainer container) {
+    public void onCreation(CodeBlockContainer container) {
         container.addVariable(getName(), this, true);
         startingValue = getValue();
     }
@@ -99,8 +100,12 @@ public class VariableBlock extends CodeBlock implements Viewable, ValueHolder, R
     }
 
     public static VariableBlock deserialize(Map<String, Object> map){
-        return new VariableBlock((ValueSetBlock) map.get("valueset"));
+        return new VariableBlock((ValueSet) map.get("valueset"));
     }
 
 
+    @Override
+    public Object retrieveValue() {
+        return getValue();
+    }
 }

@@ -1,8 +1,6 @@
 package org.amusedd.codeblocks.menu;
 
-import org.amusedd.codeblocks.CodeBlocks;
 import org.amusedd.codeblocks.blocks.executables.containers.CodeBlockContainer;
-import org.amusedd.codeblocks.blocks.executables.containers.StandaloneFunctionBlock;
 import org.amusedd.codeblocks.blocks.value.VariableBlock;
 import org.amusedd.codeblocks.util.items.ItemBuilder;
 import org.bukkit.ChatColor;
@@ -37,7 +35,7 @@ public class VariableMenu extends Menu{
     public void itemClicked(ItemStack item, InventoryClickEvent event) {
         if(item.equals(createVariable)) {
             VariableBlock variableBlock = new VariableBlock();
-            variableBlock.create(getOwner(), container);
+            variableBlock.onInitialize(getOwner(), container);
         }
         else {
             VariableBlock variableBlock = variables.get(event.getSlot());

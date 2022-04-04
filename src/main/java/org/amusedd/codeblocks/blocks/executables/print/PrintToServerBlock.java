@@ -1,7 +1,7 @@
 package org.amusedd.codeblocks.blocks.executables.print;
 
 import org.amusedd.codeblocks.blocks.CodeBlockInfo;
-import org.amusedd.codeblocks.blocks.value.ValueSetBlock;
+import org.amusedd.codeblocks.blocks.value.ValueSet;
 import org.amusedd.codeblocks.util.items.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -13,7 +13,7 @@ import java.util.Map;
 @CodeBlockInfo(viewName = "Send message to Server", viewMaterial = Material.PAPER, description = {"&7Send a message to the server", "&7Uses Bukkit's Broadcast functionality"})
 public class PrintToServerBlock extends PrintBlock {
 
-    public PrintToServerBlock(ValueSetBlock valueset) {
+    public PrintToServerBlock(ValueSet valueset) {
         super(valueset);
     }
 
@@ -31,7 +31,7 @@ public class PrintToServerBlock extends PrintBlock {
     }
 
     public static PrintToServerBlock deserialize(Map<String, Object> map){
-        return new PrintToServerBlock((ValueSetBlock) map.get("valueset"));
+        return new PrintToServerBlock((ValueSet) map.get("valueset"));
     }
 
 

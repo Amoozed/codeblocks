@@ -1,7 +1,7 @@
 package org.amusedd.codeblocks.util.values.wrappers;
 
 import org.amusedd.codeblocks.blocks.value.ValueBlock;
-import org.amusedd.codeblocks.blocks.value.ValueSetBlock;
+import org.amusedd.codeblocks.blocks.value.ValueSet;
 import org.amusedd.codeblocks.util.ViewData;
 import org.amusedd.codeblocks.util.values.Wrapper;
 import org.bukkit.Bukkit;
@@ -19,7 +19,8 @@ public class LocationWrapper implements Wrapper<Location> {
         map.put("y", new ValueBlock(new ViewData("Y", Material.MAP, new ArrayList<>()), Double.class, value.getY()));
         map.put("z", new ValueBlock(new ViewData("Z", Material.MAP, new ArrayList<>()), Double.class, value.getZ()));
         map.put("world", new ValueBlock(new ViewData("World", Material.MAP, new ArrayList<>()), String.class, value.getWorld().getName()));
-        return new ValueSetBlock("Location", map);
+        //TODO: Add support for Location
+        return null;
     }
 
     @Override
@@ -37,8 +38,8 @@ public class LocationWrapper implements Wrapper<Location> {
 
     @Override
     public Location unwrap(ValueBlock value) {
-        assert value instanceof ValueSetBlock;
-        return new Location(Bukkit.getWorld((String) ((ValueSetBlock) value).get("world").getCurrentValue()), (Double) ((ValueSetBlock) value).get("x").getCurrentValue(), (Double) ((ValueSetBlock) value).get("y").getCurrentValue(), (Double) ((ValueSetBlock) value).get("z").getCurrentValue());
+        //return new Location(Bukkit.getWorld((String) ((ValueSet) value).get("world").getCurrentValue()), (Double) ((ValueSet) value).get("x").getCurrentValue(), (Double) ((ValueSet) value).get("y").getCurrentValue(), (Double) ((ValueSet) value).get("z").getCurrentValue());
+        return null;
     }
 
     @Override
@@ -50,8 +51,8 @@ public class LocationWrapper implements Wrapper<Location> {
     public boolean isOfType(Object value) {
         if(value instanceof Location) {
             return true;
-        } else if(value instanceof ValueSetBlock){
-            return ((ValueSetBlock) value).get("x").getCurrentValue() != null && ((ValueSetBlock) value).get("y").getCurrentValue() != null && ((ValueSetBlock) value).get("z").getCurrentValue() != null && ((ValueSetBlock) value).get("world").getCurrentValue() != null;
+        } else if(value instanceof ValueSet){
+            return ((ValueSet) value).get("x").getCurrentValue() != null && ((ValueSet) value).get("y").getCurrentValue() != null && ((ValueSet) value).get("z").getCurrentValue() != null && ((ValueSet) value).get("world").getCurrentValue() != null;
         }
         else {
             if(value instanceof String) {

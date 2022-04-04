@@ -2,7 +2,7 @@ package org.amusedd.codeblocks.menu;
 
 import org.amusedd.codeblocks.blocks.executables.ValueHolder;
 import org.amusedd.codeblocks.blocks.executables.containers.CodeBlockContainer;
-import org.amusedd.codeblocks.blocks.value.ValueSetBlock;
+import org.amusedd.codeblocks.blocks.value.ValueSet;
 import org.amusedd.codeblocks.util.items.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -21,8 +21,8 @@ public class InitializeBlockMenu extends ViewValueMenu {
         createBlock = new ItemBuilder(Material.STONE).setName(ChatColor.WHITE + "Create Block").addLore(ChatColor.GRAY + "Click to add this CodeBlock to the current Container.").addLore(ChatColor.RED + "All required variables must be filled in.").build();
     }
 
-    public InitializeBlockMenu(Player player, ValueSetBlock valueSetBlock, CodeBlockContainer container, ValueHolder creationCallback) {
-        super(player, valueSetBlock);
+    public InitializeBlockMenu(Player player, ValueSet valueSet, CodeBlockContainer container, ValueHolder creationCallback) {
+        super(player, valueSet);
         this.creationCallback = creationCallback;
         this.container = container;
     }
@@ -36,7 +36,7 @@ public class InitializeBlockMenu extends ViewValueMenu {
     public void itemClicked(ItemStack item, InventoryClickEvent event) {
         if(item.equals(createBlock)){
             if(getValueSetBlock().canRun()) {
-                creationCallback.onCreate(container);
+                creationCallback.onCreation(container);
                 getParent().open();
             } else {
                 getOwner().sendMessage(ChatColor.RED + "This block cannot be created yet. Please set all required variables.");

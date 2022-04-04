@@ -2,7 +2,6 @@ package org.amusedd.codeblocks.menu;
 
 import org.amusedd.codeblocks.CodeBlocks;
 import org.amusedd.codeblocks.blocks.executables.containers.EventFunctionBlock;
-import org.amusedd.codeblocks.blocks.executables.containers.StandaloneFunctionBlock;
 import org.amusedd.codeblocks.util.items.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -34,7 +33,7 @@ public class EventFunctionsMenu extends Menu{
     public void itemClicked(ItemStack item, InventoryClickEvent event) {
         if(item.equals(createEventFunction)) {
             EventFunctionBlock function = new EventFunctionBlock();
-            function.create(getOwner(), null);
+            function.onInitialize(getOwner(), null);
         }
         else {
             EventFunctionBlock function = functions.get(event.getSlot());

@@ -9,7 +9,6 @@ public interface ExecutableCodeBlock extends Viewable {
             finishExecution();
         }
     }
-
     boolean run();
     CodeBlockContainer getContainer();
     default void addToContainer(CodeBlockContainer container){

@@ -1,17 +1,15 @@
 package org.amusedd.codeblocks.blocks.executables.containers.loops;
 
 import org.amusedd.codeblocks.blocks.CodeBlockInfo;
-import org.amusedd.codeblocks.blocks.executables.ExecutableCodeBlock;
 import org.amusedd.codeblocks.blocks.executables.ValueHolder;
 import org.amusedd.codeblocks.blocks.executables.containers.CodeBlockContainer;
 import org.amusedd.codeblocks.blocks.value.ValueBlock;
-import org.amusedd.codeblocks.blocks.value.ValueSetBlock;
+import org.amusedd.codeblocks.blocks.value.ValueSet;
 import org.amusedd.codeblocks.util.items.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,10 +17,10 @@ import java.util.Map;
 public class NumericLoop extends CodeBlockContainer implements ValueHolder {
 
     CodeBlockContainer container;
-    ValueSetBlock values;
+    ValueSet values;
     int iterations = 0;
 
-    public NumericLoop(ValueSetBlock values, Map<String, Object> data) {
+    public NumericLoop(ValueSet values, Map<String, Object> data) {
         super(data);
         this.values = values;
     }
@@ -30,7 +28,7 @@ public class NumericLoop extends CodeBlockContainer implements ValueHolder {
     public NumericLoop(){
         HashMap<String, ValueBlock> map = new HashMap<>();
         map.put("amount", new ValueBlock("Loop Amount", Material.REPEATER, Integer.class, null));
-        this.values = new ValueSetBlock(map);
+        this.values = new ValueSet(map);
     }
 
     @Override
@@ -44,7 +42,7 @@ public class NumericLoop extends CodeBlockContainer implements ValueHolder {
     }
 
     @Override
-    public ValueSetBlock getValueSet() {
+    public ValueSet getValueSet() {
         return values;
     }
 
@@ -64,7 +62,7 @@ public class NumericLoop extends CodeBlockContainer implements ValueHolder {
     }
 
     public static NumericLoop deserialize(Map<String, Object> map){
-        return new NumericLoop((ValueSetBlock)map.get("valueset"), map);
+        return new NumericLoop((ValueSet)map.get("valueset"), map);
     }
 
     @Override
