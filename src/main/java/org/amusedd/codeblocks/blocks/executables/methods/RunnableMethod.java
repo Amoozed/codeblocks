@@ -8,7 +8,6 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class RunnableMethod {
@@ -55,13 +54,13 @@ public class RunnableMethod {
     public ItemStack getItem() {
         return new ItemBuilder(Material.BOW).setName(ChatColor.WHITE + methodName + "")
                 .addLore(ChatColor.GREEN + "Method Call")
-                .addLore(ChatColor.GRAY + "Return Type: " + ChatColor.GREEN + (returnType == null ? "None" : returnType.getSimpleName()))
+                .addLore(ChatColor.GRAY + "Return Type: " + ChatColor.GREEN + (getReturnType() == null ? "None" : getReturnType().getSimpleName()))
                 .build();
     }
 
     public void call(VariableBlock variable, CodeBlockContainer container, Object[] args) {
         MethodExecutionData data = new MethodExecutionData(container, args, variable.getValue());
-        if(returnType != null) {
+        if(getReturnType() != null) {
             Object returnValue = methodExecutor.apply(data);
             if(returnValue != null) variable.setValue(returnValue, false);
         } else {
@@ -75,5 +74,13 @@ public class RunnableMethod {
 
     public String getMethodName() {
         return methodName;
+    }
+
+    public Class<?>[] getParameterTypes() {
+        return parameterTypes;
+    }
+
+    public Class<?> getReturnType() {
+        return returnType;
     }
 }

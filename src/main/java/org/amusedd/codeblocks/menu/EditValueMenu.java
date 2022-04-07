@@ -10,6 +10,7 @@ import org.amusedd.codeblocks.commands.input.communication.Conversation;
 import org.amusedd.codeblocks.commands.input.communication.Receiver;
 import org.amusedd.codeblocks.util.items.ItemBuilder;
 import org.amusedd.codeblocks.util.items.LambdaButton;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -46,6 +47,7 @@ public class EditValueMenu extends Menu {
                 .addLore(ChatColor.GRAY + "Click to get this value from a function")
                 .build();
         callMethodFromVariable = new LambdaButton(Material.MAP, ChatColor.WHITE + "Call Method From Variable", List.of(ChatColor.GRAY + "Click to call a function from a variable"), (event) -> {
+            /*
             EditValueMenu menu = (EditValueMenu) event.getInventory().getHolder();
             ValueBlock block = menu.valueBlock;
             Class type = block.getValueType();
@@ -59,6 +61,7 @@ public class EditValueMenu extends Menu {
                         .build());
             }
             new SelectMenu((Player) event.getWhoClicked(), items, ).open();
+            */
         });
         callStaticMethod = new LambdaButton(Material.MAP, ChatColor.WHITE + "Call Static Method", List.of(ChatColor.GRAY + "Click to call a static method"), (event) -> {
             EditValueMenu menu = (EditValueMenu) event.getInventory().getHolder();
@@ -93,6 +96,7 @@ public class EditValueMenu extends Menu {
         items.put(0, keyboardEntry);
         items.put(1, variableEntry);
         items.put(2, functionEntry);
+        Bukkit.broadcastMessage("broskierst");
         return items;
     }
 
@@ -107,14 +111,14 @@ public class EditValueMenu extends Menu {
                 ContainerEditMenu containerEditMenu = (ContainerEditMenu) parent;
                 CodeBlockContainer container = containerEditMenu.getContainer();
                 ArrayList<VariableBlock> variableBlocks = container.getAllVariables();
-                ArrayList<ItemStack> items = new ArrayList<>();
+                HashMap<Object, ItemStack> items = new HashMap<>();
                 for (VariableBlock variableBlock : variableBlocks) {
-                    items.add(variableBlock.getGUIItem());
+                    items.put(variableBlock, variableBlock.getGUIItem());
                 }
                 new SelectMenu((Player) event.getWhoClicked(), items, valueBlock, 1).open();
             }
         } else if (item.equals(functionEntry)) {
-            d
+
         }
     }
 

@@ -107,4 +107,8 @@ public abstract class CodeBlockContainer extends CodeBlock implements Executable
         }
         return list;
     }
+
+    public VariableBlock getVariable(String name){
+        return getAllVariables().stream().filter(variableBlock -> variableBlock.getName().equals(name)).findFirst().orElse(null);
+    }
 }

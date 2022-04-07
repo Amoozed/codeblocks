@@ -34,17 +34,17 @@ public class EventSelection implements SpecifiedSet<EventType> {
     @Override
     public ArrayList<ItemStack> getAsItems() {
         ArrayList<ItemStack> itemStacks = new ArrayList<>();
-        HashMap<String, ArrayList<ItemStack>> eventPages = new HashMap<>();
+        HashMap<String, HashMap<Object, ItemStack>> eventPages = new HashMap<>();
         for (String eventName : getAsStrings()) {
             String page = CodeBlocks.getPlugin().getEventStorage().getEventClassification(eventName);
             if (!eventPages.containsKey(page)) {
-                eventPages.put(page, new ArrayList<>());
+                eventPages.put(page, new HashMap<>());
             }
             ItemStack item = new ItemBuilder(getSpecifiedMaterial(eventName)).setName(eventName).build();
             ItemMeta meta = item.getItemMeta();
             meta.getPersistentDataContainer().set(new NamespacedKey(CodeBlocks.getPlugin(), "type"), PersistentDataType.STRING, eventName);
             item.setItemMeta(meta);
-            eventPages.get(page).add(item);
+            eventPages.get(page).put(eventPages.get(page).size(), item);
         }
         for (String page : eventPages.keySet()) {
             itemStacks.add(new PageableItem(new ItemBuilder(Material.PAPER).setName(page).build(), eventPages.get(page)));

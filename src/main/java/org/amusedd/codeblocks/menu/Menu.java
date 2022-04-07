@@ -66,6 +66,7 @@ public abstract class Menu implements InventoryHolder {
         for (int index : items.keySet()) {
             inventory.setItem(index, items.get(index));
         }
+        Bukkit.broadcastMessage(getItems().toString());
     }
 
     public Menu getParent(){
