@@ -66,7 +66,6 @@ public abstract class Menu implements InventoryHolder {
         for (int index : items.keySet()) {
             inventory.setItem(index, items.get(index));
         }
-        Bukkit.broadcastMessage(getItems().toString());
     }
 
     public Menu getParent(){
@@ -129,5 +128,11 @@ public abstract class Menu implements InventoryHolder {
     public void forceClose(){
         forceClosed = true;
         owner.closeInventory();
+    }
+
+    public Menu getFirstNonSelectParent(){
+    	if(parent == null) return null;
+    	if(parent instanceof SelectMenu) return parent.getFirstNonSelectParent();
+    	return parent;
     }
 }

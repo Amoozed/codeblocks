@@ -70,7 +70,7 @@ public class ValueWrapper {
     }
 
     public Object getUnwrappedValue(ValueBlock value, Object currentValue){
-        Wrapper wrapper = wrappers.get(value.getData().getType());
+        Wrapper wrapper = getWrapper(value.getValueType());
         if(wrapper.isOfType(value) && wrapper.isWrappedValue(currentValue)){
             return wrapper.unwrap(value);
         }
@@ -83,7 +83,7 @@ public class ValueWrapper {
     }
 
     public String unwrapToString(ValueBlock value){
-        Wrapper wrapper = wrappers.get(value.getData().getType());
+        Wrapper wrapper = getWrapper(value.getValueType());
         if(wrapper.isOfType(value)){
             return wrapper.unwrapToString(value);
         }
@@ -92,10 +92,16 @@ public class ValueWrapper {
     }
 
     Wrapper getWrapper(Class type){
-        if(type.equals(Object.class)){
+        if(wrappers.containsKey(type)){
+            return wrappers.get(type);
+        } else{
+            for (Class clazz : wrappers.keySet()) {
+                if (clazz.isAssignableFrom(type)) {
+                    return wrappers.get(clazz);
+                }
+            }
             return anyWrapper;
         }
-        return wrappers.get(type);
     }
 
     public SpecifiedSet getSet(Class type){

@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ViewValueMenu extends Menu implements Receiver {
@@ -24,6 +25,11 @@ public class ViewValueMenu extends Menu implements Receiver {
     public ViewValueMenu(Player player, ValueSet valueSet, OverridableItemStack... extraItems) {
         this(player, valueSet);
         this.extraItems = extraItems;
+    }
+
+    public ViewValueMenu(Player whoClicked, ArrayList<ValueBlock> list) {
+        super(whoClicked);
+        this.valueSet = new ValueSet(list.toArray(new ValueBlock[list.size()]));
     }
 
 
@@ -56,12 +62,13 @@ public class ViewValueMenu extends Menu implements Receiver {
         return items;
     }
 
+
     @Override
     public ItemStack blankSpot() {
         return null;
     }
 
-    public ValueSet getValueSetBlock() {
+    public ValueSet getValueSet() {
         return valueSet;
     }
 

@@ -2,6 +2,7 @@ package org.amusedd.codeblocks.menu;
 
 import org.amusedd.codeblocks.blocks.executables.ValueHolder;
 import org.amusedd.codeblocks.blocks.executables.containers.CodeBlockContainer;
+import org.amusedd.codeblocks.blocks.value.ValueBlock;
 import org.amusedd.codeblocks.blocks.value.ValueSet;
 import org.amusedd.codeblocks.util.items.ItemBuilder;
 import org.bukkit.ChatColor;
@@ -35,15 +36,19 @@ public class InitializeBlockMenu extends ViewValueMenu {
     @Override
     public void itemClicked(ItemStack item, InventoryClickEvent event) {
         if(item.equals(createBlock)){
-            if(getValueSetBlock().canRun()) {
+            if(canRun()) {
                 creationCallback.onCreation(container);
-                getParent().open();
+                getFirstNonSelectParent().open();
             } else {
                 getOwner().sendMessage(ChatColor.RED + "This block cannot be created yet. Please set all required variables.");
             }
         } else {
             super.itemClicked(item, event);
         }
+    }
+
+    public boolean canRun(){
+        return getValueSet().canRun();
     }
 
     @Override

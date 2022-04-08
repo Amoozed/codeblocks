@@ -8,7 +8,7 @@ import org.amusedd.codeblocks.blocks.executables.containers.CodeBlockContainer;
 import org.amusedd.codeblocks.commands.input.communication.Conversation;
 import org.amusedd.codeblocks.commands.input.communication.Receiver;
 import org.amusedd.codeblocks.menu.ContainerEditMenu;
-import org.amusedd.codeblocks.menu.EditValueMenu;
+import org.amusedd.codeblocks.menu.DirectValueEditMenu;
 import org.amusedd.codeblocks.menu.Menu;
 import org.amusedd.codeblocks.menu.SelectMenu;
 import org.amusedd.codeblocks.util.ViewData;
@@ -157,7 +157,7 @@ public class ValueBlock extends CodeBlock implements Viewable, Receiver, Retriev
             /*((Menu) event.getClickedInventory().getHolder()).forceClose();
             new ChatInput("Please enter a value of the type: " + data.getType().getSimpleName(), (Player) event.getWhoClicked(), new Conversation(this, (Receiver) (event.getClickedInventory().getHolder()))).awaitResponse();
             */
-            new EditValueMenu((Player) event.getWhoClicked(), this).open();
+            new DirectValueEditMenu((Player) event.getWhoClicked(), this).open();
         }
     }
 
@@ -212,6 +212,7 @@ public class ValueBlock extends CodeBlock implements Viewable, Receiver, Retriev
     @Override
     public void onTextResponse(Conversation sender, String text) {
         ValueBlock block = CodeBlocks.getPlugin().getValueWrapper().getWrappedValue(data.getType(), text);
+        System.out.println("Setting value to: " + text + " wrapped to " + block.getValue());
         if (block != null) {
             block.getData().setViewData(data.getViewData());
             block.getData().setType(data.getType());

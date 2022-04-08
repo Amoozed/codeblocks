@@ -12,6 +12,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class SelectMenu extends Menu implements Receiver {
     HashMap<Object, ItemStack> items;
@@ -66,9 +67,9 @@ public class SelectMenu extends Menu implements Receiver {
     @Override
     public HashMap<Integer, ItemStack> getItems() {
         HashMap<Integer, ItemStack> ret = new HashMap<>();
-        ItemStack[] itemArr = (ItemStack[]) this.items.values().toArray();
-        for(int i = 0; i < itemArr.length; i++) {
-            ret.put(i, itemArr[i]);
+        List<ItemStack> allItems = new ArrayList<>(this.items.values());
+        for(int i = 0; i < allItems.size(); i++) {
+            ret.put(i, allItems.get(i));
         }
         return ret;
     }

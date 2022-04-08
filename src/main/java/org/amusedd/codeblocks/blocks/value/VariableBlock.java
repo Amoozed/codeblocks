@@ -1,5 +1,6 @@
 package org.amusedd.codeblocks.blocks.value;
 
+import org.amusedd.codeblocks.CodeBlocks;
 import org.amusedd.codeblocks.blocks.CodeBlock;
 import org.amusedd.codeblocks.blocks.RetrievableValue;
 import org.amusedd.codeblocks.blocks.Viewable;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class VariableBlock extends CodeBlock implements Viewable, ValueHolder, Receiver, RetrievableValue {
     ValueSet set;
@@ -100,9 +102,22 @@ public class VariableBlock extends CodeBlock implements Viewable, ValueHolder, R
     }
 
     public static VariableBlock deserialize(Map<String, Object> map){
-        return new VariableBlock((ValueSet) map.get("valueset"));
+        try{
+            return new VariableBlock((String) map.get("name"), Class.forName((String) map.get("type")), map.get("value"), (boolean) map.get("static"));
+        } catch (Exception e) {
+            CodeBlocks.getPlugin().getLogger().log(Level.SEVERE, "Failed to deserialize VariableBlock due to ClassNotFoundException");
+            return null;
+        }
     }
 
+    public Map<String, Object> serialize(){
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", getName());
+        map.put("type", getVariableType().getName());
+        map.put("value", getValue());
+        map.put("static", isStatic());
+        return map;
+    }
 
     @Override
     public Object retrieveValue() {
