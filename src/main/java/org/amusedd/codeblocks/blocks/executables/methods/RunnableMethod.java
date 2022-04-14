@@ -1,16 +1,21 @@
 package org.amusedd.codeblocks.blocks.executables.methods;
 
+import org.amusedd.codeblocks.CodeBlocks;
+import org.amusedd.codeblocks.blocks.RetrievableValue;
 import org.amusedd.codeblocks.blocks.executables.containers.CodeBlockContainer;
 import org.amusedd.codeblocks.blocks.value.VariableBlock;
 import org.amusedd.codeblocks.util.items.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
-public class RunnableMethod {
+public class RunnableMethod implements ConfigurationSerializable, RetrievableValue {
     String methodName;
     Class<?>[] parameterTypes;
     Class<?> returnType;
@@ -18,14 +23,16 @@ public class RunnableMethod {
     boolean staticMethod;
     List<String> description;
     String id;
+    Class<?> clazz;
 
-    public RunnableMethod(String methodName, Class<?> returnType, Class<?>[] parameterTypes, boolean staticMethod, Function<MethodExecutionData, Object> methodExecutor) {
+    public RunnableMethod(String methodName, Class<?> clazz, Class<?> returnType, Class<?>[] parameterTypes, boolean staticMethod, Function<MethodExecutionData, Object> methodExecutor) {
         this.methodName = methodName;
         this.parameterTypes = parameterTypes;
         this.returnType = returnType;
         this.methodExecutor = methodExecutor;
         this.staticMethod = staticMethod;
-        String id = methodName;
+        this.clazz = clazz;
+        String id = clazz.getName() + "-" + methodName;
         if(parameterTypes != null) {
             for (Class<?> parameterType : parameterTypes) {
                 id += "-" + parameterType.getSimpleName();
@@ -34,16 +41,16 @@ public class RunnableMethod {
         this.id = id;
     }
 
-    public RunnableMethod(String methodName, Class<?> returnType, Class<?>[] parameterTypes, Function<MethodExecutionData, Object> methodExecutor) {
-        this(methodName, returnType, parameterTypes, false, methodExecutor);
+    public RunnableMethod(String methodName, Class<?> clazz, Class<?> returnType, Class<?>[] parameterTypes, Function<MethodExecutionData, Object> methodExecutor) {
+        this(methodName, clazz, returnType, parameterTypes, false, methodExecutor);
     }
 
-    public RunnableMethod(String methodName, Class<?> returnType , Class<?>[] parameterTypes, List<String> description,  Function<MethodExecutionData, Object> methodExecutor){
-        this(methodName, returnType, parameterTypes, description, false, methodExecutor);
+    public RunnableMethod(String methodName, Class<?> clazz, Class<?> returnType , Class<?>[] parameterTypes, List<String> description,  Function<MethodExecutionData, Object> methodExecutor){
+        this(methodName, clazz, returnType, parameterTypes, description, false, methodExecutor);
     }
 
-    public RunnableMethod(String methodName, Class<?> returnType , Class<?>[] parameterTypes, List<String> description, boolean staticMethod,  Function<MethodExecutionData, Object> methodExecutor){
-        this(methodName, returnType, parameterTypes, staticMethod, methodExecutor);
+    public RunnableMethod(String methodName, Class<?> clazz, Class<?> returnType , Class<?>[] parameterTypes, List<String> description, boolean staticMethod,  Function<MethodExecutionData, Object> methodExecutor){
+        this(methodName, clazz, returnType, parameterTypes, staticMethod, methodExecutor);
         this.description = description;
     }
 
@@ -68,6 +75,8 @@ public class RunnableMethod {
         }
     }
 
+
+
     public boolean isStatic() {
         return staticMethod;
     }
@@ -82,5 +91,21 @@ public class RunnableMethod {
 
     public Class<?> getReturnType() {
         return returnType;
+    }
+
+    @Override
+    public Map<String, Object> serialize() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", getID());
+        return data;
+    }
+
+    public static RunnableMethod deserialize(Map<String, Object> data) {
+        return CodeBlocks.getAPI().getMethodByID((String) data.get("id"));
+    }
+
+    @Override
+    public Object retrieveValue() {
+        return null;
     }
 }

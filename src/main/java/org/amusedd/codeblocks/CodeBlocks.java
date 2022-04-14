@@ -15,7 +15,6 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
 
-import javax.swing.text.View;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 

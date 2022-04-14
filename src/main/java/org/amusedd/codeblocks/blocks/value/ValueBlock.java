@@ -45,7 +45,9 @@ public class ValueBlock extends CodeBlock implements Viewable, Receiver, Retriev
 
     public ValueBlock(ValueBlockData data, Object value) {
         this.data = data;
-        this.value = value;
+        if(value != null) {
+            setValue(value);
+        }
     }
 
     public static ValueBlock deserialize(Map<String, Object> map) {
@@ -60,61 +62,18 @@ public class ValueBlock extends CodeBlock implements Viewable, Receiver, Retriev
         return data.getType();
     }
 
-    public Object getCurrentValue() {
-        return value;
-    }
 
     public Object getValue() {
-        if(getCurrentValue() == null) return null;
-        if (getCurrentValue() instanceof RetrievableValue) {
-            return ((RetrievableValue) getCurrentValue()).retrieveValue();
+        if (value instanceof RetrievableValue) {
+            return ((RetrievableValue) value).retrieveValue();
         }
-        if (CodeBlocks.getPlugin().getValueWrapper().hasWrapper(data.getType())) {
-            return CodeBlocks.getPlugin().getValueWrapper().getUnwrappedValue(this, getCurrentValue());
-        } else {
-            return getCurrentValue();
-        }
-    }
-
-    public void setValue(String value){
-        if(getValueType().equals(String.class)) {
-            this.value = value;
-        }
-        else {
-            if(CodeBlocks.getPlugin().getValueWrapper().hasWrapper(data.getType())) {
-                this.value = CodeBlocks.getPlugin().getValueWrapper().getUnwrappedValue(this, value);
-            }
-        }
+        return value;
     }
 
     public void setValue(Object value) {
         if(value == null) return;
-        if (value instanceof VariableBlock) {
-            this.value = value;
-        } else if (CodeBlocks.getPlugin().getValueWrapper().hasWrapper(data.getType())) {
-            ValueBlock block = CodeBlocks.getPlugin().getValueWrapper().getWrappedValue(data.getType(), value);
-            if (block != null) {
-                block.getData().setViewData(data.getViewData());
-                block.getData().setType(data.getType());
-                getParent().replace(this, block);
-                if (getParent() != null) getParent().callChange(block);
-                return;
-            } else {
-                CodeBlocks.getPlugin().getLogger().warning("Could not find value block for type: " + data.getType().getSimpleName() + " and value: " + value);
-            }
-        } else {
-            this.value = value;
-            CodeBlocks.getPlugin().getLogger().info("No wrapper for type: " + data.getType().getSimpleName() + " and value: " + value);
-        }
+        this.value = value;
         if (getParent() != null) getParent().callChange(this);
-    }
-
-    public String getValueAsString() {
-        if(getValue() == null) return null;
-        else if (CodeBlocks.getPlugin().getValueWrapper().hasWrapper(data.getType())) {
-            return CodeBlocks.getPlugin().getValueWrapper().unwrapToString(this);
-        }
-        return getValue().toString();
     }
 
     @Override
@@ -211,24 +170,42 @@ public class ValueBlock extends CodeBlock implements Viewable, Receiver, Retriev
 
     @Override
     public void onTextResponse(Conversation sender, String text) {
-        ValueBlock block = CodeBlocks.getPlugin().getValueWrapper().getWrappedValue(data.getType(), text);
-        System.out.println("Setting value to: " + text + " wrapped to " + block.getValue());
+        ValueBlock block = CodeBlocks.getPlugin().getValueWrapper().getWrapToValueBlock(data.getType(), text);
         if (block != null) {
             block.getData().setViewData(data.getViewData());
             block.getData().setType(data.getType());
             getParent().replace(this, block);
-            if (sender != null) sender.complete();
-            if (getParent() != null) getParent().callChange(block);
-        } else {
-            CodeBlocks.getPlugin().getLogger().warning("Could not find value block for type: " + data.getType().getSimpleName() + " and value: " + text);
+        } else{
+            Object value = CodeBlocks.getPlugin().getValueWrapper().getUnwrapFromString(data.getType(), text);
+            if (value != null || data.getType().equals(String.class)) {
+                setValue(value);
+            } else {
+                sender.cancel();
+                return;
+            }
         }
+        if (sender != null) sender.complete();
+        if (getParent() != null) getParent().callChange(block == null ? this : block);
+    }
+
+    public String getValueAsString(){
+        if(CodeBlocks.getPlugin().getValueWrapper().getWrapToString(data.getType(), getValue()) != null){
+            return CodeBlocks.getPlugin().getValueWrapper().getWrapToString(data.getType(), getValue());
+        }
+        if(getValue() == null) return "Undefined";
+        return getValue().toString();
     }
 
     public ItemStack toItemStack(){
         ItemStack item = getData().getViewData().getItem();
         ItemMeta meta = item.getItemMeta();
         List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.WHITE + "Value: " + ChatColor.GRAY + getValueAsString());
+        String value = getValueAsString();
+        if(value.equals("Undefined")){
+            lore.add(ChatColor.WHITE + "Value: " + ChatColor.RED + value);
+        } else {
+            lore.add(ChatColor.WHITE + "Value: " + ChatColor.GREEN + value);
+        }
         meta.setLore(lore);
         item.setItemMeta(meta);
         return item;
@@ -238,7 +215,7 @@ public class ValueBlock extends CodeBlock implements Viewable, Receiver, Retriev
     public Map<String, Object> serialize() {
         Map<String, Object> map = super.serialize();
         map.put("data", data);
-        map.put("value", getValueAsString());
+        map.put("value", value);
         return map;
     }
 

@@ -21,4 +21,8 @@ public interface Receiver {
     default void onObjectResponse(Conversation conversation, Object object){
 
     }
+
+    default void onCancel(Conversation conversation){
+
+    }
 }

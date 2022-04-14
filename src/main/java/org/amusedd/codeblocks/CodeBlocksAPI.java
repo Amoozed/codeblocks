@@ -42,23 +42,27 @@ public class CodeBlocksAPI {
         registerType(new TypeData(Event.class, Material.BEACON, List.of(ChatColor.GRAY + "Represents an event that can be triggered")));
         categoryPreviews.put("miscellaneous", new ViewData("Miscellaneous", Material.TNT, List.of(ChatColor.GRAY + "Miscellaneous/Uncategorized CodeBlocks")));
         methods.put(Integer.class, new ArrayList<>(List.of(
-                new RunnableMethod("Addition", Integer.class, new Class[]{Integer.class}, data -> (int)data.getArg(0) + (int) data.getSource()),
-                new RunnableMethod("Subtraction", Integer.class, new Class[]{Integer.class}, data -> (int)data.getSource() - (int) data.getArg(0)),
-                new RunnableMethod("Multiplication", Integer.class, new Class[]{Integer.class}, data -> (int)data.getSource() * (int) data.getArg(0)),
-                new RunnableMethod("Division", Integer.class, new Class[]{Integer.class}, data -> (int)data.getSource() / (int) data.getArg(0))
+                new RunnableMethod("Addition", Integer.class, Integer.class, new Class[]{Integer.class}, data -> (int)data.getArg(0) + (int) data.getSource()),
+                new RunnableMethod("Subtraction", Integer.class,Integer.class, new Class[]{Integer.class}, data -> (int)data.getSource() - (int) data.getArg(0)),
+                new RunnableMethod("Multiplication", Integer.class,Integer.class, new Class[]{Integer.class}, data -> (int)data.getSource() * (int) data.getArg(0)),
+                new RunnableMethod("Division", Integer.class,Integer.class, new Class[]{Integer.class}, data -> (int)data.getSource() / (int) data.getArg(0)),
+                new RunnableMethod("Modulus", Integer.class,Integer.class, new Class[]{Integer.class}, data -> (int)data.getSource() % (int) data.getArg(0)),
+                new RunnableMethod("Increment", Integer.class,Integer.class, new Class[]{}, data -> (int)data.getSource() + 1),
+                new RunnableMethod("Decrement", Integer.class,Integer.class, new Class[]{}, data -> (int)data.getSource() - 1),
+                new RunnableMethod("Debug", Integer.class,Integer.class, new Class[]{}, true, data -> 1)
         )));
         methods.put(Double.class, new ArrayList<>(List.of(
-                new RunnableMethod("Addition", Double.class, new Class[]{Double.class}, data -> (double)data.getArg(0) + (double) data.getSource()),
-                new RunnableMethod("Subtraction", Double.class, new Class[]{Double.class}, data -> (double)data.getSource() - (double) data.getArg(0)),
-                new RunnableMethod("Multiplication", Double.class, new Class[]{Double.class}, data -> (double)data.getSource() * (double) data.getArg(0)),
-                new RunnableMethod("Division", Double.class, new Class[]{Double.class}, data -> (double)data.getSource() / (double) data.getArg(0))
+                new RunnableMethod("Addition", Double.class,Double.class, new Class[]{Double.class}, data -> (double)data.getArg(0) + (double) data.getSource()),
+                new RunnableMethod("Subtraction", Double.class,Double.class, new Class[]{Double.class}, data -> (double)data.getSource() - (double) data.getArg(0)),
+                new RunnableMethod("Multiplication", Double.class,Double.class, new Class[]{Double.class}, data -> (double)data.getSource() * (double) data.getArg(0)),
+                new RunnableMethod("Division", Double.class, Double.class, new Class[]{Double.class}, data -> (double)data.getSource() / (double) data.getArg(0))
         )));
         methods.put(String.class, new ArrayList<>(List.of(
-                new RunnableMethod("Concatenation", String.class, new Class[]{String.class}, data -> data.getArg(0) + (String) data.getSource()),
-                new RunnableMethod("Length", Integer.class, new Class[]{}, data -> ((String)data.getSource()).length())
+                new RunnableMethod("Concatenation", String.class, String.class, new Class[]{String.class}, data -> data.getArg(0) + (String) data.getSource()),
+                new RunnableMethod("Length", String.class, Integer.class, new Class[]{}, data -> ((String)data.getSource()).length())
         )));
         methods.put(Boolean.class, new ArrayList<>(List.of(
-                new RunnableMethod("Not", Boolean.class, new Class[]{}, data -> !(boolean) data.getSource())
+                new RunnableMethod("Not", Boolean.class, Boolean.class, new Class[]{}, data -> !(boolean) data.getSource())
         )));
 
     }
@@ -85,10 +89,11 @@ public class CodeBlocksAPI {
     }
 
     public ArrayList<RunnableMethod> getAllMethods(Class<?> clazz) {
-        ArrayList<RunnableMethod> allMethods = methods.get(clazz);
+        ArrayList<RunnableMethod> allMethods = new ArrayList<>();
+        if(methods.containsKey(clazz)) allMethods.addAll(methods.get(clazz));
         if(clazz.equals(Object.class)){
             for(Class<?> c : methods.keySet()) {
-                allMethods.addAll(getAllMethods(c));
+                if(!c.equals(Object.class)) allMethods.addAll(getAllMethods(c));
             }
             return allMethods;
         }
@@ -97,7 +102,7 @@ public class CodeBlocksAPI {
                 String name = method.getName();
                 Class[] params = method.getParameterTypes();
                 Class returnType = method.getReturnType() == void.class ? null : method.getReturnType();
-                allMethods.add(new RunnableMethod(name, returnType, params, Modifier.isStatic(method.getModifiers()) ,data -> {
+                allMethods.add(new RunnableMethod(name, clazz, returnType, params, Modifier.isStatic(method.getModifiers()) ,data -> {
                         try {
                             return method.invoke(data.getSource(), data.getArgs());
                         } catch (InvocationTargetException | IllegalAccessException e) {
@@ -107,7 +112,7 @@ public class CodeBlocksAPI {
                 }));
             }
         }
-        if(clazz.getSuperclass() != null) allMethods.addAll(getAllMethods(clazz.getSuperclass()));
+        if(clazz.getSuperclass() != null && !clazz.getSuperclass().equals(Object.class)) allMethods.addAll(getAllMethods(clazz.getSuperclass()));
         return allMethods;
     }
 
@@ -115,10 +120,11 @@ public class CodeBlocksAPI {
         ArrayList<RunnableMethod> allMethods = new ArrayList<>();
         if(clazz.equals(Object.class)){
             for(Class<?> c : methods.keySet()) {
-                allMethods.addAll(getAllMethods(c).stream().filter(RunnableMethod::isStatic).collect(Collectors.toList()));
+                for(RunnableMethod method : getAllMethods(c)) if(method.isStatic()) allMethods.add(method);
             }
             return allMethods;
         }
+        for(RunnableMethod method : getAllMethods(clazz)) if(method.isStatic()) allMethods.add(method);
         return allMethods;
     }
 
@@ -126,16 +132,17 @@ public class CodeBlocksAPI {
         ArrayList<RunnableMethod> allMethods = new ArrayList<>();
         if(clazz.equals(Object.class)){
             for(Class<?> c : methods.keySet()) {
-                allMethods.addAll(getAllMethods(c).stream().filter(method -> !method.isStatic()).collect(Collectors.toList()));
+                for(RunnableMethod method : getAllMethods(c)) if(!method.isStatic()) allMethods.add(method);
             }
             return allMethods;
         }
+        for(RunnableMethod method : getAllMethods(clazz)) if(!method.isStatic()) allMethods.add(method);
         return allMethods;
     }
 
-    public RunnableMethod getMethodByID(Class<?> clazz, String id) {
-        for(RunnableMethod method : getAllMethods(clazz)) {
-            if(method.getID().equals(id)) return method;
+    public RunnableMethod getMethodByID(String id) {
+        for(ArrayList<RunnableMethod> list : methods.values()) {
+            for(RunnableMethod method : list) if(method.getID().equals(id)) return method;
         }
         return null;
     }

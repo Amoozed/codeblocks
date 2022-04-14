@@ -28,6 +28,15 @@ public class SelectMenu extends Menu implements Receiver {
         this.from = from;
     }
 
+    public SelectMenu(Player player){
+        super(player);
+    }
+
+    public SelectMenu(Player player, Receiver receiver) {
+        super(player);
+        this.receiver = receiver;
+    }
+
     public SelectMenu(Player player, HashMap<Object, ItemStack>  items, Receiver receiver) {
         this(player, items, receiver, -1);
     }
@@ -56,6 +65,10 @@ public class SelectMenu extends Menu implements Receiver {
         return null;
     }
 
+    public void setItems(HashMap<Object, ItemStack> items) {
+        this.items = items;
+    }
+
     @Override
     public void itemClicked(ItemStack item, InventoryClickEvent event) {
         Object key = getFirstMatchingKey(item);
@@ -77,6 +90,10 @@ public class SelectMenu extends Menu implements Receiver {
     @Override
     public ItemStack blankSpot() {
         return null;
+    }
+
+    public void setFrom(int from) {
+        this.from = from;
     }
 
     @Override

@@ -45,10 +45,6 @@ public class ListValueBlock extends ValueBlock {
         return getList();
     }
 
-    @Override
-    public void setValue(String value) {
-        CodeBlocks.getPlugin().getLogger().warning("Cannot directly set a dictionary value unless it is a ValueSet");
-    }
 
     @Override
     public void setValue(Object value) {
@@ -58,11 +54,7 @@ public class ListValueBlock extends ValueBlock {
         }
     }
 
-    @Override
-    public String getValueAsString() {
-        CodeBlocks.getPlugin().getLogger().warning("Cannot get a dictionary as a string");
-        return null;
-    }
+
 
     public ArrayList<ValueBlock> getList() {
         return this.list;

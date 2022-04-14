@@ -34,7 +34,7 @@ public class CallMethodFromVariable extends CodeBlock implements ExecutableCodeB
     String methodName;
 
     public CallMethodFromVariable(VariableBlock variableBlock, String id){
-        this(variableBlock, CodeBlocks.getAPI().getMethodByID(variableBlock.getVariableType(), id));
+        this(variableBlock, CodeBlocks.getAPI().getMethodByID(id));
         init();
     }
 
@@ -117,7 +117,7 @@ public class CallMethodFromVariable extends CodeBlock implements ExecutableCodeB
             valueSet.get("variable").setValue(getContainer().getVariable(variableName));
         }
         if(valueSet.get("method").getValue() == null && methodName != null){
-            valueSet.get("method").setValue(CodeBlocks.getAPI().getMethodByID(((VariableBlock)valueSet.get("variable").getValue()).getVariableType(), methodName));
+            valueSet.get("method").setValue(CodeBlocks.getAPI().getMethodByID(methodName));
         }
     }
 

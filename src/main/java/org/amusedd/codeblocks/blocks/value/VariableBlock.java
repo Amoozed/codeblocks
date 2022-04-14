@@ -34,10 +34,15 @@ public class VariableBlock extends CodeBlock implements Viewable, ValueHolder, R
         values.put("static", new ConditionalValueBlock("Static", new ArrayList<String>(List.of(ChatColor.GRAY + "If set to " + ChatColor.GREEN + "true" + ChatColor.GRAY + ", any changes to this variable will be retained", ChatColor.GRAY + "Otherwise, the value of this variable will be reset each execution")), staticVariable));
         values.put("name", new ValueBlock("Name of Variable", Material.NAME_TAG, String.class, name));
         values.put("type", new ValueBlock("Type", Material.FLINT, Class.class, type));
-        values.put("value", new ValueBlock(new ValueBlockData(new ViewData("Value", Material.DIAMOND), Object.class, false), value));
+        if(type != null && !type.equals(Class.class)) {
+            values.put("value", new ValueBlock(new ValueBlockData(new ViewData("Value", Material.DIAMOND), type, false), value));
+        } else {
+            values.put("value", new ValueBlock(new ValueBlockData(new ViewData("Value", Material.DIAMOND), Object.class, false), value));
+        }
         this.set = new ValueSet(values);
         this.set.setChangeCallback(this);
         startingValue = value;
+        System.out.println("ABAGADO: " + ((Class)this.set.get("type").getValue()).getName());
     }
 
     public VariableBlock(){
@@ -55,6 +60,7 @@ public class VariableBlock extends CodeBlock implements Viewable, ValueHolder, R
     }
 
     public Class getVariableType(){
+        System.out.println("aba dee aba doo: " + this.set.get("type").getValue());
         return (Class) this.set.get("type").getValue();
     }
 
@@ -103,9 +109,10 @@ public class VariableBlock extends CodeBlock implements Viewable, ValueHolder, R
 
     public static VariableBlock deserialize(Map<String, Object> map){
         try{
+            System.out.println("fucking poo face " + map.get("type"));
             return new VariableBlock((String) map.get("name"), Class.forName((String) map.get("type")), map.get("value"), (boolean) map.get("static"));
         } catch (Exception e) {
-            CodeBlocks.getPlugin().getLogger().log(Level.SEVERE, "Failed to deserialize VariableBlock due to ClassNotFoundException");
+            CodeBlocks.getPlugin().getLogger().log(Level.SEVERE, "Failed to deserialize VariableBlock due to " + e.getCause());
             return null;
         }
     }

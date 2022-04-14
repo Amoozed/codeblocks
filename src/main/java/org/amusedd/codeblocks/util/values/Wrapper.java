@@ -1,30 +1,29 @@
 package org.amusedd.codeblocks.util.values;
 
-import org.amusedd.codeblocks.blocks.executables.methods.RunnableMethod;
 import org.amusedd.codeblocks.blocks.value.ValueBlock;
 
-import java.util.ArrayList;
-
-public interface Wrapper<T> {
-    ValueBlock wrap(T value);
-    ValueBlock wrap(String value);
-    String unwrapToString(T value);
-    default String unwrapToString(ValueBlock value){
-        return unwrapToString(unwrap(value));
+public interface Wrapper<T>{
+    default String overrideToString(Object o){
+        if(o != null){
+            return o.toString();
+        } else {
+            return null;
+        }
     }
-    T unwrap(ValueBlock value);
-    Class getType();
-    boolean isOfType(Object value);
-    default boolean isOfType(ValueBlock value){
-        return value.getData().getType().equals(getType());
+    default ValueBlock toValueBlock(Object o){
+        return null;
     }
-    default boolean isWrappedValue(ValueBlock value){
-        return isOfType(value);
+    default T fromValueBlock(ValueBlock valueBlock){
+        if(isOfType(valueBlock)){
+            return (T) valueBlock.getValue();
+        }
+        return null;
     }
-    default boolean isWrappedValue(Object value){
-        return isOfType(value.toString());
+    default T fromString(String s){
+        return null;
     }
-    default ArrayList<RunnableMethod> getDefinedMethods(){
-        return new ArrayList<>();
+    default boolean isOfType(Object o){
+        return true;
     }
+    Class<?> getWrapperType();
 }

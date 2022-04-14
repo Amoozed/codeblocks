@@ -35,7 +35,7 @@ public class SetVariableBlock extends CodeBlock implements ExecutableCodeBlock, 
     }
 
     public VariableBlock getVariableBlock(){
-        return (VariableBlock) valueSet.get("variable").getCurrentValue();
+        return (VariableBlock) valueSet.get("variable").getValue();
     }
 
     public Object getValue(){

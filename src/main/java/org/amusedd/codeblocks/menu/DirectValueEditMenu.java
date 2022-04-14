@@ -1,6 +1,7 @@
 package org.amusedd.codeblocks.menu;
 
 import org.amusedd.codeblocks.blocks.executables.containers.CodeBlockContainer;
+import org.amusedd.codeblocks.blocks.executables.methods.RunnableMethod;
 import org.amusedd.codeblocks.blocks.value.ValueBlock;
 import org.amusedd.codeblocks.blocks.value.VariableBlock;
 import org.amusedd.codeblocks.commands.input.ChatInput;
@@ -25,6 +26,13 @@ public class DirectValueEditMenu extends Menu implements Receiver {
         keyboardEntry = new ItemBuilder(Material.PAPER).setName(ChatColor.WHITE + "Keyboard Entry").addLore(ChatColor.GRAY + "Click to enter a value with your keyboard").build();
     }
     ItemStack variableEntry;
+    {
+        variableEntry = new ItemBuilder(Material.MAP).setName(ChatColor.WHITE + "Variable Entry").addLore(ChatColor.GRAY + "Click to tie this value with a variable").build();
+    }
+    ItemStack methodEntry;
+    {
+        methodEntry = new ItemBuilder(Material.BOW).setName(ChatColor.WHITE + "Method Entry").addLore(ChatColor.GRAY + "Click to retrieve this value from a method call").build();
+    }
 
     public DirectValueEditMenu(Player player, ValueBlock valueBlock) {
         super(player);
@@ -40,6 +48,8 @@ public class DirectValueEditMenu extends Menu implements Receiver {
     public HashMap<Integer, ItemStack> getItems() {
         HashMap<Integer, ItemStack> items = new HashMap<>();
         items.put(0, keyboardEntry);
+        items.put(1, variableEntry);
+        items.put(2, methodEntry);
         return items;
     }
 
@@ -65,11 +75,25 @@ public class DirectValueEditMenu extends Menu implements Receiver {
                 }
                 new SelectMenu((Player) event.getWhoClicked(), items, valueBlock, 1).open();
             }
+        } else if (item.equals(methodEntry)) {
+            new MethodSelectMenu((Player) event.getWhoClicked(), valueBlock.getValueType(), true, this).open();
         }
     }
 
     @Override
     public void onComplete(Conversation conversation) {
         getFirstParentOfType(ViewValueMenu.class).open();
+    }
+
+    @Override
+    public void onCancel(Conversation conversation) {
+        getOwner().sendMessage(ChatColor.RED + "Something went wrong, please make sure you entered a valid value");
+        onComplete(conversation);
+    }
+
+    @Override
+    public void onObjectResponse(Conversation conversation, Object object) {
+        System.out.println("Null check: " + object);
+        valueBlock.setValue(object);
     }
 }

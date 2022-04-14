@@ -28,4 +28,8 @@ public class Conversation {
     public void complete() {
         sender.onComplete(this);
     }
+
+    public void cancel(){
+        sender.onCancel(this);
+    }
 }
