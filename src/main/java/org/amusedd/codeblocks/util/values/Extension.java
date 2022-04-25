@@ -1,8 +1,13 @@
 package org.amusedd.codeblocks.util.values;
 
 import org.amusedd.codeblocks.blocks.value.ValueBlock;
+import org.bukkit.inventory.ItemStack;
 
-public interface Wrapper<T>{
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public interface Extension<T>{
+    Class<?> getExtending();
     default String overrideToString(Object o){
         if(o != null){
             return o.toString();
@@ -25,5 +30,20 @@ public interface Wrapper<T>{
     default boolean isOfType(Object o){
         return true;
     }
-    Class<?> getWrapperType();
+    default ArrayList<T> getSetAsRaw() {
+        return null;
+    }
+    default ArrayList<String> getSetAsStrings(){
+        return null;
+    }
+    default ArrayList<ItemStack> getSetAsItems(){
+        return null;
+    }
+    default HashMap<T, ItemStack> getSetAsMatch(){
+        HashMap<T, ItemStack> map = new HashMap<>();
+        for (T t : getSetAsRaw()) {
+            map.put(t, getSetAsItems().get(getSetAsRaw().indexOf(t)));
+        }
+        return map;
+    }
 }

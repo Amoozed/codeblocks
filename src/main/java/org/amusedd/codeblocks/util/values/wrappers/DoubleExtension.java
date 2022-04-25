@@ -1,8 +1,8 @@
 package org.amusedd.codeblocks.util.values.wrappers;
 
-import org.amusedd.codeblocks.util.values.Wrapper;
+import org.amusedd.codeblocks.util.values.Extension;
 
-public class DoubleWrapper implements Wrapper<Double>{
+public class DoubleExtension implements Extension<Double> {
 
     @Override
     public Double fromString(String s) {
@@ -14,7 +14,7 @@ public class DoubleWrapper implements Wrapper<Double>{
     }
 
     @Override
-    public Class<?> getWrapperType() {
+    public Class<?> getExtending() {
         return Double.class;
     }
 

@@ -1,8 +1,8 @@
 package org.amusedd.codeblocks.util.values.wrappers;
 
-import org.amusedd.codeblocks.util.values.Wrapper;
+import org.amusedd.codeblocks.util.values.Extension;
 
-public class TypeWrapper implements Wrapper<Class<?>> {
+public class TypeExtension implements Extension<Class<?>> {
 
     @Override
     public String overrideToString(Object o) {
@@ -11,7 +11,7 @@ public class TypeWrapper implements Wrapper<Class<?>> {
     }
 
     @Override
-    public Class<?> getWrapperType() {
+    public Class<?> getExtending() {
         return Class.class;
     }
 

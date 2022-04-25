@@ -1,8 +1,10 @@
 package org.amusedd.codeblocks.util.values.wrappers;
 
-import org.amusedd.codeblocks.util.values.Wrapper;
+import org.amusedd.codeblocks.blocks.executables.methods.CodeBlockMethod;
+import org.amusedd.codeblocks.util.values.Extension;
+import org.bukkit.Material;
 
-public class IntegerWrapper implements Wrapper<Integer> {
+public class IntegerExtension implements Extension<Integer> {
 
     @Override
     public Integer fromString(String s) {
@@ -14,7 +16,7 @@ public class IntegerWrapper implements Wrapper<Integer> {
     }
 
     @Override
-    public Class<?> getWrapperType() {
+    public Class<?> getExtending() {
         return Integer.class;
     }
 
@@ -26,5 +28,10 @@ public class IntegerWrapper implements Wrapper<Integer> {
             return fromString((String) o) != null;
         }
         return false;
+    }
+
+    @CodeBlockMethod(viewName = "Increase by amount", viewMaterial = Material.DIAMOND)
+    public Integer increase(Integer i, Integer amount){
+        return i + amount;
     }
 }

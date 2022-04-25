@@ -1,10 +1,10 @@
-package org.amusedd.codeblocks.util.values.sets;
+package org.amusedd.codeblocks.util.values.wrappers;
 
 import org.amusedd.codeblocks.CodeBlocks;
 import org.amusedd.codeblocks.util.fake.EventType;
 import org.amusedd.codeblocks.util.items.ItemBuilder;
 import org.amusedd.codeblocks.util.items.PageableItem;
-import org.amusedd.codeblocks.util.values.SpecifiedSet;
+import org.amusedd.codeblocks.util.values.Extension;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -14,11 +14,11 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class EventSelection implements SpecifiedSet<EventType> {
+public class EventSelection implements Extension<EventType> {
 
     @Override
-    public ArrayList<EventType> getAsRaw() {
-        ArrayList<String> eventNames = getAsStrings();
+    public ArrayList<EventType> getSetAsRaw() {
+        ArrayList<String> eventNames = getSetAsStrings();
         ArrayList<EventType> eventTypes = new ArrayList<>();
         for (String eventName : eventNames) {
             eventTypes.add(new EventType(eventName));
@@ -27,15 +27,15 @@ public class EventSelection implements SpecifiedSet<EventType> {
     }
 
     @Override
-    public ArrayList<String> getAsStrings() {
+    public ArrayList<String> getSetAsStrings() {
         return CodeBlocks.getPlugin().getEventStorage().getEventNames();
     }
 
     @Override
-    public ArrayList<ItemStack> getAsItems() {
+    public ArrayList<ItemStack> getSetAsItems() {
         ArrayList<ItemStack> itemStacks = new ArrayList<>();
         HashMap<String, HashMap<Object, ItemStack>> eventPages = new HashMap<>();
-        for (String eventName : getAsStrings()) {
+        for (String eventName : getSetAsStrings()) {
             String page = CodeBlocks.getPlugin().getEventStorage().getEventClassification(eventName);
             if (!eventPages.containsKey(page)) {
                 eventPages.put(page, new HashMap<>());
@@ -53,7 +53,7 @@ public class EventSelection implements SpecifiedSet<EventType> {
     }
 
     @Override
-    public Class getType() {
+    public Class getExtending() {
         return EventType.class;
     }
 

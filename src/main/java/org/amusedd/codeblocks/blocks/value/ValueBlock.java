@@ -12,7 +12,6 @@ import org.amusedd.codeblocks.menu.DirectValueEditMenu;
 import org.amusedd.codeblocks.menu.Menu;
 import org.amusedd.codeblocks.menu.SelectMenu;
 import org.amusedd.codeblocks.util.ViewData;
-import org.amusedd.codeblocks.util.values.SpecifiedSet;
 import org.amusedd.codeblocks.util.values.ValueBlockData;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -109,9 +108,9 @@ public class ValueBlock extends CodeBlock implements Viewable, Receiver, Retriev
                 new SelectMenu((Player) event.getWhoClicked(), items, this, 1).open();
             }
         }
-        else if (CodeBlocks.getPlugin().getValueWrapper().getSet(data.getType()) != null) {
-            SpecifiedSet set = CodeBlocks.getPlugin().getValueWrapper().getSet(data.getType());
-            new SelectMenu((Player) event.getWhoClicked(), set.getAsMatch(), this).open();
+        else if (CodeBlocks.getPlugin().getValueWrapper().hasSpecifiedSet(data.getType())) {
+            HashMap<Object, ItemStack> match = CodeBlocks.getPlugin().getValueWrapper().getSetAsMatch(data.getType());
+            new SelectMenu((Player) event.getWhoClicked(), match, this).open();
         } else {
             /*((Menu) event.getClickedInventory().getHolder()).forceClose();
             new ChatInput("Please enter a value of the type: " + data.getType().getSimpleName(), (Player) event.getWhoClicked(), new Conversation(this, (Receiver) (event.getClickedInventory().getHolder()))).awaitResponse();

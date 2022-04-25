@@ -12,8 +12,7 @@ import static java.lang.annotation.ElementType.TYPE;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CodeBlockMethod {
-    String id();
-    String viewName();
+    String viewName() default "Unnamed Method";
     Material viewMaterial() default Material.STONE;
     String[] description() default {};
     String category() default "miscellaneous";

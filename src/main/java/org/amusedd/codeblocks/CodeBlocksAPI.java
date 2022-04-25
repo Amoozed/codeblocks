@@ -7,7 +7,7 @@ import org.amusedd.codeblocks.blocks.executables.methods.RunnableMethod;
 import org.amusedd.codeblocks.util.ViewData;
 import org.amusedd.codeblocks.util.items.PageableItem;
 import org.amusedd.codeblocks.util.values.TypeData;
-import org.amusedd.codeblocks.util.values.sets.TypeSelection;
+import org.amusedd.codeblocks.util.values.wrappers.TypeSelection;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class CodeBlocksAPI {
     HashMap<Class<? extends CodeBlock>, ViewData> blockPreviews = new HashMap<>();

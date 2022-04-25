@@ -1,41 +1,36 @@
-package org.amusedd.codeblocks.util.values.sets;
+package org.amusedd.codeblocks.util.values.wrappers;
 
 import org.amusedd.codeblocks.CodeBlocks;
-import org.amusedd.codeblocks.util.items.ItemBuilder;
-import org.amusedd.codeblocks.util.values.SpecifiedSet;
+import org.amusedd.codeblocks.util.values.Extension;
 import org.amusedd.codeblocks.util.values.TypeData;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-public class TypeSelection implements SpecifiedSet<Class> {
+public class TypeSelection implements Extension<Class> {
 
     static HashMap<Class, TypeData> types = new HashMap<>();
 
     @Override
-    public ArrayList<Class> getAsRaw() {
+    public ArrayList<Class> getSetAsRaw() {
         return new ArrayList<>(types.keySet());
     }
 
     @Override
-    public ArrayList<String> getAsStrings() {
+    public ArrayList<String> getSetAsStrings() {
         ArrayList<String> strings = new ArrayList<>();
-        for(Class clazz : getAsRaw()) {
+        for(Class clazz : getSetAsRaw()) {
             strings.add(clazz.getSimpleName());
         }
         return strings;
     }
 
     @Override
-    public ArrayList<ItemStack> getAsItems() {
+    public ArrayList<ItemStack> getSetAsItems() {
         ArrayList<ItemStack> items = new ArrayList<>();
         for(Class clazz : types.keySet()) {
             TypeData type = types.get(clazz);
@@ -49,7 +44,7 @@ public class TypeSelection implements SpecifiedSet<Class> {
     }
 
     @Override
-    public Class getType() {
+    public Class getExtending() {
         return Class.class;
     }
 
