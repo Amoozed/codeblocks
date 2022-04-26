@@ -14,4 +14,5 @@ public @interface Param {
     Material viewMaterial() default Material.STONE;
     String[] description() default {};
     boolean required() default true;
+    boolean self() default false;
 }
